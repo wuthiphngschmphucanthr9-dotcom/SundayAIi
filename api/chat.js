@@ -23,7 +23,7 @@ module.exports = async (req, res) => {
       role: m.role === 'assistant' ? 'model' : 'user',
       parts: [{ text: m.content }],
     })),
-    generationConfig: { maxOutputTokens: 8000, thinkingConfig: { thinkingBudget: 0 } },
+    generationConfig: { maxOutputTokens: 8000, thinkingConfig: { thinkingLevel: 'low' } },
   };
   const url = 'https://generativelanguage.googleapis.com/v1beta/models/' + MODEL + ':streamGenerateContent?alt=sse';
 
