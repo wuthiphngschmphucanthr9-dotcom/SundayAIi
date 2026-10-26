@@ -51,13 +51,26 @@ iframe{width:100%;height:360px;border:0;background:#fff;display:block}
 .msg.ai{background:var(--surface);border:1px solid var(--line);border-radius:4px 16px 16px 16px;padding:12px 14px;box-sizing:border-box}
 .rt{display:flex;align-items:center;gap:8px}
 .who{font-size:13px;color:#dfe7ff;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.keybox{position:fixed;inset:0;z-index:30;background:rgba(10,15,30,.6);display:flex;align-items:center;justify-content:center;padding:20px}
+.keybox[hidden]{display:none}
+.kcard{width:100%;max-width:380px;background:var(--surface);color:var(--ink);border-radius:18px;padding:22px;border:1px solid var(--line)}
+.kcard h2{margin:0 0 6px;font-size:20px}
+.kcard p{margin:0 0 12px;color:var(--muted);font-size:14px}
+.kcard input{width:100%;box-sizing:border-box;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:10px;padding:11px 12px;font:inherit;margin-bottom:8px}
+.kcard p.kmsg{color:#c0392b;min-height:1.2em;margin:0 0 10px}
+.krow{display:flex;gap:8px;justify-content:flex-end}
+.krow button{border-radius:10px;padding:10px 16px;font:inherit;cursor:pointer;border:1px solid var(--line);background:none;color:var(--ink)}
+.krow .ks{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
+.rt{display:flex;gap:8px}
 </style>
 </head>
 <body>
+<div class="keybox" id="keybox" hidden><div class="kcard"><h2>ใส่คีย์ Gemini ของคุณ</h2><p>คีย์เก็บในเบราว์เซอร์เครื่องนี้เท่านั้น และใช้โควตาของคุณเอง ขอได้ฟรีที่ aistudio.google.com/apikey</p><input id="keyin" type="password" placeholder="วางคีย์ที่นี่" autocomplete="off" autocapitalize="off" spellcheck="false"><p class="kmsg" id="keymsg"></p><div class="krow"><button id="keycancel" type="button">ปิด</button><button id="keysave" type="button" class="ks">บันทึก</button></div></div></div>
 <div class="app">
   <header>
     <div class="brand"><div class="logo" aria-hidden="true">&lt;/&gt;</div><div><h1>ผู้ช่วยเขียนโค้ด AI</h1><p>สั่งเป็นภาษาไทย ได้โค้ดและดูตัวอย่างเว็บทันที</p></div></div>
-    <button class="clear" id="clear" type="button">ล้างแชท</button>
+    <div class="rt"><button class="clear" id="keybtn" type="button">คีย์</button><button class="clear" id="clear" type="button">ล้างแชท</button></div>
   </header>
   <div id="log">
     <div class="empty" id="empty">
@@ -128,10 +141,10 @@ function render(box, text){
 }
 
 async function callApi(messages, signal, onText){
-  var res = await fetch('/api/chat', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({messages: messages}), signal: signal});
+  var res = await fetch('/api/chat', {method:'POST', headers:{'Content-Type':'application/json','x-user-key':getKey()}, body: JSON.stringify({messages: messages}), signal: signal});
   if(!res.ok){
     var data = {}; try{ data = await res.json(); }catch(e){}
-    var err = new Error(data.error || ('HTTP ' + res.status)); err.code = res.status === 429 ? 'rate_limited' : null; throw err;
+    var err = new Error(data.error || ('HTTP ' + res.status)); err.code = res.status === 429 ? 'rate_limited' : (res.status === 401 ? 'bad_key' : null); throw err;
   }
   var reader = res.body.getReader(), dec = new TextDecoder(), full = '';
   while(true){
@@ -147,6 +160,7 @@ async function callApi(messages, signal, onText){
 
 async function ask(text){
   if(busy || !text.trim()) return;
+  if(!getKey()){ input.value = text; openKey('ใส่คีย์ Gemini ก่อนใช้งาน'); return; }
   busy = true; send.disabled = true;
   var empty = document.getElementById('empty'); if(empty) empty.remove();
   log.appendChild(el('div','msg user',text));
@@ -163,6 +177,7 @@ async function ask(text){
   }catch(e){
     box.textContent = '';
     var code = e && e.code;
+    if(code === 'bad_key'){ openKey('คีย์ใช้ไม่ได้ ตรวจสอบแล้วใส่ใหม่'); }
     var msg = code === 'not_granted' ? 'ยังไม่ได้อนุญาตให้ใช้ AI กดส่งใหม่แล้วเลือกอนุญาต'
             : code === 'rate_limited' ? 'ใช้งานถี่เกินไปหรือโควตาเต็ม: ' + ((e && e.message) || '')
             : code === 'not_declared' || code === 'sampling_disabled' || code === 'capability_disabled' ? 'ฟีเจอร์ AI ยังไม่เปิดใช้งานสำหรับหน้านี้ (' + code + ')'
@@ -181,6 +196,15 @@ var emptyHTML = document.getElementById('empty').outerHTML;
 function bindChips(){ document.querySelectorAll('.chip').forEach(function(c){ c.onclick = function(){ ask(c.textContent); }; }); }
 bindChips();
 document.getElementById('clear').onclick = function(){ if(ctrl) ctrl.abort(); chat = []; location.reload(); };
+var KEY_NAME = 'gemini_key', memKey = '';
+function getKey(){ try{ return localStorage.getItem(KEY_NAME) || memKey; }catch(e){ return memKey; } }
+function setKey(v){ memKey = v; try{ localStorage.setItem(KEY_NAME, v); }catch(e){} }
+var kb = document.getElementById('keybox'), ki = document.getElementById('keyin'), km = document.getElementById('keymsg');
+function openKey(msg){ km.textContent = msg || ''; ki.value = ''; kb.hidden = false; ki.focus(); }
+document.getElementById('keysave').onclick = function(){ var v = ki.value.trim(); if(v.length < 20){ km.textContent = 'คีย์สั้นเกินไป ตรวจสอบอีกครั้ง'; return; } setKey(v); kb.hidden = true; };
+document.getElementById('keycancel').onclick = function(){ kb.hidden = true; };
+document.getElementById('keybtn').onclick = function(){ openKey(''); };
+if(!getKey()) openKey('');
 </script>
 </body>
 </html>
