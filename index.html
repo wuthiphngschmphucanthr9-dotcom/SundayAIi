@@ -127,11 +127,22 @@ function render(box, text){
   });
 }
 
-async function callApi(messages, signal){
+async function callApi(messages, signal, onText){
   var res = await fetch('/api/chat', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({messages: messages}), signal: signal});
-  var data = {}; try{ data = await res.json(); }catch(e){}
-  if(!res.ok){ var err = new Error(data.error || ('HTTP ' + res.status)); err.code = res.status === 429 ? 'rate_limited' : null; throw err; }
-  return {text: data.text || '', truncated: !!data.truncated};
+  if(!res.ok){
+    var data = {}; try{ data = await res.json(); }catch(e){}
+    var err = new Error(data.error || ('HTTP ' + res.status)); err.code = res.status === 429 ? 'rate_limited' : null; throw err;
+  }
+  var reader = res.body.getReader(), dec = new TextDecoder(), full = '';
+  while(true){
+    var s = await reader.read(); if(s.done) break;
+    full += dec.decode(s.value, {stream:true});
+    onText(full.replace(/\u0001\w+/g,''));
+  }
+  var trunc = full.indexOf('\u0001TRUNC') > -1;
+  full = full.replace(/\u0001\w+/g,'');
+  if(!full) throw new Error('AI ไม่ได้ส่งคำตอบกลับมา ลองถามใหม่อีกครั้ง');
+  return {text: full, truncated: trunc};
 }
 
 async function ask(text){
@@ -146,14 +157,14 @@ async function ask(text){
   
   ctrl = new AbortController();
   try{
-    var r = await callApi(msgs, ctrl.signal);
+    var r = await callApi(msgs, ctrl.signal, function(t){ render(box, t); scrollDown(); });
     render(box, r.text); chat.push({role:'assistant', content:r.text});
     if(r.truncated){ box.appendChild(el('p','err','คำตอบยาวจนถูกตัด พิมพ์ "เขียนต่อ" เพื่อให้ทำต่อ')); }
   }catch(e){
     box.textContent = '';
     var code = e && e.code;
     var msg = code === 'not_granted' ? 'ยังไม่ได้อนุญาตให้ใช้ AI กดส่งใหม่แล้วเลือกอนุญาต'
-            : code === 'rate_limited' ? 'ใช้งานถี่เกินไป รอสักครู่แล้วลองใหม่'
+            : code === 'rate_limited' ? 'ใช้งานถี่เกินไปหรือโควตาเต็ม: ' + ((e && e.message) || '')
             : code === 'not_declared' || code === 'sampling_disabled' || code === 'capability_disabled' ? 'ฟีเจอร์ AI ยังไม่เปิดใช้งานสำหรับหน้านี้ (' + code + ')'
             : 'เกิดข้อผิดพลาด ลองส่งอีกครั้ง (' + (code || (e && e.message) || 'unknown') + ')';
     if(e && e.text){ render(box, e.text); }
