@@ -1,12 +1,14 @@
 // Vercel Serverless Function (Gemini, แบบสตรีม: ตัวหนังสือทยอยขึ้นระหว่างที่ AI เขียน)
 const SYSTEM = "คุณเป็นผู้ช่วยเขียนโค้ดมืออาชีพ ตอบเป็นภาษาเดียวกับผู้ใช้ (ส่วนใหญ่เป็นภาษาไทย) อธิบายสั้น กระชับ แล้วให้โค้ดใน code fence ที่ระบุภาษาเสมอ ชี้ข้อควรระวังสำคัญเท่าที่จำเป็น ถ้าผู้ใช้ขอหน้าเว็บ ให้ตอบเป็นไฟล์ HTML เดียวที่สมบูรณ์ใน ```html block เดียว (CSS และ JS อยู่ในไฟล์เดียว ไม่พึ่งไฟล์หรือรูปภายนอก ออกแบบให้สวย ใช้สีและฟอนต์ที่เข้ากับหัวข้อ รองรับมือถือ) และห้ามใช้ localStorage กฎสำคัญ: ทำตามที่ผู้ใช้สั่งให้ตรงตัวทุกข้อ (ภาษา ฟีเจอร์ สไตล์ ชื่อ โครงสร้าง) อย่าเปลี่ยนโจทย์ อย่าถามกลับถ้าพอเดาได้ ให้เขียนโค้ดเต็มที่ใช้งานได้จริง ไม่ย่อ ไม่ใช้ ... แทนส่วนของโค้ด ถ้าผู้ใช้ไม่ระบุภาษาให้เลือกที่เหมาะกับงาน";
-const MODEL = process.env.GEMINI_MODEL || 'gemini-3.8-flash';
+const MODEL = process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite';
+const FALLBACK = 'gemini-3.8-flash';
 const wait = ms => new Promise(s => setTimeout(s, ms));
 
 module.exports = async (req, res) => {
   if (req.method !== 'POST') return res.status(405).json({ error: 'ใช้ได้เฉพาะ POST' });
-  const key = process.env.GEMINI_API_KEY;
-  if (!key) return res.status(500).json({ error: 'ยังไม่ได้ตั้งค่า GEMINI_API_KEY' });
+  // คีย์เป็นของผู้ใช้แต่ละคน ส่งมาทาง header (ไม่เก็บ ไม่บันทึก)
+  const key = String(req.headers['x-user-key'] || '').trim();
+  if (!key) return res.status(401).json({ error: 'ยังไม่ได้ใส่คีย์ Gemini' });
 
   const body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
   const messages = Array.isArray(body.messages) ? body.messages.slice(-12) : [];
@@ -25,17 +27,19 @@ module.exports = async (req, res) => {
     })),
     generationConfig: { maxOutputTokens: 8000, thinkingConfig: { thinkingLevel: 'low' } },
   };
-  const url = 'https://generativelanguage.googleapis.com/v1beta/models/' + MODEL + ':streamGenerateContent?alt=sse';
+  const urlFor = m => 'https://generativelanguage.googleapis.com/v1beta/models/' + m + ':streamGenerateContent?alt=sse';
 
   try {
     let r;
+    let model = MODEL;
     for (let i = 0; i < 3; i++) {
-      r = await fetch(url, {
+      r = await fetch(urlFor(model), {
         method: 'POST',
         headers: { 'x-goog-api-key': key, 'content-type': 'application/json' },
         body: JSON.stringify(payload),
       });
       if (r.ok) break;
+      if (r.status === 404 && model !== FALLBACK) { model = FALLBACK; continue; }
       if (r.status === 400 && payload.generationConfig.thinkingConfig) {
         delete payload.generationConfig.thinkingConfig;
         continue;
@@ -45,7 +49,9 @@ module.exports = async (req, res) => {
     }
     if (!r.ok) {
       const data = await r.json().catch(() => ({}));
-      return res.status(r.status === 429 ? 429 : 502).json({ error: (data.error && data.error.message) || 'เรียก AI ไม่สำเร็จ' });
+      const msg = (data.error && data.error.message) || '';
+      const bad = r.status === 401 || r.status === 403 || (r.status === 400 && /api key/i.test(msg));
+      return res.status(bad ? 401 : r.status === 429 ? 429 : 502).json({ error: msg || 'เรียก AI ไม่สำเร็จ' });
     }
 
     res.status(200);
