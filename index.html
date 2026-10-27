@@ -191,15 +191,52 @@ html[data-theme="horror"] #attach:hover{box-shadow:0 0 12px rgba(224,30,43,.55)}
 html[data-theme="horror"] .files{background:rgba(6,2,2,.85)}
 html[data-theme="horror"] .fchip{background:rgba(224,30,43,.14)}
 html[data-theme="horror"] .toast{background:#120505;box-shadow:0 0 20px rgba(224,30,43,.45)}
+
+.drawer{position:fixed;inset:0;z-index:35}
+.drawer[hidden]{display:none}
+.dback{position:absolute;inset:0;background:rgba(3,1,10,.68);animation:fade .2s both}
+.dpanel{position:absolute;top:0;right:0;bottom:0;width:min(88vw,380px);box-sizing:border-box;background:var(--surface);border-left:1px solid var(--pink);display:flex;flex-direction:column;gap:10px;padding:calc(14px + env(safe-area-inset-top,0px)) 14px calc(14px + env(safe-area-inset-bottom,0px));box-shadow:-10px 0 40px rgba(255,46,154,.25);animation:slidein .25s cubic-bezier(.2,.8,.2,1) both}
+.dhead{display:flex;justify-content:space-between;align-items:center}
+.dhead h2{margin:0;font-size:20px}
+.dnew{border:0;border-radius:12px;padding:11px;font:inherit;font-weight:600;color:#fff;background:linear-gradient(135deg,var(--violet),var(--pink));cursor:pointer;box-shadow:0 0 16px rgba(255,46,154,.45)}
+.dnew:active{transform:scale(.97)}
+.dpanel input[type=search]{width:100%;box-sizing:border-box;border:1px solid var(--line);background:#09051a;color:var(--ink);border-radius:12px;padding:10px 12px;font:inherit}
+.dpanel input[type=search]:focus{outline:none;border-color:var(--pink);box-shadow:0 0 14px rgba(255,46,154,.4)}
+.rlist{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
+.ritem{display:flex;gap:6px;align-items:stretch;border:1px solid var(--line);border-radius:12px;background:rgba(15,10,29,.7);flex-shrink:0}
+.ritem.cur{border-color:var(--pink);box-shadow:0 0 12px rgba(255,46,154,.3)}
+.rmain{flex:1;min-width:0;text-align:left;background:none;border:0;color:var(--ink);font:inherit;padding:10px 12px;cursor:pointer;display:flex;flex-direction:column;gap:2px}
+.rmain b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.rmain small{color:var(--muted);font-size:12px}
+.rmain .snip{color:#ffb3dd;font-size:12.5px;font-style:normal;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rbtns{display:flex;flex-direction:column;justify-content:center;gap:4px;padding:6px 8px 6px 0}
+.rbtns button{background:none;border:1px solid var(--line);color:var(--muted);border-radius:8px;padding:2px 9px;font:inherit;font-size:12px;cursor:pointer}
+.rbtns .danger.armed,.dclear.armed{border-color:#ff5a6a;color:#fff;background:rgba(255,60,80,.25)}
+.rname{flex:1;min-width:0;margin:6px;border:1px solid var(--pink);background:#09051a;color:var(--ink);border-radius:8px;padding:8px 10px;font:inherit}
+.rempty{color:var(--muted);text-align:center;padding:16px}
+.dclear{background:none;border:1px solid var(--line);color:var(--muted);border-radius:12px;padding:9px;font:inherit;cursor:pointer}
+html[data-theme="horror"] .dpanel{border-left-color:#c1121f;box-shadow:-10px 0 40px rgba(190,10,22,.3)}
+html[data-theme="horror"] .dnew{background:linear-gradient(135deg,#7a0c12,#e01e2b);box-shadow:0 0 16px rgba(224,30,43,.5)}
+html[data-theme="horror"] .ritem{background:rgba(10,5,5,.85)}
+html[data-theme="horror"] .ritem.cur{border-color:#e01e2b;box-shadow:0 0 12px rgba(224,30,43,.4)}
+html[data-theme="horror"] .rmain .snip{color:#ff9a8a}
+html[data-theme="horror"] .dpanel input[type=search],html[data-theme="horror"] .rname{background:#060303}
+@keyframes slidein{from{transform:translateX(100%)}to{transform:none}}
+
+.modes{flex-wrap:wrap;row-gap:4px}
+.modes small{flex:1;min-width:120px}
+.mode.beast.on{border-color:#ff8a00;color:#fff;background:rgba(255,120,0,.2);box-shadow:0 0 14px rgba(255,120,0,.65)}
+html[data-theme="horror"] .mode.beast.on{border-color:#ff8a00;background:rgba(255,120,0,.2);box-shadow:0 0 14px rgba(255,120,0,.65)}
 </style>
 </head>
 <body>
 <div class="keybox" id="keybox" hidden><div class="kcard"><h2>ใส่คีย์ Gemini ของคุณ</h2><p>คีย์เก็บในเบราว์เซอร์เครื่องนี้เท่านั้น และใช้โควตาของคุณเอง ขอได้ฟรีที่ aistudio.google.com/apikey</p><input id="keyin" type="password" placeholder="วางคีย์ที่นี่" autocomplete="off" autocapitalize="off" spellcheck="false"><p class="kmsg" id="keymsg"></p><div class="krow"><button id="keycancel" type="button">ปิด</button><button id="keysave" type="button" class="ks">บันทึก</button></div></div></div>
 <div class="pvbox" id="pvbox" hidden><div class="pvbar"><span>ตัวอย่างเว็บ</span><button id="pvclose" type="button">ปิด</button></div><iframe id="pvframe" sandbox="allow-scripts" title="ตัวอย่างเต็มจอ"></iframe></div>
+<div class="drawer" id="drawer" hidden><div class="dback" id="dback"></div><aside class="dpanel" aria-label="ห้องแชท"><div class="dhead"><h2>ห้องแชท</h2><button id="dclose" type="button" class="clear">ปิด</button></div><button id="newroom" type="button" class="dnew">+ ห้องใหม่</button><input id="rsearch" type="search" placeholder="ค้นหาในทุกห้อง" autocomplete="off"><div class="rlist" id="rlist"></div><button id="clearroom" type="button" class="dclear">ล้างข้อความในห้องนี้</button></aside></div>
 <div class="app">
   <header>
     <div class="brand"><div class="logo" aria-hidden="true"><span></span></div><div><h1>SUNDAY AI</h1><p>ผู้ช่วยเขียนโค้ด สั่งเป็นภาษาไทยได้เลย</p></div></div>
-    <div class="rt"><button class="clear" id="themebtn" type="button">ธีม</button><button class="clear" id="keybtn" type="button">คีย์</button><button class="clear" id="clear" type="button">ล้าง</button></div>
+    <div class="rt"><button class="clear" id="themebtn" type="button">ธีม</button><button class="clear" id="keybtn" type="button">คีย์</button><button class="clear" id="menubtn" type="button" aria-label="ห้องแชท">☰ ห้อง</button></div>
   </header>
   <div id="log">
     <div class="empty" id="empty">
@@ -213,7 +250,7 @@ html[data-theme="horror"] .toast{background:#120505;box-shadow:0 0 20px rgba(224
       </div>
     </div>
   </div>
-  <div class="modes"><button class="mode on" data-m="fast" type="button">เร็ว</button><button class="mode" data-m="smart" type="button">ฉลาด</button><small>โหมดฉลาดตรงโจทย์กว่า แต่โควตาน้อยกว่า</small></div>
+  <div class="modes"><button class="mode on" data-m="fast" type="button">เร็ว</button><button class="mode" data-m="smart" type="button">ฉลาด</button><button class="mode beast" data-m="beast" type="button">โหด</button><small id="modehint">ตอบไว ใช้โควตาน้อย</small></div>
   <div class="files" id="files" hidden></div>
   <form id="form">
     <button type="button" id="attach" aria-label="แนบไฟล์โค้ด" title="แนบไฟล์โค้ด"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.4 11.1l-8.5 8.5a5.5 5.5 0 0 1-7.8-7.8l8.5-8.5a3.7 3.7 0 0 1 5.2 5.2l-8.5 8.5a1.8 1.8 0 0 1-2.6-2.6l7.8-7.8"/></svg></button><input type="file" id="fileinp" multiple hidden>
@@ -230,7 +267,19 @@ function el(tag, cls, text){ var e = document.createElement(tag); if(cls) e.clas
 function nearBottom(){ return log.scrollHeight - log.scrollTop - log.clientHeight < 140; }
 function scrollDown(){ log.scrollTop = log.scrollHeight; }
 function setBusy(b){ busy = b; send.textContent = b ? 'หยุด' : 'ส่ง'; send.classList.toggle('stop', b); }
-function saveChat(){ try{ localStorage.setItem(STORE, JSON.stringify(chat.slice(-40))); }catch(e){} }
+var ROOMS_KEY = 'sunday_rooms', CUR_KEY = 'sunday_cur', ROOM_PREFIX = 'sunday_room_', DEFAULT_TITLE = 'ห้องใหม่', rooms = [], curId = '', emptyHTML = '';
+function newId(){ return 'r' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5); }
+function cur(){ for(var i = 0; i < rooms.length; i++) if(rooms[i].id === curId) return rooms[i]; return null; }
+function validMsgs(d){ return Array.isArray(d) ? d.filter(function(m){ return m && (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string'; }) : []; }
+function roomChat(id){ try{ return validMsgs(JSON.parse(localStorage.getItem(ROOM_PREFIX + id) || '[]')); }catch(e){ return []; } }
+function saveIndex(){ try{ localStorage.setItem(ROOMS_KEY, JSON.stringify(rooms)); localStorage.setItem(CUR_KEY, curId); }catch(e){} }
+function saveChat(){
+  if(!curId) return;
+  try{ localStorage.setItem(ROOM_PREFIX + curId, JSON.stringify(chat.slice(-60))); }
+  catch(e){ toast('พื้นที่เก็บข้อมูลเต็ม ลองลบห้องเก่าบางห้อง'); }
+  var r = cur(); if(r){ r.updated = Date.now(); r.n = chat.length; }
+  saveIndex();
+}
 
 function copyText(txt, done){
   function fb(){ var ta = document.createElement('textarea'); ta.value = txt; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); done(); }catch(e){} ta.remove(); }
@@ -407,6 +456,7 @@ async function send2(full, shown, typed, files){
   document.querySelectorAll('.acts').forEach(function(a){ a.remove(); });
   var um = el('div','msg user',shown); log.appendChild(um);
   chat.push({role:'user', content:full, display:shown});
+  var rr = cur(); if(rr && rr.title === DEFAULT_TITLE){ var tt = (typed || '').trim().split('\n')[0] || (files[0] ? 'ไฟล์ ' + files[0].name : ''); if(tt) rr.title = tt.slice(0, 30); }
   var box = el('div','msg ai'), dp = el('p','dots'); dp.innerHTML = '<i></i><i></i><i></i>'; box.appendChild(dp); log.appendChild(box); scrollDown();
   var msgs = chat.slice(-12).map(function(m){ return {role:m.role, content:m.content}; });
   while(msgs.length && msgs[0].role !== 'user') msgs.shift();
@@ -450,7 +500,7 @@ input.addEventListener('keydown', function(e){ if(e.key === 'Enter' && !e.shiftK
 input.addEventListener('input', function(){ input.style.height = 'auto'; input.style.height = Math.min(input.scrollHeight, 140) + 'px'; });
 function bindChips(){ document.querySelectorAll('.chip').forEach(function(c){ c.onclick = function(){ ask(c.textContent); }; }); }
 bindChips();
-document.getElementById('clear').onclick = function(){ if(ctrl) ctrl.abort(); chat = []; try{ localStorage.removeItem(STORE); }catch(e){} location.reload(); };
+emptyHTML = document.getElementById('empty').outerHTML;
 document.getElementById('pvclose').onclick = function(){ document.getElementById('pvbox').hidden = true; document.getElementById('pvframe').srcdoc = ''; };
 
 var KEY_NAME = 'gemini_key', memKey = '';
@@ -462,7 +512,8 @@ document.getElementById('keysave').onclick = function(){ var v = ki.value.trim()
 document.getElementById('keycancel').onclick = function(){ kb.hidden = true; };
 document.getElementById('keybtn').onclick = function(){ openKey(''); };
 if(!getKey()) openKey('');
-document.querySelectorAll('.mode').forEach(function(b){ b.onclick = function(){ aiMode = b.dataset.m; document.querySelectorAll('.mode').forEach(function(x){ x.classList.toggle('on', x === b); }); }; });
+var MODE_HINT = {fast:'ตอบไว ใช้โควตาน้อย', smart:'ตรงโจทย์กว่า โควตาน้อยกว่า', beast:'โค้ดระดับโหด คิดนาน กินโควตามาก'};
+document.querySelectorAll('.mode').forEach(function(b){ b.onclick = function(){ aiMode = b.dataset.m; document.getElementById('modehint').textContent = MODE_HINT[aiMode]; document.querySelectorAll('.mode').forEach(function(x){ x.classList.toggle('on', x === b); }); }; });
 
 (function(){
   var w = document.createElement('div'); w.className = 'sparks'; w.setAttribute('aria-hidden','true');
@@ -475,16 +526,96 @@ document.querySelectorAll('.mode').forEach(function(b){ b.onclick = function(){ 
     if(m){ ['icon','apple-touch-icon'].forEach(function(r){ var l = document.createElement('link'); l.rel = r; l.href = m[1]; document.head.appendChild(l); }); } }catch(e){}
 })();
 
-(function restore(){
-  try{ var d = JSON.parse(localStorage.getItem(STORE) || '[]');
-    if(Array.isArray(d)) chat = d.filter(function(m){ return m && (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string'; }); }catch(e){}
-  if(!chat.length) return;
-  var em = document.getElementById('empty'); if(em) em.remove();
+function drawLog(){
+  log.textContent = '';
+  if(!chat.length){ log.innerHTML = emptyHTML; bindChips(); return; }
   chat.forEach(function(m){
     if(m.role === 'user') log.appendChild(el('div','msg user',m.display || m.content));
     else { var b = el('div','msg ai'); render(b, m.content, true); log.appendChild(b); }
   });
   addActions(); scrollDown();
+}
+function openRoom(id){ curId = id; chat = roomChat(id); saveIndex(); drawLog(); }
+function createRoom(){ var id = newId(); rooms.unshift({id:id, title:DEFAULT_TITLE, updated:Date.now(), n:0}); openRoom(id); }
+function switchRoom(id){
+  if(busy){ toast('รอให้ AI ตอบเสร็จก่อน หรือกดหยุด'); return; }
+  saveChat(); openRoom(id); closeDrawer();
+}
+function deleteRoom(id){
+  if(busy && id === curId){ toast('รอให้ AI ตอบเสร็จก่อน หรือกดหยุด'); return; }
+  try{ localStorage.removeItem(ROOM_PREFIX + id); }catch(e){}
+  rooms = rooms.filter(function(r){ return r.id !== id; });
+  if(id === curId){
+    curId = ''; chat = [];
+    if(rooms.length){ var nx = rooms.slice().sort(function(a, b){ return b.updated - a.updated; })[0]; openRoom(nx.id); } else createRoom();
+  } else saveIndex();
+  renderRooms(rsearch.value);
+}
+
+var drawer = document.getElementById('drawer'), rlist = document.getElementById('rlist'), rsearch = document.getElementById('rsearch');
+function fmtTime(ts){ var d = new Date(ts), n = new Date(); if(d.toDateString() === n.toDateString()) return ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2); return d.getDate() + '/' + (d.getMonth() + 1); }
+function snippet(text, q){ var i = text.toLowerCase().indexOf(q); if(i < 0) return ''; var a = Math.max(0, i - 24), b = Math.min(text.length, i + q.length + 40); return (a > 0 ? '…' : '') + text.slice(a, b).replace(/\s+/g, ' ') + (b < text.length ? '…' : ''); }
+function openDrawer(){ rsearch.value = ''; renderRooms(''); drawer.hidden = false; }
+function closeDrawer(){ drawer.hidden = true; }
+function renderRooms(q){
+  q = (q || '').trim().toLowerCase(); rlist.textContent = '';
+  var list = rooms.slice().sort(function(a, b){ return b.updated - a.updated; }), shown = 0;
+  list.forEach(function(r){
+    var snip = '';
+    if(q){
+      var hit = r.title.toLowerCase().indexOf(q) > -1, msgs = r.id === curId ? chat : roomChat(r.id);
+      for(var i = 0; i < msgs.length && !snip; i++){ var t = msgs[i].display || msgs[i].content; if(t.toLowerCase().indexOf(q) > -1) snip = snippet(t, q); }
+      if(!hit && !snip) return;
+    }
+    shown++;
+    var it = el('div', 'ritem' + (r.id === curId ? ' cur' : '')), main = el('button','rmain'); main.type = 'button';
+    main.appendChild(el('b', null, r.title));
+    main.appendChild(el('small', null, fmtTime(r.updated) + (r.n != null ? ' · ' + r.n + ' ข้อความ' : '')));
+    if(snip) main.appendChild(el('i','snip',snip));
+    main.onclick = function(){ if(r.id === curId) closeDrawer(); else switchRoom(r.id); };
+    var bt = el('div','rbtns'), rn = el('button', null, 'แก้ชื่อ'), dl = el('button','danger','ลบ'); rn.type = 'button'; dl.type = 'button';
+    rn.onclick = function(){
+      var inp = el('input','rname'), fin = false; inp.value = r.title; inp.maxLength = 40;
+      it.replaceChild(inp, main); inp.focus(); inp.select();
+      function done(){ if(fin) return; fin = true; var v = inp.value.trim(); if(v) r.title = v.slice(0, 40); saveIndex(); renderRooms(rsearch.value); }
+      inp.onblur = done; inp.onkeydown = function(e){ if(e.key === 'Enter') inp.blur(); };
+    };
+    dl.onclick = function(){
+      if(!dl.classList.contains('armed')){ dl.classList.add('armed'); dl.textContent = 'แน่ใจ?'; setTimeout(function(){ dl.classList.remove('armed'); dl.textContent = 'ลบ'; }, 3000); return; }
+      deleteRoom(r.id);
+    };
+    bt.appendChild(rn); bt.appendChild(dl); it.appendChild(main); it.appendChild(bt); rlist.appendChild(it);
+  });
+  if(!shown) rlist.appendChild(el('div','rempty', q ? 'ไม่พบข้อความที่ค้นหา' : 'ยังไม่มีห้อง'));
+}
+var searchTimer = null;
+rsearch.oninput = function(){ clearTimeout(searchTimer); searchTimer = setTimeout(function(){ renderRooms(rsearch.value); }, 150); };
+document.getElementById('menubtn').onclick = openDrawer;
+document.getElementById('dclose').onclick = closeDrawer;
+document.getElementById('dback').onclick = closeDrawer;
+document.getElementById('newroom').onclick = function(){
+  if(busy){ toast('รอให้ AI ตอบเสร็จก่อน หรือกดหยุด'); return; }
+  if(chat.length){ saveChat(); createRoom(); }
+  closeDrawer();
+};
+document.getElementById('clearroom').onclick = function(){
+  var b = this;
+  if(!b.classList.contains('armed')){ b.classList.add('armed'); b.textContent = 'แตะอีกครั้งเพื่อยืนยัน'; setTimeout(function(){ b.classList.remove('armed'); b.textContent = 'ล้างข้อความในห้องนี้'; }, 3000); return; }
+  b.classList.remove('armed'); b.textContent = 'ล้างข้อความในห้องนี้';
+  if(busy){ toast('รอให้ AI ตอบเสร็จก่อน หรือกดหยุด'); return; }
+  chat = []; var r = cur(); if(r){ r.title = DEFAULT_TITLE; } saveChat(); drawLog(); closeDrawer();
+};
+
+(function initRooms(){
+  try{ var d = JSON.parse(localStorage.getItem(ROOMS_KEY) || '[]'); rooms = Array.isArray(d) ? d.filter(function(r){ return r && typeof r.id === 'string' && typeof r.title === 'string'; }) : []; }catch(e){ rooms = []; }
+  try{
+    var old = localStorage.getItem(STORE);
+    if(old && !rooms.length){ var oc = validMsgs(JSON.parse(old)); if(oc.length){ var oid = newId(); rooms.push({id:oid, title:'แชทเก่า', updated:Date.now(), n:oc.length}); localStorage.setItem(ROOM_PREFIX + oid, JSON.stringify(oc)); } }
+    localStorage.removeItem(STORE);
+  }catch(e){}
+  var c = ''; try{ c = localStorage.getItem(CUR_KEY) || ''; }catch(e){}
+  if(!rooms.some(function(r){ return r.id === c; })) c = rooms.length ? rooms.slice().sort(function(a, b){ return b.updated - a.updated; })[0].id : '';
+  if(c){ openRoom(c); } else { createRoom(); }
 })();
 var THEME_KEY = 'sunday_theme';
 function applyTheme(t){
