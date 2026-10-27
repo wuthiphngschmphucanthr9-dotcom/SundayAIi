@@ -87,10 +87,35 @@ textarea:focus{outline:none;border-color:var(--pink);box-shadow:0 0 16px rgba(25
 @keyframes pulse{0%,100%{box-shadow:0 0 30px rgba(255,46,154,.45),0 0 80px rgba(0,229,255,.18)}50%{box-shadow:0 0 46px rgba(138,92,255,.6),0 0 110px rgba(255,46,154,.3)}}
 @keyframes twinkle{0%,100%{opacity:0;transform:scale(.4)}50%{opacity:1;transform:scale(1)}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.sparks i{opacity:.6}}
+
+.msg.ai h3{font-size:17px;margin:10px 0 6px;color:#ffd1ec}
+.msg.ai h4{font-size:15px;margin:8px 0 4px;color:#cfe9ff}
+.msg.ai ul,.msg.ai ol{margin:0 0 10px;padding-left:22px}
+.msg.ai li{margin:2px 0}
+.msg.ai strong{color:#fff;font-weight:600}
+.bar{gap:8px;align-items:flex-start}
+.bar>span:first-child{padding-top:3px}
+.grp{flex-wrap:wrap;justify-content:flex-end}
+.tc{color:#8b84b8;font-style:italic}.ts{color:#ffd37a}.tn{color:#ff9ad5}.tk{color:#c79bff}.tg{color:#5ef0ff}
+.acts{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap}
+.acts button,.retry{background:none;border:1px solid var(--line);color:var(--muted);border-radius:999px;padding:4px 12px;font:inherit;font-size:12.5px;cursor:pointer;transition:all .15s}
+.acts button:hover,.retry:hover{border-color:var(--pink);color:#fff;box-shadow:0 0 10px rgba(255,46,154,.4)}
+#send.stop{background:linear-gradient(135deg,#ff2e63,#ff8a00);box-shadow:0 0 18px rgba(255,90,60,.55)}
+.pvbox{position:fixed;inset:0;z-index:25;background:#000;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px);animation:fade .2s both}
+.pvbox[hidden]{display:none}
+.pvbar{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;background:#0f0a1d;border-bottom:1px solid var(--line);color:var(--muted);font-size:14px}
+.pvbar button{background:none;border:1px solid var(--pink);color:#fff;border-radius:999px;padding:5px 16px;font:inherit;cursor:pointer}
+.pvbox iframe{flex:1;height:auto;min-height:0;width:100%}
+
+#log>*{flex-shrink:0}
+.rt{flex:none}
+.clear{white-space:nowrap;padding:6px 11px}
+header p{overflow-wrap:anywhere}
 </style>
 </head>
 <body>
 <div class="keybox" id="keybox" hidden><div class="kcard"><h2>ใส่คีย์ Gemini ของคุณ</h2><p>คีย์เก็บในเบราว์เซอร์เครื่องนี้เท่านั้น และใช้โควตาของคุณเอง ขอได้ฟรีที่ aistudio.google.com/apikey</p><input id="keyin" type="password" placeholder="วางคีย์ที่นี่" autocomplete="off" autocapitalize="off" spellcheck="false"><p class="kmsg" id="keymsg"></p><div class="krow"><button id="keycancel" type="button">ปิด</button><button id="keysave" type="button" class="ks">บันทึก</button></div></div></div>
+<div class="pvbox" id="pvbox" hidden><div class="pvbar"><span>ตัวอย่างเว็บ</span><button id="pvclose" type="button">ปิด</button></div><iframe id="pvframe" sandbox="allow-scripts" title="ตัวอย่างเต็มจอ"></iframe></div>
 <div class="app">
   <header>
     <div class="brand"><div class="logo" aria-hidden="true"><span></span></div><div><h1>SUNDAY AI</h1><p>ผู้ช่วยเขียนโค้ด สั่งเป็นภาษาไทยได้เลย</p></div></div>
@@ -117,53 +142,113 @@ textarea:focus{outline:none;border-color:var(--pink);box-shadow:0 0 16px rgba(25
 <script>
 var log = document.getElementById('log'), input = document.getElementById('in'),
     send = document.getElementById('send'), form = document.getElementById('form');
-var chat = [], busy = false, ctrl = null, aiMode = 'fast';
-
+var chat = [], busy = false, ctrl = null, aiMode = 'fast', STORE = 'sunday_chat_v1';
 
 function el(tag, cls, text){ var e = document.createElement(tag); if(cls) e.className = cls; if(text != null) e.textContent = text; return e; }
+function nearBottom(){ return log.scrollHeight - log.scrollTop - log.clientHeight < 140; }
 function scrollDown(){ log.scrollTop = log.scrollHeight; }
+function setBusy(b){ busy = b; send.textContent = b ? 'หยุด' : 'ส่ง'; send.classList.toggle('stop', b); }
+function saveChat(){ try{ localStorage.setItem(STORE, JSON.stringify(chat.slice(-40))); }catch(e){} }
+
+function copyText(txt, done){
+  function fb(){ var ta = document.createElement('textarea'); ta.value = txt; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); done(); }catch(e){} ta.remove(); }
+  if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(done, fb); else fb();
+}
+var EXT = {html:'html',htm:'html',css:'css',javascript:'js',js:'js',typescript:'ts',ts:'ts',jsx:'jsx',tsx:'tsx',python:'py',py:'py',java:'java',c:'c',cpp:'cpp','c++':'cpp',csharp:'cs',cs:'cs',go:'go',rust:'rs',php:'php',ruby:'rb',bash:'sh',sh:'sh',json:'json',sql:'sql',kotlin:'kt',swift:'swift',yaml:'yml',yml:'yml',md:'md',markdown:'md',xml:'xml'};
+function download(code, lang){
+  var ext = EXT[(lang || '').toLowerCase()] || 'txt', name = (ext === 'html' ? 'index' : 'code') + '.' + ext;
+  var url = URL.createObjectURL(new Blob([code], {type:'text/plain;charset=utf-8'}));
+  var a = document.createElement('a'); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 2000);
+}
+function openPreview(code){ document.getElementById('pvframe').srcdoc = code; document.getElementById('pvbox').hidden = false; }
+
+var KW = 'abstract|and|as|async|await|break|case|catch|class|const|continue|def|default|del|do|elif|else|enum|except|export|extends|false|final|finally|fn|for|from|func|function|go|if|implements|import|in|interface|is|lambda|let|match|new|nil|none|not|null|of|or|package|pass|private|protected|public|pub|raise|return|self|static|struct|super|switch|this|throw|true|try|type|typeof|undefined|use|var|void|while|with|yield|None|True|False|int|float|string|bool|char|double|long|echo|print|println';
+var R_C = /\/\*[\s\S]*?\*\/|<!--[\s\S]*?-->|\/\/[^\n]*/.source, R_H = /#[^\n]*/.source,
+    R_S = /"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*'|`(?:\\.|[^`\\])*`/.source,
+    R_N = /\b\d+(?:\.\d+)?\b/.source, R_T = /<\/?[a-zA-Z][\w-]*/.source;
+function hlRe(hash, html){ return new RegExp('(' + R_C + (hash ? '|' + R_H : '') + ')|(' + R_S + ')|(' + R_N + ')|(\\b(?:' + KW + ')\\b)' + (html ? '|(' + R_T + ')' : ''), 'g'); }
+function highlight(target, code, lang){
+  var l = (lang || '').toLowerCase();
+  var re = hlRe(/^(py|python|sh|bash|shell|zsh|ruby|rb|yaml|yml|r|perl|toml|ini)$/.test(l), /^(html?|xml|svg|vue)$/.test(l));
+  var last = 0, m, frag = document.createDocumentFragment();
+  while((m = re.exec(code))){
+    if(!m[0]){ re.lastIndex++; continue; }
+    if(m.index > last) frag.appendChild(document.createTextNode(code.slice(last, m.index)));
+    frag.appendChild(el('span', m[1] ? 'tc' : m[2] ? 'ts' : m[3] ? 'tn' : m[4] ? 'tk' : 'tg', m[0]));
+    last = m.index + m[0].length;
+  }
+  if(last < code.length) frag.appendChild(document.createTextNode(code.slice(last)));
+  target.appendChild(frag);
+}
 
 function inlineText(parent, text){
-  text.split(/(`[^`\n]+`)/g).forEach(function(part){
+  text.split(/(`[^`\n]+`|\*\*[^*\n]+\*\*)/g).forEach(function(part){
+    if(!part) return;
     if(part.length > 2 && part[0] === '`' && part[part.length-1] === '`') parent.appendChild(el('code','i',part.slice(1,-1)));
-    else if(part) parent.appendChild(document.createTextNode(part));
+    else if(part.length > 4 && part.slice(0,2) === '**' && part.slice(-2) === '**') parent.appendChild(el('strong',null,part.slice(2,-2)));
+    else parent.appendChild(document.createTextNode(part));
+  });
+}
+function prose(box, t){
+  var lines = t.split('\n'), i = 0, para = [], LI = /^\s*([-*•]|\d+[.)])\s+(.*)$/;
+  function flush(){ if(para.length){ var p = el('p'); inlineText(p, para.join('\n')); box.appendChild(p); para = []; } }
+  while(i < lines.length){
+    var L = lines[i], h = L.match(/^\s{0,3}(#{1,4})\s+(.*)$/), li = L.match(LI);
+    if(h){ flush(); var hh = el(h[1].length < 3 ? 'h3' : 'h4'); inlineText(hh, h[2]); box.appendChild(hh); i++; }
+    else if(li){
+      flush(); var ord = /\d/.test(li[1]), list = el(ord ? 'ol' : 'ul');
+      while(i < lines.length){ var m = lines[i].match(LI); if(!m || /\d/.test(m[1]) !== ord) break; var it = el('li'); inlineText(it, m[2]); list.appendChild(it); i++; }
+      box.appendChild(list);
+    }
+    else if(!L.trim()){ flush(); i++; }
+    else { para.push(L); i++; }
+  }
+  flush();
+}
+
+function render(box, text, final){
+  box.textContent = '';
+  text.split(/```/).forEach(function(part, i){
+    if(i % 2 === 0){ var t = part.replace(/^\n+|\n+$/g,''); if(t) prose(box, t); return; }
+    var nl = part.indexOf('\n'), lang = nl > -1 ? part.slice(0, nl).trim() : part.trim(), code = nl > -1 ? part.slice(nl + 1).replace(/\n$/,'') : '';
+    var b = el('div','block'), bar = el('div','bar'), grp = el('span','grp');
+    function btn(label, fn){ var x = el('button', null, label); x.type = 'button'; x.onclick = function(){ fn(x); }; grp.appendChild(x); }
+    bar.appendChild(el('span', null, lang || 'code'));
+    if(final){
+      if(/^html?$/i.test(lang) && /<body|<div|<h1|<\/html>/i.test(code)){
+        btn('ดูตัวอย่าง', function(x){
+          var f = b.querySelector('iframe');
+          if(f){ f.remove(); x.textContent = 'ดูตัวอย่าง'; }
+          else { f = document.createElement('iframe'); f.setAttribute('sandbox','allow-scripts'); f.title = 'ตัวอย่างเว็บ'; f.srcdoc = code; b.appendChild(f); x.textContent = 'ปิดตัวอย่าง'; }
+        });
+        btn('เต็มจอ', function(){ openPreview(code); });
+      }
+      btn('ดาวน์โหลด', function(){ download(code, lang); });
+      btn('คัดลอก', function(x){ copyText(code, function(){ x.textContent = 'คัดลอกแล้ว'; setTimeout(function(){ x.textContent = 'คัดลอก'; }, 1500); }); });
+    }
+    bar.appendChild(grp);
+    var pre = el('pre'), ce = el('code');
+    if(final && code.length < 30000) highlight(ce, code, lang); else ce.textContent = code;
+    pre.appendChild(ce); b.appendChild(bar); b.appendChild(pre); box.appendChild(b);
   });
 }
 
-function render(box, text){
-  box.textContent = '';
-  var parts = text.split(/```/);
-  parts.forEach(function(part, i){
-    if(i % 2 === 0){
-      var t = part.replace(/^\n+|\n+$/g,'');
-      if(t){ var p = el('p'); inlineText(p, t); box.appendChild(p); }
-    } else {
-      var nl = part.indexOf('\n'), lang = nl > -1 ? part.slice(0,nl).trim() : '', code = nl > -1 ? part.slice(nl+1) : part;
-      code = code.replace(/\n$/,'');
-      var b = el('div','block'), bar = el('div','bar'), btn = el('button',null,'คัดลอก');
-      btn.type = 'button';
-      btn.onclick = function(){
-        var done = function(){ btn.textContent = 'คัดลอกแล้ว'; setTimeout(function(){ btn.textContent = 'คัดลอก'; }, 1500); };
-        if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(code).then(done, fallback);
-        else fallback();
-        function fallback(){ var ta = document.createElement('textarea'); ta.value = code; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); done(); }catch(e){} ta.remove(); }
-      };
-      bar.appendChild(el('span',null,lang || 'code'));
-      var grp = el('span','grp');
-      if(/^html?$/i.test(lang) && /<body|<div|<h1|<\/html>/i.test(code)){
-        var pv = el('button',null,'ดูตัวอย่าง'); pv.type = 'button';
-        pv.onclick = function(){
-          var f = b.querySelector('iframe');
-          if(f){ f.remove(); pv.textContent = 'ดูตัวอย่าง'; }
-          else { f = document.createElement('iframe'); f.setAttribute('sandbox','allow-scripts'); f.title = 'ตัวอย่างเว็บ'; f.srcdoc = code; b.appendChild(f); pv.textContent = 'ปิดตัวอย่าง'; }
-        };
-        grp.appendChild(pv);
-      }
-      grp.appendChild(btn); bar.appendChild(grp);
-      var pre = el('pre'); pre.appendChild(el('code',null,code));
-      b.appendChild(bar); b.appendChild(pre); box.appendChild(b);
-    }
-  });
+function addActions(){
+  document.querySelectorAll('.acts').forEach(function(a){ a.remove(); });
+  var ais = log.querySelectorAll('.msg.ai'), last = ais[ais.length - 1];
+  if(!last || !chat.length || chat[chat.length-1].role !== 'assistant' || last.querySelector('.retry')) return;
+  var a = el('div','acts'), rb = el('button',null,'ตอบใหม่'), cb = el('button',null,'คัดลอกคำตอบ');
+  rb.type = 'button'; cb.type = 'button'; rb.onclick = regen;
+  cb.onclick = function(){ copyText(chat[chat.length-1].content, function(){ cb.textContent = 'คัดลอกแล้ว'; setTimeout(function(){ cb.textContent = 'คัดลอกคำตอบ'; }, 1500); }); };
+  a.appendChild(rb); a.appendChild(cb); last.appendChild(a);
+}
+function regen(){
+  if(busy || chat.length < 2) return;
+  chat.pop(); var u = chat.pop();
+  var ais = log.querySelectorAll('.msg.ai'), uss = log.querySelectorAll('.msg.user');
+  if(ais.length) ais[ais.length-1].remove(); if(uss.length) uss[uss.length-1].remove();
+  saveChat(); ask(u.content);
 }
 
 async function callApi(messages, signal, onText){
@@ -187,41 +272,54 @@ async function callApi(messages, signal, onText){
 async function ask(text){
   if(busy || !text.trim()) return;
   if(!getKey()){ input.value = text; openKey('ใส่คีย์ Gemini ก่อนใช้งาน'); return; }
-  busy = true; send.disabled = true;
+  setBusy(true);
   var empty = document.getElementById('empty'); if(empty) empty.remove();
-  log.appendChild(el('div','msg user',text));
+  document.querySelectorAll('.acts').forEach(function(a){ a.remove(); });
+  var um = el('div','msg user',text); log.appendChild(um);
   chat.push({role:'user', content:text});
-  var box = el('div','msg ai'); var dp = el('p','dots'); dp.innerHTML = '<i></i><i></i><i></i>'; box.appendChild(dp); log.appendChild(box); scrollDown();
+  var box = el('div','msg ai'), dp = el('p','dots'); dp.innerHTML = '<i></i><i></i><i></i>'; box.appendChild(dp); log.appendChild(box); scrollDown();
   var msgs = chat.slice(-12).map(function(m){ return {role:m.role, content:m.content}; });
   while(msgs.length && msgs[0].role !== 'user') msgs.shift();
-  
   ctrl = new AbortController();
+  var latest = '', timer = null;
+  function paint(){ timer = null; var st = nearBottom(); render(box, latest, false); if(st) scrollDown(); }
   try{
-    var r = await callApi(msgs, ctrl.signal, function(t){ render(box, t); scrollDown(); });
-    render(box, r.text); chat.push({role:'assistant', content:r.text});
+    var r = await callApi(msgs, ctrl.signal, function(t){ latest = t; if(!timer) timer = setTimeout(paint, 90); });
+    clearTimeout(timer);
+    render(box, r.text, true); chat.push({role:'assistant', content:r.text}); saveChat();
     if(r.truncated){ box.appendChild(el('p','err','คำตอบยาวจนถูกตัด พิมพ์ "เขียนต่อ" เพื่อให้ทำต่อ')); }
   }catch(e){
-    box.textContent = '';
-    var code = e && e.code;
-    if(code === 'bad_key'){ openKey('คีย์ใช้ไม่ได้ ตรวจสอบแล้วใส่ใหม่'); }
-    var msg = code === 'not_granted' ? 'ยังไม่ได้อนุญาตให้ใช้ AI กดส่งใหม่แล้วเลือกอนุญาต'
-            : code === 'rate_limited' ? 'ใช้งานถี่เกินไปหรือโควตาเต็ม: ' + ((e && e.message) || '')
-            : code === 'not_declared' || code === 'sampling_disabled' || code === 'capability_disabled' ? 'ฟีเจอร์ AI ยังไม่เปิดใช้งานสำหรับหน้านี้ (' + code + ')'
-            : 'เกิดข้อผิดพลาด ลองส่งอีกครั้ง (' + (code || (e && e.message) || 'unknown') + ')';
-    if(e && e.text){ render(box, e.text); }
-    box.appendChild(el('p','err',msg));
-    chat.pop();
+    clearTimeout(timer);
+    if(e && e.name === 'AbortError'){
+      if(latest){ render(box, latest, true); chat.push({role:'assistant', content:latest}); saveChat(); box.appendChild(el('p','err','หยุดแล้ว')); }
+      else { box.remove(); um.remove(); chat.pop(); input.value = text; }
+    } else {
+      box.textContent = '';
+      var code = e && e.code;
+      if(code === 'bad_key'){ openKey('คีย์ใช้ไม่ได้ ตรวจสอบแล้วใส่ใหม่'); }
+      var msg = code === 'rate_limited' ? 'ใช้งานถี่เกินไปหรือโควตาเต็ม: ' + ((e && e.message) || '')
+              : 'เกิดข้อผิดพลาด (' + ((e && e.message) || 'unknown') + ')';
+      box.appendChild(el('p','err',msg));
+      var rb = el('button','retry','ลองใหม่'); rb.type = 'button';
+      rb.onclick = function(){ box.remove(); um.remove(); ask(text); };
+      box.appendChild(rb); chat.pop();
+    }
   }
-  busy = false; send.disabled = false; scrollDown(); input.focus();
+  setBusy(false); ctrl = null; addActions(); if(nearBottom()) scrollDown();
 }
 
-form.addEventListener('submit', function(e){ e.preventDefault(); var t = input.value; input.value = ''; input.style.height = 'auto'; ask(t); });
-input.addEventListener('keydown', function(e){ if(e.key === 'Enter' && !e.shiftKey && !e.isComposing && window.innerWidth > 700){ e.preventDefault(); form.requestSubmit(); } });
+form.addEventListener('submit', function(e){
+  e.preventDefault();
+  if(busy){ if(ctrl) ctrl.abort(); return; }
+  var t = input.value; input.value = ''; input.style.height = 'auto'; ask(t);
+});
+input.addEventListener('keydown', function(e){ if(e.key === 'Enter' && !e.shiftKey && !e.isComposing && window.innerWidth > 700){ e.preventDefault(); if(!busy) form.requestSubmit(); } });
 input.addEventListener('input', function(){ input.style.height = 'auto'; input.style.height = Math.min(input.scrollHeight, 140) + 'px'; });
-var emptyHTML = document.getElementById('empty').outerHTML;
 function bindChips(){ document.querySelectorAll('.chip').forEach(function(c){ c.onclick = function(){ ask(c.textContent); }; }); }
 bindChips();
-document.getElementById('clear').onclick = function(){ if(ctrl) ctrl.abort(); chat = []; location.reload(); };
+document.getElementById('clear').onclick = function(){ if(ctrl) ctrl.abort(); chat = []; try{ localStorage.removeItem(STORE); }catch(e){} location.reload(); };
+document.getElementById('pvclose').onclick = function(){ document.getElementById('pvbox').hidden = true; document.getElementById('pvframe').srcdoc = ''; };
+
 var KEY_NAME = 'gemini_key', memKey = '';
 function getKey(){ try{ return localStorage.getItem(KEY_NAME) || memKey; }catch(e){ return memKey; } }
 function setKey(v){ memKey = v; try{ localStorage.setItem(KEY_NAME, v); }catch(e){} }
@@ -232,6 +330,7 @@ document.getElementById('keycancel').onclick = function(){ kb.hidden = true; };
 document.getElementById('keybtn').onclick = function(){ openKey(''); };
 if(!getKey()) openKey('');
 document.querySelectorAll('.mode').forEach(function(b){ b.onclick = function(){ aiMode = b.dataset.m; document.querySelectorAll('.mode').forEach(function(x){ x.classList.toggle('on', x === b); }); }; });
+
 (function(){
   var w = document.createElement('div'); w.className = 'sparks'; w.setAttribute('aria-hidden','true');
   var cols = ['#ff2e9a','#00e5ff','#ffcc00','#3dff7a','#8a5cff'];
@@ -241,6 +340,18 @@ document.querySelectorAll('.mode').forEach(function(b){ b.onclick = function(){ 
   document.body.insertBefore(w, document.body.firstChild);
   try{ var lu = getComputedStyle(document.documentElement).getPropertyValue('--logo').trim(), m = lu.match(/url\(["']?(.*?)["']?\)/);
     if(m){ ['icon','apple-touch-icon'].forEach(function(r){ var l = document.createElement('link'); l.rel = r; l.href = m[1]; document.head.appendChild(l); }); } }catch(e){}
+})();
+
+(function restore(){
+  try{ var d = JSON.parse(localStorage.getItem(STORE) || '[]');
+    if(Array.isArray(d)) chat = d.filter(function(m){ return m && (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string'; }); }catch(e){}
+  if(!chat.length) return;
+  var em = document.getElementById('empty'); if(em) em.remove();
+  chat.forEach(function(m){
+    if(m.role === 'user') log.appendChild(el('div','msg user',m.content));
+    else { var b = el('div','msg ai'); render(b, m.content, true); log.appendChild(b); }
+  });
+  addActions(); scrollDown();
 })();
 </script>
 </body>
