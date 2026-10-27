@@ -3,90 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ปุ่มเติมเงินอั่งเปา</title>
+    <title>ระบบเติมเงินอั่งเปา</title>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Prompt', sans-serif; }
-        body { background: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #333; }
-        .topup-card { background: #ffffff; padding: 24px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 100%; max-width: 380px; }
-        .topup-title { font-size: 18px; font-weight: 600; color: #ff6600; margin-bottom: 16px; text-align: center; }
-        .input-group { margin-bottom: 16px; }
-        .input-group label { display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 6px; }
-        .input-group input { width: 100%; padding: 10px 14px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; outline: none; transition: border-color 0.2s; }
-        .input-group input:focus { border-color: #ff6600; }
-        .btn-topup { width: 100%; background: #ff6600; color: #fff; border: none; padding: 12px; border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
-        .btn-topup:hover { background: #e05b00; }
-        .btn-topup:disabled { background: #ffccaa; cursor: not-allowed; }
-        #message { margin-top: 14px; padding: 10px; border-radius: 6px; font-size: 13px; text-align: center; display: none; }
-        .msg-success { background: #e1fdf4; color: #00875a; border: 1px solid #abf5d1; }
-        .msg-error { background: #ffebe6; color: #de350b; border: 1px solid #ffbdad; }
+        body { background: #05030b; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #f4eeff; }
+        .card { background: #0f0a1d; padding: 24px; border-radius: 12px; border: 1px solid #2d2252; box-shadow: 0 4px 20px rgba(255,46,154,0.2); width: 100%; max-width: 380px; }
+        .title { font-size: 18px; font-weight: 600; color: #ff2e9a; margin-bottom: 16px; text-align: center; }
+        .group { margin-bottom: 16px; }
+        label { display: block; font-size: 13px; font-weight: 600; color: #a093c8; margin-bottom: 6px; }
+        input { width: 100%; padding: 10px 14px; border: 1px solid #2d2252; background: #09051a; color: #f4eeff; border-radius: 6px; font-size: 14px; outline: none; }
+        input:focus { border-color: #ff2e9a; }
+        .btn { width: 100%; background: linear-gradient(135deg, #8a5cff, #ff2e9a); color: #fff; border: none; padding: 12px; border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer; }
+        .btn:hover { filter: brightness(1.1); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        #msg { margin-top: 14px; padding: 10px; border-radius: 6px; font-size: 13px; text-align: center; display: none; }
+        .success { background: rgba(0,255,150,0.1); color: #3dff7a; border: 1px solid rgba(0,255,150,0.3); }
+        .error { background: rgba(255,46,99,0.1); color: #ff7a8a; border: 1px solid rgba(255,46,99,0.3); }
     </style>
 </head>
 <body>
 
-<div class="topup-card">
-    <div class="topup-title">🧧 เติมเงิน TrueMoney Wallet</div>
-    <div class="input-group">
+<div class="card">
+    <div class="title">🧧 เติมเงินอั่งเปา TrueMoney</div>
+    <div class="group">
         <label>ลิงก์ซองอั่งเปา</label>
-        <input type="text" id="voucherUrl" placeholder="https://gift.truemoney.com/campaign/?v=...">
+        <input type="text" id="url" placeholder="https://gift.truemoney.com/campaign/?v=...">
     </div>
-    <button class="btn-topup" id="submitBtn" onclick="handleTopup()">ยืนยันการเติมเงิน</button>
-    <div id="message"></div>
+    <button class="btn" id="btn" onclick="topup()">ยืนยันการเติมเงิน</button>
+    <div id="msg"></div>
 </div>
 
 <script>
-    async function handleTopup() {
-        const urlInput = document.getElementById('voucherUrl');
-        const submitBtn = document.getElementById('submitBtn');
-        const msgDiv = document.getElementById('message');
-        const url = urlInput.value.trim();
+    async function topup() {
+        const urlIn = document.getElementById('url');
+        const btn = document.getElementById('btn');
+        const msg = document.getElementById('msg');
+        const val = urlIn.value.trim();
+        
+        msg.style.display = 'none';
+        if(!val) return show('error', 'กรุณากรอกลิงก์ซองอั่งเปา');
 
-        msgDiv.style.display = 'none';
+        const match = val.match(/v=([a-zA-Z0-9]+)/);
+        if(!match) return show('error', 'ลิงก์ซองอั่งเปาไม่ถูกต้อง');
 
-        if (!url) {
-            showMsg('msg-error', 'กรุณากรอกลิงก์ซองอั่งเปา');
-            return;
-        }
-
-        const match = url.match(/v=([a-zA-Z0-9]+)/);
-        if (!match) {
-            showMsg('msg-error', 'ลิงก์ซองอั่งเปaไม่ถูกต้อง');
-            return;
-        }
-
-        const voucherHash = match[1];
-
-        submitBtn.disabled = true;
-        submitBtn.innerText = 'กำลังตรวจสอบ...';
+        btn.disabled = true; 
+        btn.innerText = 'กำลังเติมเงิน...';
 
         try {
-            // ตัวอย่างการเชื่อมต่อกับ Backend (เปลี่ยน URL ตามจริงเมื่อขึ้นเซิร์ฟเวอร์)
-            const response = await fetch('http://localhost:3000/api/redeem', {
-                method: 'POST',
+            const res = await fetch('http://localhost:3000/api/redeem', {
+                method: 'POST', 
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ voucher_hash: voucherHash })
+                body: JSON.stringify({ voucher_hash: match[1] })
             });
-            const data = await response.json();
-
-            if (data.success) {
-                showMsg('msg-success', '✅ เติมเงินสำเร็จ!');
-                urlInput.value = '';
-            } else {
-                showMsg('msg-error', '❌ ' + (data.message || 'ซองถูกใช้งานแล้วหรือหมดอายุ'));
+            const data = await res.json();
+            
+            if(data.success) { 
+                show('success', '✅ เติมเงินสำเร็จ! ได้รับ ' + (data.amount || 0) + ' บาท'); 
+                urlIn.value = ''; 
+            } else { 
+                show('error', '❌ ' + (data.message || 'ซองไม่ถูกต้อง')); 
             }
-        } catch (error) {
-            showMsg('msg-error', '❌ ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้');
-        } finally {
-            submitBtn.disabled = false;
-            submitBtn.innerText = 'ยืนยันการเติมเงิน';
+        } catch (err) { 
+            show('error', '❌ เชื่อมต่อเซิร์ฟเวอร์ไม่ได้ (รัน Backend หรือยัง?)'); 
+        } finally { 
+            btn.disabled = false; 
+            btn.innerText = 'ยืนยันการเติมเงิน'; 
         }
     }
 
-    function showMsg(className, text) {
-        const msgDiv = document.getElementById('message');
-        msgDiv.className = className;
-        msgDiv.innerText = text;
-        msgDiv.style.display = 'block';
+    function show(c, t) { 
+        const m = document.getElementById('msg'); 
+        m.className = c; 
+        m.innerText = t; 
+        m.style.display = 'block'; 
     }
 </script>
 
