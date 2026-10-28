@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>SUNDAY · หลังบ้าน</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{--bg:#06030a;--surface:#110a1c;--ink:#f1eaf8;--muted:#9a8fb4;--line:#2c2147;--pink:#ff2e9a;--violet:#8a5cff;--ok:#3dff9a;--warn:#ffcc00;--bad:#ff5a6a;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+html{height:100%}
+body{margin:0;min-height:100%;background:radial-gradient(circle at 85% -5%,rgba(255,46,154,.2),transparent 45%),radial-gradient(circle at 0 100%,rgba(138,92,255,.18),transparent 45%),var(--bg);color:var(--ink);font:15px/1.6 "IBM Plex Sans Thai",system-ui,sans-serif}
+[hidden]{display:none!important}
+button,input,select,textarea{font:inherit;color:inherit}
+.center{min-height:100vh;display:grid;place-items:center;padding:20px}
+.card{background:rgba(17,10,28,.9);border:1px solid var(--line);border-radius:16px;padding:18px}
+.login{width:100%;max-width:360px;text-align:center;border-color:var(--pink);box-shadow:0 0 30px rgba(255,46,154,.25)}
+h1{margin:0 0 4px;font-size:22px;letter-spacing:.04em}
+h2{margin:0 0 10px;font-size:17px}
+p.sub{margin:0 0 14px;color:var(--muted);font-size:13px}
+input,select,textarea{width:100%;background:#09051a;border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--pink);box-shadow:0 0 12px rgba(255,46,154,.35)}
+.btn{border:0;border-radius:10px;padding:10px 16px;cursor:pointer;font-weight:600;background:linear-gradient(135deg,var(--violet),var(--pink));color:#fff}
+.btn.ghost{background:none;border:1px solid var(--line);color:var(--muted);font-weight:500}
+.btn.sm{padding:5px 10px;font-size:13px;border-radius:8px}
+.btn.danger{background:none;border:1px solid var(--bad);color:var(--bad)}
+.btn:active{transform:scale(.96)}
+.err{color:var(--bad);font-size:13px;min-height:1.2em;margin:8px 0 0}
+header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(6,3,10,.9);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);z-index:5}
+header b{letter-spacing:.06em}
+.tabs{display:flex;gap:6px;padding:12px 16px 0}
+.tab{flex:1;border:1px solid var(--line);background:none;border-radius:10px;padding:8px;cursor:pointer;color:var(--muted)}
+.tab.on{background:rgba(255,46,154,.16);border-color:var(--pink);color:#fff}
+main{max-width:820px;margin:0 auto;padding:14px 16px 40px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
+.stat{padding:12px 14px}
+.stat small{display:block;color:var(--muted);font-size:12px}
+.stat b{font-size:22px}
+.stat.hot b{color:var(--ok)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.row>*{flex:1;min-width:110px}
+.item{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px;background:rgba(17,10,28,.7)}
+.item .top{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.code{font:500 14px "JetBrains Mono",monospace;cursor:pointer;word-break:break-all}
+.badge{font-size:12px;border-radius:999px;padding:1px 10px;border:1px solid}
+.badge.active{color:var(--ok);border-color:var(--ok)}
+.badge.expired{color:var(--muted);border-color:var(--line)}
+.badge.revoked{color:var(--bad);border-color:var(--bad)}
+.meta{color:var(--muted);font-size:12.5px;margin:4px 0 6px}
+.acts{display:flex;gap:6px;flex-wrap:wrap}
+.order{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px}
+.order small{color:var(--muted)}
+.field{margin-bottom:12px}
+.field label{display:block;color:var(--muted);font-size:13px;margin-bottom:4px}
+.switch{display:flex;align-items:center;gap:10px}
+.switch input{width:auto}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#1a0f2e;border:1px solid var(--pink);border-radius:12px;padding:9px 16px;z-index:50;max-width:90vw;box-shadow:0 0 18px rgba(255,46,154,.4)}
+</style>
+</head>
+<body>
+<div class="center" id="loginbox">
+  <form class="card login" id="loginform">
+    <h1>SUNDAY หลังบ้าน</h1>
+    <p class="sub">สำหรับแอดมินเท่านั้น</p>
+    <input id="pw" type="password" placeholder="รหัสผ่านแอดมิน" autocomplete="current-password" required>
+    <p class="err" id="loginerr"></p>
+    <button class="btn" style="width:100%;margin-top:8px" type="submit">เข้าสู่ระบบ</button>
+  </form>
+</div>
+
+<div id="app" hidden>
+  <header><b>SUNDAY · หลังบ้าน</b><button class="btn ghost sm" id="logout" type="button">ออก</button></header>
+  <div class="tabs">
+    <button class="tab on" data-t="overview" type="button">ภาพรวม</button>
+    <button class="tab" data-t="codes" type="button">รหัสใช้งาน</button>
+    <button class="tab" data-t="settings" type="button">ตั้งค่า</button>
+  </div>
+  <main>
+    <section id="t-overview">
+      <div class="grid">
+        <div class="card stat hot"><small>รายได้รวม (บาท)</small><b id="s-rev">-</b></div>
+        <div class="card stat"><small>วันนี้ (บาท)</small><b id="s-today">-</b></div>
+        <div class="card stat"><small>7 วันล่าสุด (บาท)</small><b id="s-week">-</b></div>
+        <div class="card stat"><small>จำนวนออเดอร์</small><b id="s-orders">-</b></div>
+        <div class="card stat"><small>รหัสที่ใช้งานอยู่</small><b id="s-active">-</b></div>
+        <div class="card stat"><small>ข้อความแชททั้งหมด</small><b id="s-chats">-</b></div>
+      </div>
+      <div class="card"><h2>ออเดอร์ล่าสุด</h2><div id="orders"></div></div>
+    </section>
+
+    <section id="t-codes" hidden>
+      <div class="card" style="margin-bottom:12px">
+        <h2>สร้างรหัสให้ด้วยมือ</h2>
+        <div class="row">
+          <select id="c-min"><option value="60">1 ชั่วโมง</option><option value="180">3 ชั่วโมง</option><option value="1440">1 วัน</option><option value="10080">7 วัน</option></select>
+          <input id="c-note" placeholder="โน้ต (เช่น ชื่อลูกค้า)" maxlength="60">
+          <button class="btn" id="c-make" type="button">สร้างรหัส</button>
+        </div>
+        <p class="meta" id="c-new"></p>
+      </div>
+      <input id="c-search" placeholder="ค้นหารหัสหรือโน้ต" style="margin-bottom:10px">
+      <div id="c-list"></div>
+    </section>
+
+    <section id="t-settings" hidden>
+      <div class="card">
+        <div class="field"><label>ราคา (บาท ต่อ 1 ชั่วโมง)</label><input id="p-price" type="number" min="1" max="1000" step="1"></div>
+        <div class="field"><label>จำกัดการส่งข้อความต่อรหัส (ครั้งต่อนาที)</label><input id="p-rate" type="number" min="1" max="120" step="1"></div>
+        <div class="field"><label>ประกาศหน้าเว็บ (เว้นว่าง = ไม่แสดง)</label><textarea id="p-notice" rows="2" maxlength="200"></textarea></div>
+        <div class="field switch"><input id="p-maint" type="checkbox"><label for="p-maint" style="margin:0;color:var(--ink)">ปิดระบบชั่วคราว (ลูกค้าใช้แชทและเติมเวลาไม่ได้)</label></div>
+        <button class="btn" id="p-save" type="button">บันทึกการตั้งค่า</button>
+        <hr style="border:0;border-top:1px solid var(--line);margin:16px 0">
+        <button class="btn ghost" id="p-tm" type="button">ทดสอบเชื่อมต่อทรูมันนี่</button>
+        <p class="meta" id="p-tmres"></p>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+var TOKEN = ''; try{ TOKEN = sessionStorage.getItem('sd_admin') || ''; }catch(e){}
+var codesCache = [], timer = null;
+function $(id){ return document.getElementById(id); }
+function h(tag, cls, text){ var e = document.createElement(tag); if(cls) e.className = cls; if(text != null) e.textContent = text; return e; }
+function toast(m){ var o = document.querySelector('.toast'); if(o) o.remove(); var t = h('div','toast',m); document.body.appendChild(t); setTimeout(function(){ t.remove(); }, 3200); }
+function baht(n){ return Number(n || 0).toLocaleString('th-TH', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+function when(ts){ return new Date(ts).toLocaleString('th-TH', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'}); }
+function left(ms){ if(ms <= 0) return 'หมดแล้ว'; var m = Math.floor(ms / 60000), d = Math.floor(m / 1440), hh = Math.floor(m % 1440 / 60); return (d ? d + ' วัน ' : '') + (hh ? hh + ' ชม. ' : '') + (m % 60) + ' นาที'; }
+function copy(t){ if(navigator.clipboard) navigator.clipboard.writeText(t).then(function(){ toast('คัดลอกแล้ว'); }, function(){ toast(t); }); else toast(t); }
+
+async function api(action, data){
+  var r = await fetch('/api/shop', {method:'POST', headers:{'Content-Type':'application/json', 'x-admin-token':TOKEN}, body: JSON.stringify(Object.assign({action:action}, data || {}))});
+  var d = await r.json().catch(function(){ return {}; });
+  if(r.status === 401 && action !== 'login'){ logout(); throw new Error('หมดเวลาล็อกอิน'); }
+  if(!r.ok) throw new Error(d.error || 'เกิดข้อผิดพลาด');
+  return d;
+}
+function show(on){ $('loginbox').hidden = on; $('app').hidden = !on; }
+function logout(){ TOKEN = ''; try{ sessionStorage.removeItem('sd_admin'); }catch(e){} clearInterval(timer); show(false); }
+
+$('loginform').onsubmit = async function(e){
+  e.preventDefault(); $('loginerr').textContent = '';
+  try{ var d = await api('login', {password: $('pw').value}); TOKEN = d.token; try{ sessionStorage.setItem('sd_admin', TOKEN); }catch(x){} $('pw').value = ''; start(); }
+  catch(x){ $('loginerr').textContent = x.message; }
+};
+$('logout').onclick = logout;
+
+document.querySelectorAll('.tab').forEach(function(t){ t.onclick = function(){
+  document.querySelectorAll('.tab').forEach(function(x){ x.classList.toggle('on', x === t); });
+  ['overview','codes','settings'].forEach(function(n){ $('t-' + n).hidden = n !== t.dataset.t; });
+  if(t.dataset.t === 'codes') loadCodes(); if(t.dataset.t === 'settings') loadSettings(); if(t.dataset.t === 'overview') loadSummary();
+}; });
+
+async function loadSummary(){
+  try{
+    var d = await api('admin_summary');
+    $('s-rev').textContent = baht(d.revenue); $('s-today').textContent = baht(d.today); $('s-week').textContent = baht(d.week);
+    $('s-orders').textContent = d.orders; $('s-active').textContent = d.active; $('s-chats').textContent = d.chats;
+    var box = $('orders'); box.textContent = '';
+    if(!d.recent.length) box.appendChild(h('p','meta','ยังไม่มีออเดอร์'));
+    d.recent.forEach(function(o){
+      var r = h('div','order'), a = h('div'); a.appendChild(h('div',null,'+' + baht(o.amount) + ' บาท · ' + o.minutes + ' นาที')); a.appendChild(h('small',null,when(o.t) + ' · ซอง ' + o.v + '…'));
+      var c = h('span','code',o.code); c.onclick = function(){ copy(o.code); ; };
+      r.appendChild(a); r.appendChild(c); box.appendChild(r);
+    });
+  }catch(e){ if(TOKEN) toast(e.message); }
+}
+
+function renderCodes(){
+  var q = $('c-search').value.trim().toLowerCase(), box = $('c-list'); box.textContent = '';
+  var list = codesCache.filter(function(c){ return !q || c.code.toLowerCase().indexOf(q) > -1 || (c.note || '').toLowerCase().indexOf(q) > -1; });
+  if(!list.length){ box.appendChild(h('p','meta','ไม่พบรหัส')); return; }
+  list.forEach(function(c){
+    var it = h('div','item'), top = h('div','top'), code = h('span','code',c.code); code.onclick = function(){ copy(c.code); };
+    top.appendChild(code); top.appendChild(h('span','badge ' + c.state, {active:'ใช้งานอยู่', expired:'หมดเวลา', revoked:'ถูกระงับ'}[c.state] || c.state)); it.appendChild(top);
+    it.appendChild(h('div','meta', (c.state === 'active' ? 'เหลือ ' + left(c.expires - Date.now()) : 'หมด ' + when(c.expires)) + ' · ใช้แชท ' + c.uses + ' ครั้ง · ' + (c.source === 'admin' ? 'แอดมินสร้าง' : 'ซื้อ ' + baht(c.amount) + ' บาท') + (c.note ? ' · ' + c.note : '')));
+    var a = h('div','acts');
+    function act(label, cls, fn){ var b = h('button','btn sm ' + cls, label); b.type = 'button'; b.onclick = fn; a.appendChild(b); return b; }
+    act('+1 ชม.','ghost', async function(){ try{ await api('admin_extend', {code:c.code, minutes:60}); toast('เพิ่มเวลาแล้ว'); loadCodes(); }catch(e){ toast(e.message); } });
+    act(c.state === 'revoked' ? 'คืนสิทธิ์' : 'ระงับ','ghost', async function(){ try{ await api(c.state === 'revoked' ? 'admin_unrevoke' : 'admin_revoke', {code:c.code}); loadCodes(); }catch(e){ toast(e.message); } });
+    var del = act('ลบ','danger', async function(){
+      if(del.textContent !== 'แน่ใจ?'){ del.textContent = 'แน่ใจ?'; setTimeout(function(){ del.textContent = 'ลบ'; }, 3000); return; }
+      try{ await api('admin_delete', {code:c.code}); loadCodes(); }catch(e){ toast(e.message); }
+    });
+    it.appendChild(a); box.appendChild(it);
+  });
+}
+async function loadCodes(){ try{ codesCache = (await api('admin_codes')).codes; renderCodes(); }catch(e){ if(TOKEN) toast(e.message); } }
+$('c-search').oninput = renderCodes;
+$('c-make').onclick = async function(){
+  try{ var d = await api('admin_create', {minutes:Number($('c-min').value), note:$('c-note').value}); $('c-new').textContent = 'สร้างแล้ว: ' + d.code + ' (แตะที่รายการเพื่อคัดลอก)'; copy(d.code); $('c-note').value = ''; loadCodes(); }
+  catch(e){ toast(e.message); }
+};
+
+async function loadSettings(){
+  try{ var s = await api('admin_settings_get'); $('p-price').value = s.price; $('p-rate').value = s.rate; $('p-notice').value = s.notice; $('p-maint').checked = !!s.maintenance; }catch(e){ if(TOKEN) toast(e.message); }
+}
+$('p-save').onclick = async function(){
+  try{ await api('admin_settings_set', {price:Number($('p-price').value), rate:Number($('p-rate').value), notice:$('p-notice').value, maintenance:$('p-maint').checked}); toast('บันทึกแล้ว'); }
+  catch(e){ toast(e.message); }
+};
+
+$('p-tm').onclick = async function(){
+  var out = $('p-tmres'); out.textContent = 'กำลังทดสอบ...';
+  try{ var d = await api('admin_tmtest'); out.textContent = (d.ok ? '✅ ' : '❌ ') + d.msg; }catch(e){ out.textContent = '❌ ' + e.message; }
+};
+
+function start(){ show(true); loadSummary(); clearInterval(timer); timer = setInterval(function(){ if(!document.hidden && !$('t-overview').hidden) loadSummary(); }, 30000); }
+if(TOKEN) start(); else show(false);
+</script>
+</body>
+</html>
