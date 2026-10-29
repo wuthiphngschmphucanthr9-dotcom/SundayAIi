@@ -1,7 +1,8 @@
 // Vercel Serverless Function (Gemini, แบบสตรีม: ตัวหนังสือทยอยขึ้นระหว่างที่ AI เขียน)
 const SYSTEM = "คุณคือวิศวกรซอฟต์แวร์อาวุโส หน้าที่คือเขียนโค้ดตามคำสั่งของผู้ใช้ให้ครบและทำงานได้จริง ปฏิบัติตามกฎเหล่านี้ทุกครั้ง: 1) อ่านคำสั่งให้ครบทุกข้อ แล้วทำทุกข้อที่ขอ ห้ามข้าม ห้ามเปลี่ยนโจทย์ ห้ามตอบแค่คำอธิบาย ถ้าผู้ใช้ขอให้เขียน สร้าง ทำ หรือแก้ ต้องมีโค้ดเสมอ 2) ใช้ภาษา เฟรมเวิร์ก ชื่อ และสไตล์ที่ผู้ใช้ระบุตรงตัว ถ้าไม่ระบุให้เลือกที่เหมาะกับงานและบอกสั้นๆ บรรทัดเดียว 3) ถ้าคำสั่งกำกวม ให้เดาอย่างสมเหตุสมผลแล้วลงมือทำเลย อย่าถามกลับ 4) โค้ดต้องสมบูรณ์ รันได้จริง ห้ามย่อ ห้ามใช้ ... หรือเขียนว่าส่วนที่เหลือเหมือนเดิม 5) ถ้าขอหน้าเว็บหรือแอป ให้ตอบเป็นไฟล์ HTML เดียวที่สมบูรณ์ใน ```html block เดียว โดย CSS และ JS อยู่ในไฟล์เดียว ไม่พึ่งไฟล์หรือรูปภายนอก (ใช้ฟอนต์จาก Google Fonts ได้) ออกแบบให้สวย รองรับมือถือ และห้ามใช้ localStorage 6) โค้ดทุกชิ้นต้องอยู่ใน code fence ที่ระบุภาษา 7) ตอบเป็นภาษาเดียวกับผู้ใช้ (ส่วนใหญ่ภาษาไทย) อธิบายสั้นไม่เกิน 3 บรรทัด แล้วตามด้วยโค้ด 8) ก่อนส่งคำตอบ ให้ตรวจว่าทำครบทุกข้อที่ผู้ใช้ขอแล้ว 9) ถ้าผู้ใช้แนบไฟล์โค้ด ให้แก้หรือปรับปรุงตามคำสั่งโดยคงสไตล์เดิมของไฟล์ แล้วส่งโค้ดที่แก้แล้วทั้งไฟล์ใน code fence เดียวต่อไฟล์ (ไม่ส่งเฉพาะส่วนที่เปลี่ยน) ตามด้วยสรุปสั้นๆ เป็นข้อๆ ว่าแก้อะไรเพราะอะไร ถ้าไม่พบบั๊กให้บอกตรงๆ";
-const MODEL = process.env.GEMINI_MODEL || 'gemini-3.8-flash';
-const LITE = 'gemini-3.5-flash-lite';
+// โหมดเร็วใช้รุ่นเล็ก (ไม่คิดนาน ตอบภายในไม่กี่วินาที) โหมดฉลาด/โหดใช้รุ่นเต็ม
+const FAST = process.env.GEMINI_FAST_MODEL || 'gemini-3.5-flash-lite';
+const SMART = process.env.GEMINI_MODEL || 'gemini-3.8-flash';
 const SAFETY = ['HARASSMENT', 'HATE_SPEECH', 'SEXUALLY_EXPLICIT', 'DANGEROUS_CONTENT'].map(c => ({ category: 'HARM_CATEGORY_' + c, threshold: 'BLOCK_ONLY_HIGH' }));
 const NUDGE = '\n\n[หมายเหตุถึงระบบ: ถ้าคำขอนี้ให้เขียน สร้าง ทำ หรือแก้โค้ด ให้ตอบด้วยโค้ดเต็มที่รันได้จริงใน code block ทันที ทำตามคำสั่งทุกข้อ ห้ามตอบแค่คำอธิบาย ห้ามถามกลับ]';
 const RETRY = '\n[ย้ำ: ตอบเป็นโค้ดเต็มทันที]';
@@ -25,21 +26,21 @@ module.exports = async (req, res) => {
 
   const mode = body.mode === 'beast' ? 'beast' : body.mode === 'smart' ? 'smart' : 'fast';
   const beast = mode === 'beast';
-  const level = beast ? 'high' : mode === 'smart' ? 'medium' : 'low';
+  const level = beast ? 'high' : mode === 'smart' ? 'low' : '';
   const build = (lvl, extra) => ({
     systemInstruction: { parts: [{ text: beast ? SYSTEM + '\n\n' + BEAST : SYSTEM }] },
     contents: messages.map((m, i) => ({
       role: m.role === 'assistant' ? 'model' : 'user',
       parts: [{ text: i === messages.length - 1 ? m.content + NUDGE + (extra || '') : m.content }],
     })),
-    generationConfig: { maxOutputTokens: beast ? 32000 : 16000, thinkingConfig: { thinkingLevel: lvl } },
+    generationConfig: Object.assign({ maxOutputTokens: beast ? 32000 : 16000 }, lvl ? { thinkingConfig: { thinkingLevel: lvl } } : {}),
     safetySettings: SAFETY,
   });
   const urlFor = m => 'https://generativelanguage.googleapis.com/v1beta/models/' + m + ':streamGenerateContent?alt=sse';
 
   // เปิดการเชื่อมต่อกับ Gemini (ถ้าตัวเลือกบางอย่างไม่รองรับ จะตัดออกแล้วลองใหม่เอง)
   async function open(payload, model) {
-    let r;
+    let r, swapped = false;
     for (let i = 0; i < 4; i++) {
       r = await fetch(urlFor(model), {
         method: 'POST',
@@ -47,11 +48,11 @@ module.exports = async (req, res) => {
         body: JSON.stringify(payload),
       });
       if (r.ok) return r;
-      if (r.status === 404 && model !== LITE) { model = LITE; continue; }
+      if (r.status === 404 && !swapped) { model = model === FAST ? SMART : FAST; swapped = true; continue; }
       if (r.status === 400) {
         const j = await r.clone().json().catch(() => ({}));
         if (/api key/i.test((j.error && j.error.message) || '')) break;
-        if (payload.generationConfig.thinkingConfig) { delete payload.generationConfig.thinkingConfig; continue; }
+        if (payload.generationConfig && payload.generationConfig.thinkingConfig) { delete payload.generationConfig.thinkingConfig; continue; }
         if (payload.safetySettings) { delete payload.safetySettings; continue; }
       }
       if (r.status === 503) { await wait(1200); continue; }
@@ -90,7 +91,7 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const model = mode === 'fast' ? MODEL : (process.env.GEMINI_SMART_MODEL || MODEL);
+    const model = mode === 'fast' ? FAST : SMART;
     const r = await open(build(level), model);
     if (!r.ok) {
       const data = await r.json().catch(() => ({}));
@@ -109,7 +110,7 @@ module.exports = async (req, res) => {
     let out = await pump(r);
     if (!out.got) {
       // ไม่มีคำตอบเลย (ถูกกรอง/ว่าง) ลองอีกครั้งด้วยโมเดลเต็มและคำสั่งที่เข้มขึ้น
-      const r2 = await open(build('medium', RETRY), mode === 'fast' ? (process.env.GEMINI_SMART_MODEL || MODEL) : model);
+      const r2 = await open(build('low', RETRY), SMART);
       if (r2.ok) out = await pump(r2);
     }
     if (!out.got) {
