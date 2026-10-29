@@ -227,6 +227,121 @@ html[data-theme="horror"] .dpanel input[type=search],html[data-theme="horror"] .
 .modes small{flex:1;min-width:120px}
 .mode.beast.on{border-color:#ff8a00;color:#fff;background:rgba(255,120,0,.2);box-shadow:0 0 14px rgba(255,120,0,.65)}
 html[data-theme="horror"] .mode.beast.on{border-color:#ff8a00;background:rgba(255,120,0,.2);box-shadow:0 0 14px rgba(255,120,0,.65)}
+
+.notice{padding:8px 16px;font-size:13.5px;text-align:center;background:rgba(255,204,0,.14);color:#ffe59a;border-bottom:1px solid rgba(255,204,0,.35)}
+.notice[hidden]{display:none}
+.notice.maint{background:rgba(255,60,80,.16);color:#ffb3bb;border-bottom-color:rgba(255,60,80,.4)}
+#timebtn.on{border-color:#3dff9a;color:#bfffe0;font-variant-numeric:tabular-nums}
+#timebtn.low{border-color:#ffcc00;color:#ffe59a;animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:.45}}
+.shopcard{max-height:92vh;overflow-y:auto}
+.shopmsg{color:#ffb3bb!important;min-height:0}
+.shopmsg:empty{display:none}
+.pricebox{border:1px dashed var(--pink);border-radius:12px;padding:10px 12px;margin-bottom:12px;text-align:center}
+.pricebox b{display:block;font-size:19px}
+.pricebox small{color:var(--muted)}
+.steps{margin:0 0 10px;padding-left:20px;color:var(--muted);font-size:13.5px}
+.steps b{color:var(--ink)}
+.mycode{border:1px solid #3dff9a;border-radius:12px;padding:10px 12px;margin-bottom:12px;background:rgba(61,255,154,.07)}
+.mycode small{color:var(--muted);display:block}
+.mcrow{display:flex;gap:8px;align-items:center;margin:6px 0}
+.mcrow code{flex:1;font:500 15px "JetBrains Mono",monospace;color:#bfffe0;word-break:break-all}
+.mcrow button{border:1px solid var(--line);background:none;color:var(--ink);border-radius:8px;padding:6px 12px;font:inherit;cursor:pointer}
+.mcrow input{flex:1;min-width:0;margin:0}
+.mcrow .ks{background:linear-gradient(135deg,var(--violet),var(--pink));border:0;color:#fff}
+.ks.wide{width:100%;border:0;border-radius:10px;padding:12px;font:inherit;font-weight:600;color:#fff;background:linear-gradient(135deg,var(--violet),var(--pink));cursor:pointer;margin-bottom:10px}
+.ks.wide:disabled{opacity:.6}
+.havecode{margin-bottom:10px;color:var(--muted);font-size:14px}
+.havecode summary{cursor:pointer;padding:4px 0}
+html[data-theme="horror"] .ks.wide,html[data-theme="horror"] .mcrow .ks{background:linear-gradient(135deg,#7a0c12,#e01e2b)}
+html[data-theme="horror"] .pricebox{border-color:#e01e2b}
+.acts button.hot{border-color:var(--pink);color:#fff;box-shadow:0 0 10px rgba(255,46,154,.4)}
+
+/* ===== ธีมแฮกเกอร์หรู (เขียว + ทอง) ===== */
+html[data-theme="hacker"]{--bg:#010503;--surface:#05110a;--ink:#d6ffe6;--muted:#6aa885;--line:#0e3b25;--pink:#00ff9c;--violet:#007a4a;--cyan:#e8c766;--rainbow:linear-gradient(90deg,#00ff9c,#e8c766,#00ff9c)}
+html[data-theme="hacker"] ::selection{background:#00a86b;color:#001a0e}
+html[data-theme="hacker"] body{caret-color:#00ff9c}
+html[data-theme="hacker"] body::before{inset:0;background:radial-gradient(ellipse at 50% 125%,rgba(0,255,156,.2),transparent 55%),radial-gradient(ellipse at 50% -25%,rgba(232,199,102,.09),transparent 50%);filter:none;animation:breathe 7s ease-in-out infinite}
+html[data-theme="hacker"] body::after{content:"";position:fixed;inset:0;z-index:3;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.3) 0 1px,transparent 1px 3px),radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.7) 100%)}
+html[data-theme="hacker"] .sparks{display:none}
+#rain{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:.32}
+.scanbar{position:fixed;left:0;right:0;top:-120px;height:110px;z-index:2;pointer-events:none;background:linear-gradient(180deg,transparent,rgba(0,255,156,.07),transparent);animation:scan 7s linear infinite}
+html[data-theme="hacker"] header{position:relative;z-index:4;background:rgba(2,9,5,.82);border-bottom-color:#0e3b25}
+html[data-theme="hacker"] header::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:linear-gradient(90deg,transparent,#00ff9c,#e8c766,#00ff9c,transparent);background-size:200% 100%;animation:sweep 4s linear infinite}
+html[data-theme="hacker"] header h1{font-family:"Orbitron","JetBrains Mono",monospace;font-weight:700;font-size:21px;letter-spacing:.14em;background:none;-webkit-background-clip:border-box;background-clip:border-box;color:#00ff9c;text-shadow:0 0 12px rgba(0,255,156,.75);animation:hglitch 6s infinite}
+html[data-theme="hacker"] header h1::after{content:"_";margin-left:3px;color:#e8c766;animation:cur 1s steps(2) infinite}
+html[data-theme="hacker"] header p{color:#6aa885;font-family:"JetBrains Mono",monospace;font-size:11.5px}
+html[data-theme="hacker"] .logo::before{background:conic-gradient(#00ff9c,#e8c766,#003d24,#00ff9c);box-shadow:0 0 16px rgba(0,255,156,.65)}
+html[data-theme="hacker"] .logo span,html[data-theme="hacker"] .hero,html[data-theme="hacker"] .msg.ai::before{filter:sepia(1) hue-rotate(80deg) saturate(2.6) brightness(.95) contrast(1.1)}
+html[data-theme="hacker"] .hero{animation:float 4.5s ease-in-out infinite,gpulse 3s ease-in-out infinite}
+html[data-theme="hacker"] .empty h2{display:inline-block;font-family:"JetBrains Mono","IBM Plex Sans Thai",monospace;color:#d6ffe6;text-shadow:0 0 14px rgba(0,255,156,.5);animation:typeclip 1.5s steps(22,end) .25s both}
+html[data-theme="hacker"] .empty h2::after{content:"▌";margin-left:4px;color:#00ff9c;animation:cur 1s steps(2) infinite}
+html[data-theme="hacker"] .clear{font-family:"JetBrains Mono",monospace;font-size:12.5px}
+html[data-theme="hacker"] .clear:hover{box-shadow:0 0 12px rgba(0,255,156,.5)}
+html[data-theme="hacker"] #timebtn.on{border-color:#e8c766;color:#ffe9a8;text-shadow:0 0 8px rgba(232,199,102,.6)}
+html[data-theme="hacker"] .msg.user{background:linear-gradient(135deg,#04472c,#00b074);color:#eafff3;border:1px solid #0b7a4d;box-shadow:0 0 20px rgba(0,255,156,.3)}
+html[data-theme="hacker"] .msg.ai{background:rgba(2,10,6,.9);border-color:#0e3b25;border-left-color:#00ff9c;box-shadow:0 0 26px rgba(0,255,156,.1)}
+html[data-theme="hacker"] .msg.ai::before{box-shadow:0 0 0 2px #00ff9c,0 0 16px rgba(0,255,156,.6)}
+html[data-theme="hacker"] .msg.ai code.i{background:#06231a;color:#9dffd0}
+html[data-theme="hacker"] .msg.ai h3{color:#e8c766}
+html[data-theme="hacker"] .msg.ai h4{color:#9dffd0}
+html[data-theme="hacker"] .block{background:#020a06;border-color:#0f4a2e;box-shadow:0 0 18px rgba(0,255,156,.12)}
+html[data-theme="hacker"] .bar{background:#04120a;color:#e8c766}
+html[data-theme="hacker"] .bar button{border-color:#14583a;color:#d6ffe6}
+html[data-theme="hacker"] .bar button:hover{border-color:#00ff9c;box-shadow:0 0 10px rgba(0,255,156,.5)}
+html[data-theme="hacker"] pre{color:#d9ffe9}
+html[data-theme="hacker"] .tc{color:#4f8f6b}
+html[data-theme="hacker"] .ts{color:#e8c766}
+html[data-theme="hacker"] .tn{color:#ffb454}
+html[data-theme="hacker"] .tk{color:#00ff9c}
+html[data-theme="hacker"] .tg{color:#7df0ff}
+html[data-theme="hacker"] .chip{background:rgba(2,10,6,.85)}
+html[data-theme="hacker"] .chip::before{content:"$ ";color:#00ff9c}
+html[data-theme="hacker"] .chip:hover{border-color:#00ff9c;box-shadow:0 0 18px rgba(0,255,156,.45)}
+html[data-theme="hacker"] .modes,html[data-theme="hacker"] form,html[data-theme="hacker"] .files{background:rgba(2,9,5,.85)}
+html[data-theme="hacker"] .mode.on{background:rgba(0,255,156,.14);box-shadow:0 0 12px rgba(0,255,156,.5)}
+html[data-theme="hacker"] .mode.beast.on{border-color:#ff8a00;background:rgba(255,120,0,.2);box-shadow:0 0 14px rgba(255,120,0,.65)}
+html[data-theme="hacker"] textarea,html[data-theme="hacker"] #attach{background:#020a06}
+html[data-theme="hacker"] textarea{font-family:"JetBrains Mono","IBM Plex Sans Thai",monospace}
+html[data-theme="hacker"] textarea:focus{box-shadow:0 0 16px rgba(0,255,156,.45)}
+html[data-theme="hacker"] #attach:hover{box-shadow:0 0 12px rgba(0,255,156,.5)}
+html[data-theme="hacker"] #send{background:linear-gradient(135deg,#00a86b,#00ff9c);color:#00180d;box-shadow:0 0 18px rgba(0,255,156,.5)}
+html[data-theme="hacker"] #send.stop{background:linear-gradient(135deg,#7a1020,#ff3b57);color:#fff;box-shadow:0 0 16px rgba(255,59,87,.5)}
+html[data-theme="hacker"] .acts button:hover,html[data-theme="hacker"] .retry:hover{box-shadow:0 0 10px rgba(0,255,156,.45)}
+html[data-theme="hacker"] .acts button.hot{box-shadow:0 0 10px rgba(0,255,156,.45)}
+html[data-theme="hacker"] .dots i:nth-child(1){background:#00ff9c;box-shadow:0 0 8px #00ff9c}
+html[data-theme="hacker"] .dots i:nth-child(2){background:#e8c766;box-shadow:0 0 8px #e8c766}
+html[data-theme="hacker"] .dots i:nth-child(3){background:#d6ffe6;box-shadow:0 0 8px #d6ffe6}
+html[data-theme="hacker"] .kcard,html[data-theme="hacker"] .dpanel{border-color:#00ff9c;box-shadow:0 0 30px rgba(0,255,156,.3)}
+html[data-theme="hacker"] .ks.wide,html[data-theme="hacker"] .mcrow .ks,html[data-theme="hacker"] .krow .ks,html[data-theme="hacker"] .dnew{background:linear-gradient(135deg,#00a86b,#00ff9c);color:#00180d;box-shadow:0 0 16px rgba(0,255,156,.45)}
+html[data-theme="hacker"] .pricebox{border-color:#e8c766}
+html[data-theme="hacker"] .ritem{background:rgba(2,10,6,.85)}
+html[data-theme="hacker"] .ritem.cur{border-color:#00ff9c;box-shadow:0 0 12px rgba(0,255,156,.4)}
+html[data-theme="hacker"] .rmain .snip{color:#9dffd0}
+html[data-theme="hacker"] .fchip{background:rgba(0,255,156,.1)}
+html[data-theme="hacker"] .toast{background:#03130b;box-shadow:0 0 20px rgba(0,255,156,.4)}
+html[data-theme="hacker"] .notice{background:rgba(232,199,102,.12);color:#ffe9a8;border-bottom-color:rgba(232,199,102,.35)}
+/* ===== แอนิเมชันที่ใช้ทุกธีม ===== */
+.msg.ai.streaming::after{content:"▋";display:inline-block;margin-left:2px;color:var(--pink);animation:cur .9s steps(2) infinite}
+.chip{position:relative;overflow:hidden}
+.chip::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.16),transparent);transform:skewX(-20deg);transition:left .7s}
+.chip:hover::after{left:130%}
+.boot{position:fixed;inset:0;z-index:60;background:#010503;color:#00ff9c;font:13.5px/1.8 "JetBrains Mono",monospace;padding:calc(48px + env(safe-area-inset-top,0px)) 22px 24px;transition:opacity .55s;cursor:pointer}
+.boot.out{opacity:0;pointer-events:none}
+.boot div{animation:rise .2s both;white-space:pre-wrap;word-break:break-all}
+.boot .big{margin-top:18px;font:700 24px/1.3 "Orbitron","JetBrains Mono",monospace;letter-spacing:.16em;color:#e8c766;text-shadow:0 0 16px rgba(232,199,102,.7);animation:flick 1.2s both}
+@keyframes cur{50%{opacity:0}}
+@keyframes scan{to{transform:translateY(calc(100vh + 240px))}}
+@keyframes sweep{to{background-position:-200% 0}}
+@keyframes typeclip{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes hglitch{0%,93%,100%{transform:none;text-shadow:0 0 12px rgba(0,255,156,.75)}94%{transform:translate(-2px,1px);text-shadow:2px 0 #e8c766,-2px 0 #00e5ff}96%{transform:translate(2px,-1px);text-shadow:-2px 0 #e8c766,2px 0 #00e5ff}98%{transform:none}}
+@keyframes gpulse{0%,100%{box-shadow:0 0 30px rgba(0,255,156,.45),0 0 80px rgba(0,122,74,.4)}50%{box-shadow:0 0 50px rgba(0,255,156,.75),0 0 120px rgba(232,199,102,.25)}}
+@media (prefers-reduced-motion:reduce){#rain,.scanbar{display:none}.boot{display:none}}
+.contactbox{border:1px solid var(--pink);border-radius:12px;padding:10px 12px;margin-bottom:12px;text-align:center}
+.contactbox[hidden]{display:none}
+.contactbox small{display:block;color:var(--muted)}
+.contactbox b{display:block;font-size:17px;word-break:break-word}
+.steps0{margin:0 0 10px;color:var(--muted);font-size:13.5px}
 </style>
 </head>
 <body>
@@ -366,6 +481,7 @@ function render(box, text, final){
   });
 }
 
+var CODE_RE = /เขียน|สร้าง|ทำ(?:ให้)?(?:เว็บ|แอป|เกม|หน้า|ระบบ|สคริปต์|โปรแกรม|ปุ่ม)|โค้ด|โปรแกรม|สคริปต์|ฟังก์ชัน|บั๊ก|\bcode\b|function|script|\bbug\b|html|css|javascript|python|\bjava\b|sql|react|node|php|\bapi\b/i;
 function addActions(){
   document.querySelectorAll('.acts').forEach(function(a){ a.remove(); });
   var ais = log.querySelectorAll('.msg.ai'), last = ais[ais.length - 1];
@@ -373,7 +489,14 @@ function addActions(){
   var a = el('div','acts'), rb = el('button',null,'ตอบใหม่'), cb = el('button',null,'คัดลอกคำตอบ');
   rb.type = 'button'; cb.type = 'button'; rb.onclick = regen;
   cb.onclick = function(){ copyText(chat[chat.length-1].content, function(){ cb.textContent = 'คัดลอกแล้ว'; setTimeout(function(){ cb.textContent = 'คัดลอกคำตอบ'; }, 1500); }); };
-  a.appendChild(rb); a.appendChild(cb); last.appendChild(a);
+  a.appendChild(rb); a.appendChild(cb);
+  var prev = chat[chat.length - 2];
+  if(prev && prev.role === 'user' && CODE_RE.test(prev.display || prev.content) && chat[chat.length - 1].content.indexOf('```') < 0){
+    var fb = el('button','hot','ขอเป็นโค้ดเต็ม'); fb.type = 'button';
+    fb.onclick = function(){ ask('ขอเป็นโค้ดเต็มที่รันได้เลย ตามที่สั่งก่อนหน้านี้ ไม่ต้องอธิบายยาว'); };
+    a.insertBefore(fb, a.firstChild);
+  }
+  last.appendChild(a);
 }
 function regen(){
   if(busy || chat.length < 2) return;
@@ -457,7 +580,7 @@ async function send2(full, shown, typed, files){
   var um = el('div','msg user',shown); log.appendChild(um);
   chat.push({role:'user', content:full, display:shown});
   var rr = cur(); if(rr && rr.title === DEFAULT_TITLE){ var tt = (typed || '').trim().split('\n')[0] || (files[0] ? 'ไฟล์ ' + files[0].name : ''); if(tt) rr.title = tt.slice(0, 30); }
-  var box = el('div','msg ai'), dp = el('p','dots'); dp.innerHTML = '<i></i><i></i><i></i>'; box.appendChild(dp); log.appendChild(box); scrollDown();
+  var box = el('div','msg ai streaming'), dp = el('p','dots'); dp.innerHTML = '<i></i><i></i><i></i>'; box.appendChild(dp); log.appendChild(box); scrollDown();
   var msgs = chat.slice(-12).map(function(m){ return {role:m.role, content:m.content}; });
   while(msgs.length && msgs[0].role !== 'user') msgs.shift();
   ctrl = new AbortController();
@@ -485,7 +608,7 @@ async function send2(full, shown, typed, files){
       box.appendChild(rb); chat.pop();
     }
   }
-  setBusy(false); ctrl = null; addActions(); if(nearBottom()) scrollDown();
+  box.classList.remove('streaming'); setBusy(false); ctrl = null; addActions(); if(nearBottom()) scrollDown();
 }
 
 document.getElementById('attach').onclick = function(){ document.getElementById('fileinp').click(); };
@@ -617,14 +740,59 @@ document.getElementById('clearroom').onclick = function(){
   if(!rooms.some(function(r){ return r.id === c; })) c = rooms.length ? rooms.slice().sort(function(a, b){ return b.updated - a.updated; })[0].id : '';
   if(c){ openRoom(c); } else { createRoom(); }
 })();
-var THEME_KEY = 'sunday_theme';
-function applyTheme(t){
-  document.documentElement.setAttribute('data-theme', t);
-  document.getElementById('themebtn').textContent = t === 'horror' ? 'นีออน' : 'สยอง';
-  try{ localStorage.setItem(THEME_KEY, t); }catch(e){}
+var THEME_KEY = 'sunday_theme_v2', THEMES = ['hacker','neon','horror'], THEME_NAME = {hacker:'แฮกเกอร์', neon:'นีออน', horror:'สยอง'};
+var rainClean = null, scanEl = null;
+function reduced(){ try{ return window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){ return false; } }
+function stopRain(){ if(rainClean){ rainClean(); rainClean = null; } if(scanEl){ scanEl.remove(); scanEl = null; } }
+function startRain(){
+  stopRain(); if(reduced()) return;
+  var cv = document.createElement('canvas'); cv.id = 'rain'; document.body.insertBefore(cv, document.body.firstChild);
+  var ctx = cv.getContext('2d'), fs = 14, cols = 0, drops = [], W = 0, H = 0, raf = 0, last = 0;
+  var chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789SUNDAY<>/{}[]=+*#$%&'.split('');
+  function size(){
+    var dpr = Math.min(window.devicePixelRatio || 1, 2); W = window.innerWidth; H = window.innerHeight;
+    cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    cols = Math.ceil(W / fs); drops = []; for(var i = 0; i < cols; i++) drops[i] = Math.random() * -40;
+  }
+  function frame(){
+    ctx.globalCompositeOperation = 'destination-out'; ctx.fillStyle = 'rgba(0,0,0,.1)'; ctx.fillRect(0, 0, W, H);
+    ctx.globalCompositeOperation = 'source-over'; ctx.font = fs + 'px "JetBrains Mono",monospace';
+    for(var i = 0; i < cols; i++){
+      var y = drops[i] * fs;
+      if(y > 0){ ctx.fillStyle = Math.random() > .975 ? '#eafff3' : (Math.random() > .96 ? '#e8c766' : '#00ff9c'); ctx.fillText(chars[Math.random() * chars.length | 0], i * fs, y); }
+      if(y > H && Math.random() > .975) drops[i] = 0;
+      drops[i] += 0.5 + (i % 3) * 0.15;
+    }
+  }
+  function loop(t){ raf = requestAnimationFrame(loop); if(document.hidden || t - last < 50) return; last = t; frame(); }
+  size(); window.addEventListener('resize', size); raf = requestAnimationFrame(loop);
+  rainClean = function(){ cancelAnimationFrame(raf); window.removeEventListener('resize', size); cv.remove(); };
+  scanEl = document.createElement('div'); scanEl.className = 'scanbar'; document.body.appendChild(scanEl);
 }
-(function(){ var t = 'horror'; try{ t = localStorage.getItem(THEME_KEY) || 'horror'; }catch(e){} applyTheme(t); })();
-document.getElementById('themebtn').onclick = function(){ applyTheme(document.documentElement.getAttribute('data-theme') === 'horror' ? 'neon' : 'horror'); };
+function bootSeq(){
+  try{ if(sessionStorage.getItem('sd_boot')) return; sessionStorage.setItem('sd_boot', '1'); }catch(e){}
+  if(reduced()) return;
+  var b = el('div','boot'), done = false, i = 0;
+  var lines = ['> SUNDAY AI // secure terminal','> initializing neural core ........ [ OK ]','> loading code engine ............ [ OK ]','> encrypting channel ............. [ OK ]','> verifying access ............... [ OK ]'];
+  document.body.appendChild(b);
+  function finish(){ if(done) return; done = true; b.classList.add('out'); setTimeout(function(){ b.remove(); }, 650); }
+  b.onclick = finish;
+  (function next(){
+    if(done) return;
+    if(i < lines.length){ b.appendChild(el('div', null, lines[i++])); setTimeout(next, 230); }
+    else { b.appendChild(el('div','big','ACCESS GRANTED')); setTimeout(finish, 950); }
+  })();
+}
+function applyTheme(t, first){
+  if(THEMES.indexOf(t) < 0) t = 'hacker';
+  document.documentElement.setAttribute('data-theme', t);
+  document.getElementById('themebtn').textContent = THEME_NAME[THEMES[(THEMES.indexOf(t) + 1) % THEMES.length]];
+  try{ localStorage.setItem(THEME_KEY, t); }catch(e){}
+  if(t === 'hacker') startRain(); else stopRain();
+  if(first && t === 'hacker') bootSeq();
+}
+(function(){ var t = 'hacker'; try{ t = localStorage.getItem(THEME_KEY) || 'hacker'; }catch(e){} applyTheme(t, true); })();
+document.getElementById('themebtn').onclick = function(){ var c = document.documentElement.getAttribute('data-theme'); applyTheme(THEMES[(THEMES.indexOf(c) + 1) % THEMES.length]); };
 </script>
 </body>
 </html>
