@@ -342,6 +342,7 @@ html[data-theme="hacker"] .notice{background:rgba(232,199,102,.12);color:#ffe9a8
 .contactbox small{display:block;color:var(--muted)}
 .contactbox b{display:block;font-size:17px;word-break:break-word}
 .steps0{margin:0 0 10px;color:var(--muted);font-size:13.5px}
+.waitmsg{color:var(--muted);font:12.5px/1.4 "JetBrains Mono",monospace;padding:2px 0 4px}
 </style>
 </head>
 <body>
@@ -365,7 +366,7 @@ html[data-theme="hacker"] .notice{background:rgba(232,199,102,.12);color:#ffe9a8
       </div>
     </div>
   </div>
-  <div class="modes"><button class="mode on" data-m="fast" type="button">เร็ว</button><button class="mode" data-m="smart" type="button">ฉลาด</button><button class="mode beast" data-m="beast" type="button">โหด</button><small id="modehint">ตอบไว ใช้โควตาน้อย</small></div>
+  <div class="modes"><button class="mode on" data-m="fast" type="button">เร็ว</button><button class="mode" data-m="smart" type="button">ฉลาด</button><button class="mode beast" data-m="beast" type="button">โหด</button><small id="modehint">ตอบไวที่สุด (รุ่นเล็ก)</small></div>
   <div class="files" id="files" hidden></div>
   <form id="form">
     <button type="button" id="attach" aria-label="แนบไฟล์โค้ด" title="แนบไฟล์โค้ด"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.4 11.1l-8.5 8.5a5.5 5.5 0 0 1-7.8-7.8l8.5-8.5a3.7 3.7 0 0 1 5.2 5.2l-8.5 8.5a1.8 1.8 0 0 1-2.6-2.6l7.8-7.8"/></svg></button><input type="file" id="fileinp" multiple hidden>
@@ -580,12 +581,15 @@ async function send2(full, shown, typed, files){
   var um = el('div','msg user',shown); log.appendChild(um);
   chat.push({role:'user', content:full, display:shown});
   var rr = cur(); if(rr && rr.title === DEFAULT_TITLE){ var tt = (typed || '').trim().split('\n')[0] || (files[0] ? 'ไฟล์ ' + files[0].name : ''); if(tt) rr.title = tt.slice(0, 30); }
-  var box = el('div','msg ai streaming'), dp = el('p','dots'); dp.innerHTML = '<i></i><i></i><i></i>'; box.appendChild(dp); log.appendChild(box); scrollDown();
+  var box = el('div','msg ai streaming'), dp = el('p','dots'); dp.innerHTML = '<i></i><i></i><i></i>'; box.appendChild(dp);
+  var wm = el('div','waitmsg','กำลังคิด… 0 วิ'), t0 = Date.now();
+  box.appendChild(wm); log.appendChild(box); scrollDown();
+  var wi = setInterval(function(){ var sec = Math.floor((Date.now() - t0) / 1000); wm.textContent = 'กำลังคิด… ' + sec + ' วิ' + (sec >= 15 && aiMode !== 'fast' ? ' · โหมดนี้คิดนาน ลองสลับเป็นโหมดเร็ว' : ''); }, 1000);
   var msgs = chat.slice(-12).map(function(m){ return {role:m.role, content:m.content}; });
   while(msgs.length && msgs[0].role !== 'user') msgs.shift();
   ctrl = new AbortController();
   var latest = '', timer = null;
-  function paint(){ timer = null; var st = nearBottom(); render(box, latest, false); if(st) scrollDown(); }
+  function paint(){ clearInterval(wi); timer = null; var st = nearBottom(); render(box, latest, false); if(st) scrollDown(); }
   try{
     var r = await callApi(msgs, ctrl.signal, function(t){ latest = t; if(!timer) timer = setTimeout(paint, 90); });
     clearTimeout(timer);
@@ -608,7 +612,7 @@ async function send2(full, shown, typed, files){
       box.appendChild(rb); chat.pop();
     }
   }
-  box.classList.remove('streaming'); setBusy(false); ctrl = null; addActions(); if(nearBottom()) scrollDown();
+  clearInterval(wi); box.classList.remove('streaming'); setBusy(false); ctrl = null; addActions(); if(nearBottom()) scrollDown();
 }
 
 document.getElementById('attach').onclick = function(){ document.getElementById('fileinp').click(); };
@@ -635,7 +639,7 @@ document.getElementById('keysave').onclick = function(){ var v = ki.value.trim()
 document.getElementById('keycancel').onclick = function(){ kb.hidden = true; };
 document.getElementById('keybtn').onclick = function(){ openKey(''); };
 if(!getKey()) openKey('');
-var MODE_HINT = {fast:'ตอบไว ใช้โควตาน้อย', smart:'ตรงโจทย์กว่า โควตาน้อยกว่า', beast:'โค้ดระดับโหด คิดนาน กินโควตามาก'};
+var MODE_HINT = {fast:'ตอบไวที่สุด (รุ่นเล็ก)', smart:'ตรงโจทย์กว่า แต่ช้ากว่า', beast:'โค้ดระดับโหด คิดนานมาก กินโควตามาก'};
 document.querySelectorAll('.mode').forEach(function(b){ b.onclick = function(){ aiMode = b.dataset.m; document.getElementById('modehint').textContent = MODE_HINT[aiMode]; document.querySelectorAll('.mode').forEach(function(x){ x.classList.toggle('on', x === b); }); }; });
 
 (function(){
