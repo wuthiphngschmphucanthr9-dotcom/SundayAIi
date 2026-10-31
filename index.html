@@ -262,7 +262,7 @@ html[data-theme="hacker"]{--bg:#010503;--surface:#05110a;--ink:#d6ffe6;--muted:#
 html[data-theme="hacker"] ::selection{background:#00a86b;color:#001a0e}
 html[data-theme="hacker"] body{caret-color:#00ff9c}
 html[data-theme="hacker"] body::before{inset:0;background:radial-gradient(ellipse at 50% 125%,rgba(0,255,156,.2),transparent 55%),radial-gradient(ellipse at 50% -25%,rgba(232,199,102,.09),transparent 50%);filter:none;animation:breathe 7s ease-in-out infinite}
-html[data-theme="hacker"] body::after{content:"";position:fixed;inset:0;z-index:3;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.3) 0 1px,transparent 1px 3px),radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.7) 100%)}
+html[data-theme="hacker"] body::after{content:"";position:fixed;inset:0;z-index:3;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.14) 0 1px,transparent 1px 3px),radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.7) 100%)}
 html[data-theme="hacker"] .sparks{display:none}
 #rain{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:.32}
 .scanbar{position:fixed;left:0;right:0;top:-120px;height:110px;z-index:2;pointer-events:none;background:linear-gradient(180deg,transparent,rgba(0,255,156,.07),transparent);animation:scan 7s linear infinite}
@@ -343,6 +343,16 @@ html[data-theme="hacker"] .notice{background:rgba(232,199,102,.12);color:#ffe9a8
 .contactbox b{display:block;font-size:17px;word-break:break-word}
 .steps0{margin:0 0 10px;color:var(--muted);font-size:13.5px}
 .waitmsg{color:var(--muted);font:12.5px/1.4 "JetBrains Mono",monospace;padding:2px 0 4px}
+header h1{white-space:nowrap}
+.brand{min-width:0}
+@media (max-width:430px){
+  header{padding:10px 12px;gap:8px}
+  .logo{width:40px;height:40px}
+  header p{display:none}
+  header h1,html[data-theme="hacker"] header h1,html[data-theme="horror"] header h1{font-size:16px;letter-spacing:.06em}
+  .clear{padding:5px 10px;font-size:12px}
+  .rt{gap:5px}
+}
 </style>
 </head>
 <body>
@@ -352,7 +362,7 @@ html[data-theme="hacker"] .notice{background:rgba(232,199,102,.12);color:#ffe9a8
 <div class="app">
   <header>
     <div class="brand"><div class="logo" aria-hidden="true"><span></span></div><div><h1>SUNDAY AI</h1><p>ผู้ช่วยเขียนโค้ด สั่งเป็นภาษาไทยได้เลย</p></div></div>
-    <div class="rt"><button class="clear" id="themebtn" type="button">ธีม</button><button class="clear" id="keybtn" type="button">คีย์</button><button class="clear" id="menubtn" type="button" aria-label="ห้องแชท">☰ ห้อง</button></div>
+    <div class="rt"><button class="clear" id="themebtn" type="button">ธีม</button><button class="clear" id="keybtn" type="button">คีย์</button><button class="clear" id="menubtn" type="button" aria-label="ห้องแชท">☰</button></div>
   </header>
   <div id="log">
     <div class="empty" id="empty">
@@ -455,11 +465,30 @@ function prose(box, t){
   flush();
 }
 
+// แยกข้อความกับบล็อกโค้ดทีละบรรทัด (``` ที่อยู่กลางบรรทัดในสตริงของโค้ดจะไม่ทำให้บล็อกขาด)
+function splitFences(text){
+  var lines = text.split('\n'), out = [], buf = [], inCode = false, fenceLen = 0, lang = '';
+  function flushText(){ if(buf.length){ out.push({type:'text', text: buf.join('\n')}); buf = []; } }
+  for(var i = 0; i < lines.length; i++){
+    var L = lines[i], m;
+    if(!inCode){
+      m = /^\s{0,3}(`{3,})([^`]*)$/.exec(L);
+      if(m){ flushText(); inCode = true; fenceLen = m[1].length; lang = m[2].trim().split(/\s+/)[0] || ''; continue; }
+      buf.push(L);
+    } else {
+      m = /^\s{0,3}(`{3,})\s*$/.exec(L);
+      if(m && m[1].length >= fenceLen){ out.push({type:'code', lang: lang, code: buf.join('\n')}); buf = []; inCode = false; continue; }
+      buf.push(L);
+    }
+  }
+  if(inCode) out.push({type:'code', lang: lang, code: buf.join('\n')}); else flushText();
+  return out;
+}
 function render(box, text, final){
   box.textContent = '';
-  text.split(/```/).forEach(function(part, i){
-    if(i % 2 === 0){ var t = part.replace(/^\n+|\n+$/g,''); if(t) prose(box, t); return; }
-    var nl = part.indexOf('\n'), lang = nl > -1 ? part.slice(0, nl).trim() : part.trim(), code = nl > -1 ? part.slice(nl + 1).replace(/\n$/,'') : '';
+  splitFences(text).forEach(function(seg){
+    if(seg.type === 'text'){ var t = seg.text.replace(/^\n+|\n+$/g,''); if(t) prose(box, t); return; }
+    var lang = seg.lang, code = seg.code;
     var b = el('div','block'), bar = el('div','bar'), grp = el('span','grp');
     function btn(label, fn){ var x = el('button', null, label); x.type = 'button'; x.onclick = function(){ fn(x); }; grp.appendChild(x); }
     bar.appendChild(el('span', null, lang || 'code'));
@@ -790,7 +819,7 @@ function bootSeq(){
 function applyTheme(t, first){
   if(THEMES.indexOf(t) < 0) t = 'hacker';
   document.documentElement.setAttribute('data-theme', t);
-  document.getElementById('themebtn').textContent = THEME_NAME[THEMES[(THEMES.indexOf(t) + 1) % THEMES.length]];
+  var tbn = document.getElementById('themebtn'); tbn.textContent = 'ธีม'; tbn.title = 'สลับเป็นธีม' + THEME_NAME[THEMES[(THEMES.indexOf(t) + 1) % THEMES.length]];
   try{ localStorage.setItem(THEME_KEY, t); }catch(e){}
   if(t === 'hacker') startRain(); else stopRain();
   if(first && t === 'hacker') bootSeq();
