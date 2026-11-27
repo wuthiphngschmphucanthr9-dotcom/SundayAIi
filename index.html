@@ -828,140 +828,140 @@
         function safeIcons() {
             try { if (window.lucide) window.lucide.createIcons(); } catch (e) {}
         }
-// ... existing code ... -->
-        function init() {
-            // ตั้งค่าธีมเริ่มต้นเป็นโหมดสว่าง (สีขาว) หรือตามที่ผู้ใช้เคยเลือกไว้
-            const savedTheme = safeStorage.get('sundayai_theme');
-// ... existing code ... -->
-            // ตรวจสอบว่าเคยกดเข้าดิสคอร์ดหรือเข้าใช้งานในเซสชันนี้แล้วหรือยัง
-            if (safeStorage.get('sundayai_discord_passed') === 'true') {
-                document.getElementById('discordGateModal').classList.add('hidden');
+
+        const safeStorage = {
+            get(key, persistent = false) {
+                try {
+                    if (persistent) return window.localStorage.getItem(key) || window.sessionStorage.getItem(key) || '';
+                    return window.sessionStorage.getItem(key) || '';
+                } catch (e) { return ''; }
+            },
+            set(key, val, persistent = false) {
+                try {
+                    window.sessionStorage.setItem(key, val);
+                    if (persistent) window.localStorage.setItem(key, val);
+                } catch (e) {}
+            },
+            remove(key) {
+                try {
+                    window.sessionStorage.removeItem(key);
+                    window.localStorage.removeItem(key);
+                } catch (e) {}
             }
-
-            // เริ่มระบบเล่นเพลง YOUNG J - JOKER อัตโนมัติ
-            initBackgroundMusicPlayer();
-
-            document.addEventListener('click', (e) => {
-                const popover = document.getElementById('emojiPickerPopover');
-                const btn = document.getElementById('emojiPickerBtn');
-                if (popover && !popover.classList.contains('hidden') && !popover.contains(e.target) && !btn.contains(e.target)) {
-                    popover.classList.add('hidden');
-                }
-            });
-        }
-
-        // =========================================================
-        // BACKGROUND MUSIC PLAYER (YOUNG J - JOKER)
-        // =========================================================
-        let ytPlayer = null;
-        let isMusicPlaying = false;
-        let musicUserPaused = false;
-        const JOKER_VIDEO_ID = 'JVWMCJmj6i0'; // YOUNG J - JOKER (Official Audio)
-
-        function initBackgroundMusicPlayer() {
-            // โหลด YouTube IFrame API
-            if (!window.YT) {
-                const tag = document.createElement('script');
-                tag.src = 'https://www.youtube.com/iframe_api';
-                const firstScriptTag = document.getElementsByTagName('script')[0];
-                firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-            } else if (window.YT && window.YT.Player) {
-                createYTPlayerInstance();
-            }
-
-            // ปลดล็อกเสียงเล่นอัตโนมัติทันทีที่มีการแตะหรือคลิกครั้งแรกบนหน้าเว็บ (แก้ข้อจำกัด Autoplay ของเบราว์เซอร์)
-            const unlockAudioOnFirstTouch = () => {
-                if (ytPlayer && typeof ytPlayer.playVideo === 'function' && !musicUserPaused) {
-                    try {
-                        ytPlayer.unMute();
-                        const vol = Number(document.getElementById('musicVolumeSlider')?.value || 65);
-                        ytPlayer.setVolume(vol);
-                        ytPlayer.playVideo();
-                    } catch (e) {}
-                }
-                document.removeEventListener('pointerdown', unlockAudioOnFirstTouch);
-                document.removeEventListener('keydown', unlockAudioOnFirstTouch);
-            };
-            document.addEventListener('pointerdown', unlockAudioOnFirstTouch, { passive: true });
-            document.addEventListener('keydown', unlockAudioOnFirstTouch, { passive: true });
-        }
-
-        window.onYouTubeIframeAPIReady = function () {
-            createYTPlayerInstance();
         };
 
-        function createYTPlayerInstance() {
-            if (ytPlayer) return;
-            ytPlayer = new YT.Player('ytMusicPlayer', {
-                height: '1',
-                width: '1',
-                videoId: JOKER_VIDEO_ID,
-                playerVars: {
-                    autoplay: 1,
-                    controls: 0,
-                    disablekb: 1,
-                    fs: 0,
-                    loop: 1,
-                    playlist: JOKER_VIDEO_ID,
-                    playsinline: 1,
-                    rel: 0
-                },
-                events: {
-                    onReady: (event) => {
-                        event.target.setVolume(65);
-                        event.target.playVideo();
-                        updateMusicUIState(true);
-                    },
-                    onStateChange: (event) => {
-                        if (event.data === YT.PlayerState.PLAYING) {
-                            updateMusicUIState(true);
-                        } else if (event.data === YT.PlayerState.PAUSED) {
-                            updateMusicUIState(false);
-                        } else if (event.data === YT.PlayerState.ENDED) {
-                            // เล่นวนซ้ำอัตโนมัติเมื่อจบเพลง
-                            event.target.seekTo(0);
-                            event.target.playVideo();
-                        }
+        const REACTION_EMOJIS = ['❤️', '🔥', '👍', '🤯', '😂', '✨'];
+        const PICKER_EMOJIS = [
+            '😀','😂','🥰','😎','🤔','🤩','🥳','😭',
+            '👍','👏','🙌','🙏','💪','✨','🔥','❤️',
+            '💡','🚀','💻','⚡','🎯','🎨','📌','✅',
+            '🎉','🌟','🤖','🧠','📚','💬','🌈','☕'
+        ];
+
+        const PROMPT_TEMPLATES = [
+            {
+                icon: '🎮',
+                title: 'สร้างเกมไฟล์เดียวเล่นบนมือถือ',
+                desc: 'สั่ง AI เขียนโค้ดเกม HTML5 แยกไฟล์สำหรับดาวน์โหลดและรันตัวอย่างได้ทันที',
+                prompt: 'ช่วยสร้างไฟล์เกม Space Shooter เป็นไฟล์ game.html ที่เล่นได้ทั้งบนมือถือและคอมพิวเตอร์ ส่งมาให้ดาวน์โหลดได้ทันที'
+            },
+            {
+                icon: '🔧',
+                title: 'ตรวจหาบั๊กและแก้โค้ดให้อัตโนมัติ',
+                desc: 'ให้ AI ตรวจสอบโค้ดที่แนบมา แก้ไขข้อผิดพลาด และอธิบายจุดที่แก้',
+                prompt: 'ช่วยตรวจสอบโค้ดที่แนบมา หาจุดผิดพลาดหรือบั๊ก และเขียนโค้ดฉบับสมบูรณ์ที่แก้ไขแล้วส่งกลับมาให้หน่อย'
+            },
+            {
+                icon: '📱',
+                title: 'คิดไอเดียคอนเทนต์ไวรัล',
+                desc: 'สร้างหัวข้อและสคริปต์สั้นๆ สำหรับ TikTok, Reels หรือ YouTube Shorts',
+                prompt: 'ช่วยคิดไอเดียคอนเทนต์สั้นๆ 5 ไอเดีย พร้อมฮุคเปิดคลิป 3 วินาทีแรกให้น่าสนใจ'
+            },
+            {
+                icon: '🌐',
+                title: 'แปลภาษาและเกลาให้ดูเป็นมืออาชีพ',
+                desc: 'แปลข้อความไทย-อังกฤษ พร้อมปรับสำนวนให้สุภาพและเป็นธรรมชาติ',
+                prompt: 'ช่วยแปลและเกลาข้อความต่อไปนี้ให้เป็นภาษาอังกฤษที่ดูเป็นมืออาชีพและเข้าใจง่าย:\n'
+            }
+        ];
+
+        let userApiKey = safeStorage.get('sundayai_gemini_key', true);
+        let currentChatId = 'c_' + Math.random().toString(36).substring(2, 10);
+        let isTyping = false;
+        let pendingMessageAfterKey = '';
+        let currentAbortController = null;
+        let attachedImage = null;
+        let attachedDoc = null;
+        let isRecordingVoice = false;
+        let speechRecognition = null;
+
+        let chats = (() => {
+            try {
+                const saved = window.localStorage.getItem('sundayai_chats_v1');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        currentChatId = parsed[0].id;
+                        return parsed;
                     }
                 }
-            });
+            } catch (e) {}
+            return [
+                {
+                    id: currentChatId,
+                    title: 'บทสนทนาใหม่',
+                    updatedAt: 'เมื่อสักครู่',
+                    messages: []
+                }
+            ];
+        })();
+
+        function saveChatsToStorage() {
+            try {
+                const slimChats = chats.slice(0, 20).map(c => ({
+                    ...c,
+                    messages: (c.messages || []).slice(-30).map(m => ({
+                        role: m.role,
+                        content: m.content,
+                        time: m.time,
+                        reactions: m.reactions || {},
+                        doc: m.doc ? { name: m.doc.name, size: m.doc.size, lines: m.doc.lines, ext: m.doc.ext } : null
+                    }))
+                }));
+                window.localStorage.setItem('sundayai_chats_v1', JSON.stringify(slimChats));
+            } catch (e) {}
         }
 
-        function updateMusicUIState(playing) {
-            isMusicPlaying = playing;
-            const icon = document.getElementById('musicPlayIcon');
-            const eq = document.getElementById('musicEqBars');
-            const status = document.getElementById('musicStatusText');
-            if (icon) {
-                icon.setAttribute('data-lucide', playing ? 'pause' : 'play');
-                safeIcons();
-            }
-            if (eq) {
-                eq.classList.toggle('eq-paused', !playing);
-            }
-            if (status) {
-                status.textContent = playing ? 'กำลังเล่นเพลง...' : 'แตะเพื่อเล่นเพลง';
-            }
-        }
+        const chatHistoryList = document.getElementById('chatHistoryList');
+        const chatMessages = document.getElementById('chatMessages');
+        const welcomeScreen = document.getElementById('welcomeScreen');
+        const messageInput = document.getElementById('messageInput');
+        const messagesContainer = document.getElementById('messagesContainer');
 
-        function toggleBgMusic() {
-            if (!ytPlayer || typeof ytPlayer.playVideo !== 'function') {
-                showToast('กำลังโหลดเครื่องเล่นเพลง...');
-                return;
-            }
-            if (isMusicPlaying) {
-                musicUserPaused = true;
-                ytPlayer.pauseVideo();
-                updateMusicUIState(false);
-                showToast('หยุดเพลงชั่วคราว ⏸️');
+        function init() {
+            // ตั้งค่าธีมเริ่มต้นเป็นโหมดสว่าง (สีขาว) หรือตามที่ผู้ใช้เคยเลือกไว้
+            const savedTheme = safeStorage.get('sundayai_theme', true);
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+            if (savedTheme === 'dark') {
+                html.classList.add('dark');
+                if (themeIcon) themeIcon.setAttribute('data-lucide', 'moon');
+                if (themeText) themeText.textContent = 'โหมดมืด';
             } else {
-                musicUserPaused = false;
-                ytPlayer.unMute();
-                ytPlayer.playVideo();
-                updateMusicUIState(true);
-                showToast('กำลังเล่น: YOUNG J - JOKER 🎵');
+                html.classList.remove('dark');
+                if (themeIcon) themeIcon.setAttribute('data-lucide', 'sun');
+                if (themeText) themeText.textContent = 'โหมดสว่าง (ธีมหลัก)';
             }
-        }
+
+            safeIcons();
+            renderEmojiGrid();
+            renderPromptLibrary();
+            updateKeyStatusUI();
+            renderChatList();
+            loadChat(currentChatId);
+            initCardTiltAnimations();
+            initMobileSwipeGestures();
 
         function changeMusicVolume(val) {
             if (ytPlayer && typeof ytPlayer.setVolume === 'function') {
@@ -1683,37 +1683,6 @@
                     <span class="w-2 h-2 rounded-full bg-emerald-400 typing-dot"></span>
                     <span class="w-2 h-2 rounded-full bg-emerald-500 typing-dot"></span>
                     <span class="w-2 h-2 rounded-full bg-teal-400 typing-dot"></span>
-                </div>
-            `;
-            chatMessages.appendChild(indicator);
-            safeIcons();
-            scrollToBottom();
-        }
-
-        function getSundayAiAvatarSVG(sizeClass = 'w-7 h-7') {
-            return `
-                <svg viewBox="0 0 100 100" class="${sizeClass}">
-                    <circle cx="50" cy="50" r="38" fill="none" stroke="#22c55e" stroke-width="3.5" stroke-opacity="0.7"/>
-                    <path d="M68 24 H38 L28 48 H56 L48 76 H24" fill="none" stroke="#22c55e" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M68 24 H38 L28 48 H56 L48 76 H24" fill="none" stroke="#f8fafc" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <ellipse cx="50" cy="52" rx="44" ry="13" transform="rotate(-22 50 52)" fill="none" stroke="#4ade80" stroke-width="4"/>
-                    <polygon points="82,25 84,31 90,33 84,35 82,41 80,35 74,33 80,31" fill="#ffffff"/>
-                </svg>
-            `;
-        }
-
-        function showTypingIndicator() {
-            const indicator = document.createElement('div');
-            indicator.id = 'typingIndicator';
-            indicator.className = 'flex gap-3 sm:gap-3.5 justify-start animate-msg';
-            indicator.innerHTML = `
-                <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center text-white shrink-0 mt-1 shadow-md shadow-indigo-500/25">
-                    <i data-lucide="sparkles" class="w-4 h-4 animate-spin"></i>
-                </div>
-                <div class="bg-white/90 dark:bg-darkCard/90 backdrop-blur-md border border-slate-200/80 dark:border-darkBorder px-4 py-3.5 rounded-2xl rounded-tl-sm flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-indigo-400 typing-dot"></span>
-                    <span class="w-2 h-2 rounded-full bg-purple-400 typing-dot"></span>
-                    <span class="w-2 h-2 rounded-full bg-pink-400 typing-dot"></span>
                 </div>
             `;
             chatMessages.appendChild(indicator);
