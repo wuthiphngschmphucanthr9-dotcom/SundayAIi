@@ -503,13 +503,13 @@
                             <div class="flex items-center justify-between mb-1">
                                 <div class="flex items-center gap-2 text-emerald-500 dark:text-emerald-400 font-semibold text-xs sm:text-sm">
                                     <span class="p-1.5 rounded-lg bg-emerald-500/10 group-hover:scale-110 transition-transform">
-                                        <i data-lucide="image-plus" class="w-4 h-4"></i>
+                                        <i data-lucide="file-code-2" class="w-4 h-4"></i>
                                     </span>
-                                    <span>ส่งรูปภาพให้ AI วิเคราะห์</span>
+                                    <span>ส่งไฟล์โค้ด/รูปภาพให้ AI แก้</span>
                                 </div>
                                 <i data-lucide="arrow-up-right" class="w-4 h-4 text-slate-400 group-hover:text-emerald-400 transition-transform"></i>
                             </div>
-                            <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">อัปโหลดรูปภาพ หรือวางรูปเพื่อให้ AI ช่วยอ่านและวิเคราะห์</p>
+                            <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">แนบไฟล์โค้ด (.html, .js, .py, .txt) หรือรูปภาพให้ AI ช่วยแก้ไข</p>
                         </button>
 
                         <button type="button" onclick="useSuggestion('อธิบายการทำงานของ API แบบเข้าใจง่ายใน 3 ย่อหน้า')" style="--delay: 0.48s" class="tilt-card animate-card group relative p-3.5 sm:p-4 rounded-2xl bg-white/80 dark:bg-darkCard/80 backdrop-blur-md border border-slate-200/80 dark:border-darkBorder hover:border-amber-500/70 hover:-translate-y-1 hover:shadow-xl hover:shadow-amber-500/10 active:scale-[0.97] transition-all duration-300">
@@ -569,17 +569,20 @@
 
                 <!-- Hidden File Input for Images -->
                 <input type="file" id="imageFileInput" accept="image/*" class="hidden" onchange="handleImageFileSelect(event)">
+                <!-- Hidden File Input for Code & Text Documents -->
+                <input type="file" id="docFileInput" accept=".txt,.md,.html,.htm,.css,.js,.jsx,.ts,.tsx,.py,.json,.csv,.xml,.sql,.php,.java,.cpp,.c,.cs,.go,.rs,.yaml,.yml,.env,.log" class="hidden" onchange="handleDocFileSelect(event)">
 
-                <div class="animated-input-border relative group rounded-2xl p-[1.5px] bg-gradient-to-r from-slate-200 via-slate-200 to-slate-200 dark:from-darkBorder dark:via-darkBorder dark:to-darkBorder focus-within:from-indigo-500 focus-within:via-purple-500 focus-within:to-pink-500 shadow-xl shadow-black/10 dark:shadow-black/40 transition-all duration-300">
+                <div id="inputDropZone" ondragover="handleInputDragOver(event)" ondragleave="handleInputDragLeave(event)" ondrop="handleInputDrop(event)" class="animated-input-border relative group rounded-2xl p-[1.5px] bg-gradient-to-r from-slate-200 via-slate-200 to-slate-200 dark:from-darkBorder dark:via-darkBorder dark:to-darkBorder focus-within:from-indigo-500 focus-within:via-purple-500 focus-within:to-pink-500 shadow-xl shadow-black/10 dark:shadow-black/40 transition-all duration-300">
                     <div class="relative bg-white/95 dark:bg-darkCard/95 backdrop-blur-xl rounded-[14.5px]">
                         
                         <!-- ========================================================= -->
-                        <!-- 2. IMAGE ATTACHMENT PREVIEW BAR                           -->
+                        <!-- 2. IMAGE & CODE FILE ATTACHMENT PREVIEW BAR               -->
                         <!-- ========================================================= -->
-                        <div id="imagePreviewContainer" class="hidden px-3.5 pt-3 pb-1 animate-msg">
-                            <div class="relative inline-flex items-center gap-3 p-2 rounded-xl bg-slate-100/90 dark:bg-darkBg/90 border border-slate-200 dark:border-darkBorder">
+                        <div id="attachmentPreviewBar" class="hidden px-3.5 pt-3 pb-1 flex flex-wrap gap-2.5 animate-msg">
+                            <!-- พรีวิวรูปภาพ -->
+                            <div id="imagePreviewContainer" class="hidden relative inline-flex items-center gap-3 p-2 rounded-xl bg-slate-100/90 dark:bg-darkBg/90 border border-slate-200 dark:border-darkBorder">
                                 <img id="imagePreviewThumb" src="" alt="Attached Preview" class="w-12 h-12 sm:w-14 sm:h-14 rounded-lg object-cover border border-white/10 shadow-sm">
-                                <div class="pr-6 max-w-[160px] sm:max-w-[200px]">
+                                <div class="pr-6 max-w-[150px] sm:max-w-[190px]">
                                     <p id="imagePreviewName" class="text-xs font-medium truncate text-slate-700 dark:text-slate-200">image.png</p>
                                     <p class="text-[10px] text-emerald-500 dark:text-emerald-400">พร้อมส่งให้ AI วิเคราะห์</p>
                                 </div>
@@ -587,10 +590,24 @@
                                     <i data-lucide="x" class="w-3.5 h-3.5"></i>
                                 </button>
                             </div>
+
+                            <!-- พรีวิวไฟล์โค้ด / เอกสาร -->
+                            <div id="docPreviewContainer" class="hidden relative inline-flex items-center gap-3 p-2 rounded-xl bg-indigo-500/10 dark:bg-indigo-950/40 border border-indigo-500/30">
+                                <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center shrink-0 shadow-sm">
+                                    <i data-lucide="file-code-2" class="w-5 h-5"></i>
+                                </div>
+                                <div class="pr-6 max-w-[165px] sm:max-w-[220px]">
+                                    <p id="docPreviewName" class="text-xs font-semibold truncate text-slate-800 dark:text-indigo-200">index.html</p>
+                                    <p id="docPreviewMeta" class="text-[10px] text-indigo-500 dark:text-indigo-400">พร้อมให้ AI แก้ไขโค้ด</p>
+                                </div>
+                                <button type="button" onclick="clearAttachedDoc()" title="ลบไฟล์" class="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-rose-500 text-white flex items-center justify-center shadow-md hover:bg-rose-600 active:scale-90 transition-all">
+                                    <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </div>
                         </div>
 
                         <!-- Responsive Layout: บนมือถือปุ่มเครื่องมืออยู่แถวล่างกดง่ายไม่เบียดช่องพิมพ์ -->
-                        <textarea id="messageInput" rows="1" placeholder="พิมพ์ข้อความ พูดด้วยเสียง หรือวางรูปภาพ..." class="w-full bg-transparent px-3.5 sm:px-4 pt-3 pb-1.5 sm:py-3.5 sm:pr-44 text-[15px] sm:text-base resize-none focus:outline-none max-h-32 sm:max-h-36 overflow-y-auto placeholder:text-slate-400" oninput="autoResize(this)" onkeydown="handleKeyDown(event)" onpaste="handlePasteImage(event)"></textarea>
+                        <textarea id="messageInput" rows="1" placeholder="พิมพ์ข้อความ วางรูป หรือแนบไฟล์โค้ดให้ AI แก้..." class="w-full bg-transparent px-3.5 sm:px-4 pt-3 pb-1.5 sm:py-3.5 sm:pr-52 text-[15px] sm:text-base resize-none focus:outline-none max-h-32 sm:max-h-36 overflow-y-auto placeholder:text-slate-400" oninput="autoResize(this)" onkeydown="handleKeyDown(event)" onpaste="handlePasteImage(event)"></textarea>
                         
                         <div class="flex items-center justify-between sm:justify-end px-2.5 pb-2 sm:p-0 sm:absolute sm:right-2 sm:bottom-2 gap-1">
                             <div class="flex items-center gap-0.5 sm:gap-1">
@@ -602,6 +619,11 @@
                                 <!-- ปุ่มพิมพ์ด้วยเสียง (Voice Input) -->
                                 <button type="button" id="voiceInputBtn" onclick="toggleVoiceInput()" title="พิมพ์ด้วยเสียง (พูดภาษาไทย/อังกฤษ)" class="p-2 sm:p-2.5 rounded-xl text-slate-400 hover:text-sky-400 hover:bg-slate-100 dark:hover:bg-darkBorder/70 transition-all active:scale-90">
                                     <i data-lucide="mic" class="w-4 h-4 sm:w-4 sm:h-4 pointer-events-none"></i>
+                                </button>
+
+                                <!-- ปุ่มอัปโหลดไฟล์โค้ด / เอกสารให้ AI แก้ -->
+                                <button type="button" id="attachDocBtn" onclick="triggerDocUpload()" title="แนบไฟล์โค้ด / เอกสารให้ AI แก้ไข" class="p-2 sm:p-2.5 rounded-xl text-slate-400 hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-darkBorder/70 transition-all active:scale-90">
+                                    <i data-lucide="file-code-2" class="w-4 h-4 sm:w-4 sm:h-4 pointer-events-none"></i>
                                 </button>
 
                                 <!-- ปุ่มอัปโหลดรูปภาพ -->
@@ -705,6 +727,7 @@
         let isTyping = false;
         let currentAbortController = null; // สำหรับหยุด Fetch Stream
         let attachedImage = null; // เก็บข้อมูลรูปภาพ { base64, mimeType, dataUrl, name }
+        let attachedDoc = null; // เก็บข้อมูลไฟล์โค้ด/เอกสาร { name, content, size, ext }
         let pendingMessageAfterKey = '';
         let speechRecognition = null;
         let isRecordingVoice = false;
@@ -895,6 +918,7 @@
                     document.getElementById('imagePreviewThumb').src = dataUrl;
                     document.getElementById('imagePreviewName').textContent = attachedImage.name;
                     document.getElementById('imagePreviewContainer').classList.remove('hidden');
+                    updateAttachmentBarVisibility();
                     safeIcons();
                     messageInput.focus();
                     showToast('แนบรูปภาพเรียบร้อยแล้ว 🖼️');
@@ -904,35 +928,94 @@
             reader.readAsDataURL(file);
         }
 
+        function updateAttachmentBarVisibility() {
+            const bar = document.getElementById('attachmentPreviewBar');
+            if (!bar) return;
+            if (attachedImage || attachedDoc) {
+                bar.classList.remove('hidden');
+            } else {
+                bar.classList.add('hidden');
+            }
+        }
+
         function clearAttachedImage() {
             attachedImage = null;
             document.getElementById('imagePreviewContainer').classList.add('hidden');
             document.getElementById('imagePreviewThumb').src = '';
+            updateAttachmentBarVisibility();
         }
 
-        function openLightbox(src) {
-            document.getElementById('lightboxImg').src = src;
-            document.getElementById('imageLightbox').classList.remove('hidden');
+        function triggerDocUpload() {
+            document.getElementById('docFileInput').click();
         }
 
-        function closeLightbox() {
-            document.getElementById('imageLightbox').classList.add('hidden');
+        function handleDocFileSelect(event) {
+            const file = event.target.files?.[0];
+            if (file) processDocFile(file);
+            event.target.value = '';
         }
 
-        // =========================================================
-        // 3. STOP GENERATION CONTROL
-        // =========================================================
-        function setGeneratingState(generating) {
-            isTyping = generating;
-            const sendBtn = document.getElementById('sendButton');
-            const stopBtn = document.getElementById('stopButton');
-            if (generating) {
-                sendBtn.classList.add('hidden');
-                stopBtn.classList.remove('hidden');
+        function processDocFile(file) {
+            // จำกัดขนาดไฟล์ข้อความไม่เกิน 1.5MB เพื่อไม่ให้เกิน Token Limit
+            if (file.size > 1.5 * 1024 * 1024) {
+                showToast('ไฟล์มีขนาดใหญ่เกินไป (รองรับสูงสุด 1.5 MB)');
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const content = e.target.result;
+                const ext = file.name.includes('.') ? file.name.split('.').pop().toLowerCase() : 'txt';
+                const sizeKB = (file.size / 1024).toFixed(1);
+                const linesCount = content.split(/\r\n|\r|\n/).length;
+
+                attachedDoc = {
+                    name: file.name,
+                    content: content,
+                    size: `${sizeKB} KB`,
+                    lines: linesCount,
+                    ext: ext
+                };
+
+                document.getElementById('docPreviewName').textContent = file.name;
+                document.getElementById('docPreviewMeta').textContent = `${linesCount} บรรทัด • ${sizeKB} KB`;
+                document.getElementById('docPreviewContainer').classList.remove('hidden');
+                updateAttachmentBarVisibility();
+                safeIcons();
+                messageInput.focus();
+                showToast(`แนบไฟล์ ${file.name} แล้ว 📄`);
+            };
+            reader.onerror = () => {
+                showToast('ไม่สามารถอ่านไฟล์นี้ได้ กรุณาลองใหม่');
+            };
+            reader.readAsText(file);
+        }
+
+        function clearAttachedDoc() {
+            attachedDoc = null;
+            document.getElementById('docPreviewContainer').classList.add('hidden');
+            updateAttachmentBarVisibility();
+        }
+
+        // รองรับการลากไฟล์ (รูปภาพ หรือ ไฟล์โค้ด) มาวางในช่องพิมพ์
+        function handleInputDragOver(e) {
+            e.preventDefault();
+            document.getElementById('inputDropZone').classList.add('ring-2', 'ring-indigo-500');
+        }
+
+        function handleInputDragLeave(e) {
+            e.preventDefault();
+            document.getElementById('inputDropZone').classList.remove('ring-2', 'ring-indigo-500');
+        }
+
+        function handleInputDrop(e) {
+            e.preventDefault();
+            document.getElementById('inputDropZone').classList.remove('ring-2', 'ring-indigo-500');
+            const file = e.dataTransfer?.files?.[0];
+            if (!file) return;
+            if (file.type.startsWith('image/')) {
+                processImageFile(file);
             } else {
-                stopBtn.classList.add('hidden');
-                sendBtn.classList.remove('hidden');
-                sendBtn.disabled = false;
+                processDocFile(file);
             }
         }
 
@@ -1133,6 +1216,7 @@
             if (filtered.length === 0) {
                 chatHistoryList.innerHTML = `<p class="text-xs text-center text-slate-400 py-6">ไม่พบประวัติการแชท</p>`;
                 return;
+            }
             filtered.forEach((chat, index) => {
                 const isActive = chat.id === currentChatId;
                 const item = document.createElement('div');
@@ -1217,7 +1301,7 @@
             } else {
                 welcomeScreen.classList.add('hidden');
                 chatMessages.innerHTML = '';
-                chat.messages.forEach((msg, index) => appendMessageToDOM(msg.role, msg.content, msg.time, index, msg.reactions, msg.image));
+                chat.messages.forEach((msg, index) => appendMessageToDOM(msg.role, msg.content, msg.time, index, msg.reactions, msg.image, msg.doc));
                 scrollToBottom();
             }
         }
@@ -1244,7 +1328,7 @@
             return escaped.replace(/\n/g, '<br>');
         }
 
-        function appendMessageToDOM(role, content, time, msgIndex, reactions = {}, imageObj = null) {
+        function appendMessageToDOM(role, content, time, msgIndex, reactions = {}, imageObj = null, docObj = null) {
             welcomeScreen.classList.add('hidden');
             const wrapper = document.createElement('div');
             wrapper.className = `flex gap-3 sm:gap-3.5 animate-msg ${role === 'user' ? 'justify-end' : 'justify-start'}`;
@@ -1256,10 +1340,23 @@
                     </div>
                 ` : '';
 
+                const docHtml = docObj ? `
+                    <div class="mb-2 flex items-center gap-2.5 p-2.5 rounded-xl bg-white/15 border border-white/25 backdrop-blur-sm">
+                        <div class="w-9 h-9 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
+                            <i data-lucide="file-code-2" class="w-4 h-4 text-white"></i>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <p class="text-xs font-semibold truncate text-white">${escapeHtml(docObj.name)}</p>
+                            <p class="text-[10px] text-indigo-100">${docObj.lines} บรรทัด • ${docObj.size}</p>
+                        </div>
+                    </div>
+                ` : '';
+
                 wrapper.innerHTML = `
                     <div class="max-w-[85%] sm:max-w-[75%] space-y-1">
                         <div class="bg-gradient-to-tr from-indigo-600 to-purple-600 text-white px-4 py-3 rounded-2xl rounded-tr-sm shadow-md shadow-indigo-500/20 text-sm sm:text-base leading-relaxed break-words">
                             ${imgHtml}
+                            ${docHtml}
                             ${content ? `<div>${escapeHtml(content).replace(/\n/g, '<br>')}</div>` : ''}
                         </div>
                         <p class="text-[11px] text-slate-400 text-right pr-1">${time}</p>
@@ -1358,21 +1455,32 @@
         }
 
         // =========================================================
-        // SEND MESSAGE (รองรับรูปภาพ + สตรีม + หยุดข้อความกลางคัน)
+        // SEND MESSAGE (รองรับรูปภาพ + ไฟล์โค้ด + สตรีม + หยุดข้อความ)
         // =========================================================
         async function sendMessage(event) {
             if (isTyping) return;
             if (event) triggerButtonRipple(document.getElementById('sendButton'), event);
             const rawText = messageInput.value.trim();
             const currentImage = attachedImage;
+            const currentDoc = attachedDoc;
 
-            if (!rawText && !currentImage) {
+            if (!rawText && !currentImage && !currentDoc) {
                 messageInput.focus();
-                showToast('กรุณาพิมพ์ข้อความหรือแนบรูปภาพก่อนกดส่ง');
+                showToast('กรุณาพิมพ์ข้อความ แนบไฟล์ หรือรูปภาพก่อนกดส่ง');
                 return;
             }
 
-            const textToSend = rawText || 'ช่วยดูและวิเคราะห์รูปภาพนี้ให้หน่อย';
+            let displayPrompt = rawText;
+            if (!displayPrompt) {
+                if (currentDoc && currentImage) displayPrompt = 'ช่วยตรวจสอบไฟล์และรูปภาพนี้ให้หน่อย';
+                else if (currentDoc) displayPrompt = `ช่วยตรวจสอบและแก้ไขไฟล์ ${currentDoc.name} นี้ให้หน่อย`;
+                else displayPrompt = 'ช่วยดูและวิเคราะห์รูปภาพนี้ให้หน่อย';
+            }
+
+            // รวมเนื้อหาไฟล์โค้ดเข้ากับ Prompt ที่ส่งให้ AI
+            const fullPromptForAI = currentDoc
+                ? `${displayPrompt}\n\n--- เนื้อหาไฟล์: ${currentDoc.name} ---\n\`\`\`${currentDoc.ext}\n${currentDoc.content}\n\`\`\``
+                : displayPrompt;
 
             if (!userApiKey) {
                 pendingMessageAfterKey = rawText;
@@ -1385,7 +1493,7 @@
             if (!chat) return;
 
             if (chat.messages.length === 0) {
-                const titleBase = rawText ? rawText : '🖼️ วิเคราะห์รูปภาพ';
+                const titleBase = rawText ? rawText : (currentDoc ? `📄 แก้ไฟล์ ${currentDoc.name}` : '🖼️ วิเคราะห์รูปภาพ');
                 chat.title = titleBase.length > 32 ? titleBase.substring(0, 32) + '...' : titleBase;
                 renderChatList();
             }
@@ -1396,15 +1504,18 @@
             const userMsgIdx = chat.messages.length;
             chat.messages.push({
                 role: 'user',
-                content: textToSend,
+                content: displayPrompt,
+                aiContent: fullPromptForAI,
                 time: timeStr,
-                image: currentImage
+                image: currentImage,
+                doc: currentDoc
             });
-            appendMessageToDOM('user', textToSend, timeStr, userMsgIdx, {}, currentImage);
+            appendMessageToDOM('user', displayPrompt, timeStr, userMsgIdx, {}, currentImage, currentDoc);
 
             messageInput.value = '';
             messageInput.style.height = 'auto';
             clearAttachedImage();
+            clearAttachedDoc();
             document.getElementById('emojiPickerPopover').classList.add('hidden');
 
             setGeneratingState(true);
@@ -1418,10 +1529,10 @@
             let wrapper = null;
 
             try {
-                // เตรียมประวัติการสนทนาพร้อมรูปภาพ (ถ้ามี)
+                // เตรียมประวัติการสนทนาพร้อมเนื้อหาไฟล์และรูปภาพ (ถ้ามี)
                 const apiMessages = chat.messages.slice(-8).map(m => ({
                     role: m.role === 'user' ? 'user' : 'assistant',
-                    content: m.content,
+                    content: m.aiContent || m.content,
                     ...(m.image ? { image: { base64: m.image.base64, mimeType: m.image.mimeType } } : {})
                 }));
 
@@ -1491,6 +1602,195 @@
                     const errIdx = chat.messages.length;
                     chat.messages.push({ role: 'assistant', content: errMsg, time: timeStr, reactions: {} });
                     appendMessageToDOM('assistant', errMsg, timeStr, errIdx, {});
+                }
+            } finally {
+                setGeneratingState(false);
+                currentAbortController = null;
+                messageInput.focus();
+            }
+        }
+
+        // =========================================================
+        // DISCORD GATE, PROMPT LIBRARY, VOICE & IMAGE UPLOAD
+        // =========================================================
+        function openDiscordModal() {
+            const modal = document.getElementById('discordGateModal');
+            modal.classList.remove('hidden', 'opacity-0');
+        }
+
+        function handleJoinDiscordClick() {
+            safeStorage.set('sundayai_discord_passed', 'true');
+            const btnText = document.getElementById('enterAppBtnText');
+            if (btnText) btnText.textContent = 'เข้าใช้งาน SundayAI ต่อเลย ✨';
+            showToast('ขอบคุณที่เข้าร่วม Discord! กดเข้าใช้งานได้เลย 🎉');
+        }
+
+        function enterSundayAI() {
+            safeStorage.set('sundayai_discord_passed', 'true');
+            const modal = document.getElementById('discordGateModal');
+            modal.classList.add('opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('opacity-0');
+                messageInput.focus();
+            }, 250);
+        }
+
+        function renderPromptLibrary() {
+            const list = document.getElementById('promptLibraryList');
+            if (!list) return;
+            list.innerHTML = PROMPT_TEMPLATES.map((item, idx) => `
+                <button type="button" onclick="selectPromptTemplate(${idx})"
+                    class="w-full text-left p-3.5 rounded-2xl bg-slate-100/80 dark:bg-darkBg/90 border border-slate-200/80 dark:border-darkBorder hover:border-purple-500/60 hover:bg-purple-500/5 transition-all active:scale-[0.98] group">
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="font-semibold text-xs sm:text-sm flex items-center gap-2 text-slate-800 dark:text-slate-100 group-hover:text-purple-400 transition-colors">
+                            <span class="text-base">${item.icon}</span>
+                            <span>${escapeHtml(item.title)}</span>
+                        </span>
+                        <i data-lucide="arrow-up-right" class="w-4 h-4 text-slate-400 group-hover:text-purple-400"></i>
+                    </div>
+                    <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">${escapeHtml(item.desc)}</p>
+                </button>
+            `).join('');
+            safeIcons();
+        }
+
+        function openPromptLibrary() {
+            document.getElementById('promptLibraryModal').classList.remove('hidden');
+        }
+
+        function closePromptLibrary() {
+            document.getElementById('promptLibraryModal').classList.add('hidden');
+        }
+
+        function selectPromptTemplate(index) {
+            const tpl = PROMPT_TEMPLATES[index];
+            if (!tpl) return;
+            closePromptLibrary();
+            messageInput.value = tpl.prompt;
+            autoResize(messageInput);
+            messageInput.focus();
+            showToast('ใส่เทมเพลตคำสั่งแล้ว ✨');
+        }
+
+        function triggerImageUpload() {
+            document.getElementById('imageFileInput').click();
+        }
+
+        function handleImageFileSelect(event) {
+            const file = event.target.files?.[0];
+            if (file) processImageFile(file);
+            event.target.value = '';
+        }
+
+        function handlePasteImage(event) {
+            const items = event.clipboardData?.items;
+            if (!items) return;
+            for (const item of items) {
+                if (item.type.startsWith('image/')) {
+                    event.preventDefault();
+                    const file = item.getAsFile();
+                    if (file) processImageFile(file);
+                    break;
+                }
+            }
+        }
+
+        function toggleVoiceInput() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                showToast('เบราว์เซอร์นี้ยังไม่รองรับการพิมพ์ด้วยเสียง');
+                return;
+            }
+            const btn = document.getElementById('voiceInputBtn');
+            if (isRecordingVoice && speechRecognition) {
+                speechRecognition.stop();
+                return;
+            }
+            speechRecognition = new SpeechRecognition();
+            speechRecognition.lang = 'th-TH';
+            speechRecognition.interimResults = false;
+            speechRecognition.maxAlternatives = 1;
+
+            speechRecognition.onstart = () => {
+                isRecordingVoice = true;
+                btn.classList.add('text-rose-500', 'bg-rose-500/15', 'animate-pulse');
+                showToast('กำลังฟังเสียงพูดของคุณ... 🎙️');
+            };
+
+            speechRecognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                messageInput.value = (messageInput.value ? messageInput.value + ' ' : '') + transcript;
+                autoResize(messageInput);
+                messageInput.focus();
+            };
+
+            speechRecognition.onerror = () => {
+                showToast('ไม่สามารถรับเสียงได้ กรุณาลองใหม่');
+            };
+
+            speechRecognition.onend = () => {
+                isRecordingVoice = false;
+                btn.classList.remove('text-rose-500', 'bg-rose-500/15', 'animate-pulse');
+            };
+
+            speechRecognition.start();
+        }
+
+        function regenerateLastResponse() {
+            if (isTyping) return;
+            const chat = chats.find(c => c.id === currentChatId);
+            if (!chat || chat.messages.length === 0) return;
+
+            if (chat.messages[chat.messages.length - 1].role === 'assistant') {
+                chat.messages.pop();
+            }
+            const lastUserMsg = chat.messages[chat.messages.length - 1];
+            if (!lastUserMsg || lastUserMsg.role !== 'user') return;
+
+            chat.messages.pop();
+            loadChat(currentChatId);
+
+            if (lastUserMsg.image) {
+                attachedImage = lastUserMsg.image;
+            }
+            if (lastUserMsg.doc) {
+                attachedDoc = lastUserMsg.doc;
+            }
+            messageInput.value = lastUserMsg.content;
+            sendMessage();
+        }
+
+        function setGeneratingState(generating) {
+            isTyping = generating;
+            const sendBtn = document.getElementById('sendButton');
+            const stopBtn = document.getElementById('stopButton');
+            if (generating) {
+                sendBtn.classList.add('hidden');
+                stopBtn.classList.remove('hidden');
+            } else {
+                sendBtn.classList.remove('hidden');
+                stopBtn.classList.add('hidden');
+            }
+            safeIcons();
+        }
+
+        function openLightbox(src) {
+            const lightbox = document.getElementById('imageLightbox');
+            const img = document.getElementById('lightboxImg');
+            if (lightbox && img && src) {
+                img.src = src;
+                lightbox.classList.remove('hidden');
+            }
+        }
+
+        function closeLightbox() {
+            const lightbox = document.getElementById('imageLightbox');
+            if (lightbox) {
+                lightbox.classList.add('hidden');
+            }
+        }
+
         function scrollToBottom(smooth = false) {
             if (smooth) {
                 messagesContainer.scrollTo({ top: messagesContainer.scrollHeight, behavior: 'smooth' });
@@ -1537,10 +1837,6 @@
                 e.preventDefault();
                 sendMessage();
             }
-        }
-
-        function scrollToBottom() {
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
         function copyToClipboard(text, successMsg) {
