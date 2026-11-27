@@ -518,65 +518,65 @@
     <!-- Main Chat Area -->
     <main class="flex-1 flex flex-col min-w-0 relative z-10">
         <!-- Top Glass Header -->
-        <header class="h-14 sm:h-16 border-b border-slate-200/70 dark:border-darkBorder/70 bg-white/75 dark:bg-darkBg/75 backdrop-blur-xl px-2.5 sm:px-5 flex items-center justify-between sticky top-0 z-20 safe-top">
-            <div class="flex items-center gap-1.5 sm:gap-2.5 min-w-0">
+        <header class="h-14 sm:h-16 border-b border-slate-200/70 dark:border-darkBorder/70 bg-white/80 dark:bg-darkBg/80 backdrop-blur-xl px-2.5 sm:px-5 flex items-center justify-between gap-2 sticky top-0 z-20 safe-top">
+            <div class="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-1">
                 <button type="button" onclick="toggleSidebar()" class="md:hidden p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-darkCard active:scale-90 transition-all shrink-0">
                     <i data-lucide="menu" class="w-5 h-5"></i>
                 </button>
                 <div class="relative group min-w-0">
-                    <select id="modeSelect" class="appearance-none bg-white/85 dark:bg-darkCard/90 border border-slate-200/80 dark:border-darkBorder hover:border-indigo-500/50 text-xs sm:text-sm font-semibold rounded-xl pl-3 pr-8 py-1.5 sm:py-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500/40 shadow-sm transition-all truncate max-w-[140px] sm:max-w-none">
-                        <option value="fast">⚡ โหมดเร็ว (ตอบไว)</option>
-                        <option value="smart" selected>✨ โหมดฉลาด (วิเคราะห์ลึก)</option>
-                        <option value="beast">🔥 โหมดโหด (โค้ดระดับโปร)</option>
+                    <select id="modeSelect" class="appearance-none bg-white/90 dark:bg-darkCard/90 border border-slate-200/80 dark:border-darkBorder hover:border-indigo-500/50 text-xs sm:text-sm font-semibold rounded-xl pl-2.5 sm:pl-3 pr-7 sm:pr-8 py-1.5 sm:py-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500/40 shadow-sm transition-all truncate max-w-[115px] sm:max-w-[175px]">
+                        <option value="fast">⚡ โหมดเร็ว</option>
+                        <option value="smart" selected>✨ โหมดฉลาด</option>
+                        <option value="beast">🔥 โหมดโหด</option>
                     </select>
-                    <i data-lucide="chevron-down" class="w-4 h-4 absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 group-hover:text-indigo-400 pointer-events-none transition-colors"></i>
+                    <i data-lucide="chevron-down" class="w-3.5 h-3.5 sm:w-4 sm:h-4 absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 group-hover:text-indigo-400 pointer-events-none transition-colors"></i>
                 </div>
                 <!-- ตัวเลือกบุคลิก AI (AI Persona Selector) -->
-                <div class="relative group min-w-0 hidden sm:block">
+                <div class="relative group min-w-0 hidden lg:block">
                     <select id="personaSelect" onchange="handlePersonaChange()" class="appearance-none bg-emerald-500/10 dark:bg-emerald-950/40 border border-emerald-500/30 hover:border-emerald-500/60 text-emerald-700 dark:text-emerald-300 text-xs sm:text-sm font-semibold rounded-xl pl-3 pr-8 py-1.5 sm:py-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500/40 shadow-sm transition-all">
-                        <option value="default">🤖 ผู้ช่วยอัจฉริยะทั่วไป</option>
-                        <option value="coder">💻 โปรแกรมเมอร์ระดับเทพ</option>
+                        <option value="default">🤖 ผู้ช่วยทั่วไป</option>
+                        <option value="coder">💻 โปรแกรมเมอร์</option>
                         <option value="designer">🎨 นักออกแบบ UI/UX</option>
-                        <option value="writer">✍️ นักเขียนคอนเทนต์ไวรัล</option>
-                        <option value="tutor">🎓 ติวเตอร์อธิบายเข้าใจง่าย</option>
+                        <option value="writer">✍️ นักเขียนไวรัล</option>
+                        <option value="tutor">🎓 ติวเตอร์</option>
                     </select>
                     <i data-lucide="chevron-down" class="w-4 h-4 absolute right-2 top-1/2 -translate-y-1/2 text-emerald-500 pointer-events-none transition-colors"></i>
                 </div>
             </div>
 
-            <div class="flex items-center gap-1 sm:gap-2">
-                <!-- เครื่องเล่นเพลง YOUNG J - JOKER (Mini Music Pill) -->
-                <div id="musicPlayerPill" class="flex items-center gap-1.5 sm:gap-2 px-2.5 py-1.5 rounded-xl bg-slate-950/90 dark:bg-darkCard border border-emerald-500/40 text-white shadow-md shadow-emerald-500/10">
-                    <button type="button" id="musicToggleBtn" onclick="toggleBgMusic()" title="เล่น / หยุดเพลง" class="w-6 h-6 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 flex items-center justify-center shrink-0 transition-all active:scale-90">
+            <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                <!-- เครื่องเล่นเพลงบีทสด (Built-in Cyber Beat Player - ดังชัวร์ 100% ทั้งมือถือและคอม) -->
+                <div id="musicPlayerPill" class="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-slate-950 dark:bg-darkCard border border-emerald-500/40 text-white shadow-md shadow-emerald-500/10">
+                    <button type="button" id="musicToggleBtn" onclick="toggleBgMusic()" title="เล่น / หยุดเพลง" class="w-7 h-7 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 flex items-center justify-center shrink-0 transition-all active:scale-90 shadow-sm">
                         <i id="musicPlayIcon" data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>
                     </button>
-                    <div id="musicEqBars" class="eq-paused flex items-end gap-[2px] h-4 px-0.5 shrink-0">
+                    <div id="musicEqBars" class="eq-paused flex items-end gap-[2px] h-3.5 px-0.5 shrink-0">
                         <span class="eq-bar"></span>
                         <span class="eq-bar"></span>
                         <span class="eq-bar"></span>
                         <span class="eq-bar"></span>
                     </div>
-                    <div class="min-w-0 max-w-[85px] sm:max-w-[140px]">
-                        <p class="text-[11px] font-bold text-emerald-400 truncate leading-tight">JOKER - ยังเจ</p>
-                        <p id="musicStatusText" class="text-[9px] text-slate-400 truncate leading-tight">กดเพื่อเล่น</p>
+                    <div class="min-w-0 max-w-[72px] sm:max-w-[125px]">
+                        <p class="text-[10px] sm:text-[11px] font-bold text-emerald-400 truncate leading-tight">JOKER BEAT</p>
+                        <p id="musicStatusText" class="text-[9px] text-slate-400 truncate leading-tight">แตะเพื่อเปิดเสียง</p>
                     </div>
-                    <div class="hidden md:flex items-center gap-1 pl-1 border-l border-slate-800">
-                        <i data-lucide="volume-2" class="w-3.5 h-3.5 text-emerald-400"></i>
-                        <input id="musicVolumeSlider" type="range" min="0" max="100" value="65" oninput="changeMusicVolume(this.value)" title="ระดับเสียง" class="w-14 h-1 accent-emerald-400 bg-slate-700 rounded-lg cursor-pointer">
+                    <div class="hidden sm:flex items-center gap-1.5 pl-1.5 border-l border-slate-800">
+                        <i data-lucide="volume-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                        <input id="musicVolumeSlider" type="range" min="0" max="100" value="70" oninput="changeMusicVolume(this.value)" title="ระดับเสียง" class="w-14 md:w-16 h-1.5 accent-emerald-400 bg-slate-700 rounded-lg cursor-pointer">
                     </div>
                 </div>
 
-                <button type="button" onclick="openDiscordModal()" title="เข้า Discord" class="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1.5 rounded-xl bg-[#5865F2]/15 text-[#7983F5] border border-[#5865F2]/25 hover:bg-[#5865F2]/25 transition-all">
-                    <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 127.14 96.36">
+                <button type="button" onclick="openDiscordModal()" title="เข้า Discord" class="inline-flex items-center gap-1.5 text-xs font-medium p-2 sm:px-2.5 sm:py-1.5 rounded-xl bg-[#5865F2]/15 text-[#7983F5] border border-[#5865F2]/25 hover:bg-[#5865F2]/25 transition-all">
+                    <svg class="w-4 h-4 sm:w-3.5 sm:h-3.5 fill-current" viewBox="0 0 127.14 96.36">
                         <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/>
                     </svg>
-                    <span class="hidden sm:inline">Discord</span>
+                    <span class="hidden md:inline">Discord</span>
                 </button>
-                <button type="button" onclick="openApiKeyModal()" id="headerKeyBtn" class="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 sm:px-3 py-1.5 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 transition-all">
-                    <i data-lucide="key-round" class="w-3.5 h-3.5"></i>
+                <button type="button" onclick="openApiKeyModal()" id="headerKeyBtn" class="inline-flex items-center gap-1.5 text-xs font-medium p-2 sm:px-3 sm:py-1.5 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 transition-all">
+                    <i data-lucide="key-round" class="w-4 h-4 sm:w-3.5 sm:h-3.5"></i>
                     <span class="hidden sm:inline">ใส่ API Key</span>
                 </button>
-                <button type="button" onclick="exportChatHistory()" title="ส่งออกประวัติแชท (.md)" class="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-emerald-500/10 hover:text-emerald-500 active:scale-95 transition-all">
+                <button type="button" onclick="exportChatHistory()" title="ส่งออกประวัติแชท (.md)" class="hidden sm:inline-flex p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-emerald-500/10 hover:text-emerald-500 active:scale-95 transition-all">
                     <i data-lucide="download-cloud" class="w-4 h-4"></i>
                 </button>
                 <button type="button" onclick="clearCurrentChat()" title="ล้างข้อความในแชทนี้" class="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-red-500/10 hover:text-red-500 active:scale-95 transition-all">
@@ -819,11 +819,6 @@
         <span id="toastMessage">ดำเนินการสำเร็จ</span>
     </div>
 
-    <!-- Hidden YouTube Player Container สำหรับเล่นเพลง YOUNG J - JOKER -->
-    <div class="fixed -left-[9999px] -top-[9999px] w-1 h-1 overflow-hidden pointer-events-none opacity-0" aria-hidden="true">
-        <div id="ytMusicPlayer"></div>
-    </div>
-
     <script>
         function safeIcons() {
             try { if (window.lucide) window.lucide.createIcons(); } catch (e) {}
@@ -891,14 +886,14 @@
         let pendingMessageAfterKey = '';
         let currentAbortController = null;
         let attachedImage = null;
-        let attachedDoc = null;
-        let isRecordingVoice = false;
-        let speechRecognition = null;
-
-        // ตัวแปรควบคุมเครื่องเล่นเพลง YouTube
-        let ytPlayer = null;
+        // ตัวแปรควบคุมเครื่องเล่นเพลง Web Audio Beat Engine (เสียงดังคมชัด 100% ทุกอุปกรณ์)
+        let audioCtx = null;
+        let masterGain = null;
+        let beatInterval = null;
+        let beatStep = 0;
         let isMusicPlaying = false;
         let musicUserPaused = false;
+        let currentMusicVolume = 0.7;
 
         let chats = (() => {
             try {
@@ -974,55 +969,140 @@
             loadChat(currentChatId);
             initCardTiltAnimations();
             initMobileSwipeGestures();
-            initYouTubePlayer();
         }
 
         // =========================================================
-        // YOUTUBE MUSIC PLAYER CONTROLS
+        // BUILT-IN WEB AUDIO CYBER BEAT PLAYER (เสียงดัง 100% ไม่มีบล็อก)
         // =========================================================
-        function initYouTubePlayer() {
-            if (window.YT && window.YT.Player) {
-                createYTInstance();
-                return;
+        function ensureAudioContext() {
+            if (!audioCtx) {
+                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContextClass();
+                masterGain = audioCtx.createGain();
+                masterGain.gain.value = currentMusicVolume;
+                masterGain.connect(audioCtx.destination);
             }
-            window.onYouTubeIframeAPIReady = () => {
-                createYTInstance();
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playBeatStep(step) {
+            if (!audioCtx || !masterGain) return;
+            const now = audioCtx.currentTime;
+
+            // 1. Kick Drum (จังหวะ 0, 3, 6, 10)
+            if ([0, 3, 6, 10].includes(step)) {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(140, now);
+                osc.frequency.exponentialRampToValueAtTime(38, now + 0.16);
+                gain.gain.setValueAtTime(0.85, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+                osc.connect(gain);
+                gain.connect(masterGain);
+                osc.start(now);
+                osc.stop(now + 0.26);
+            }
+
+            // 2. Snare / Clap (จังหวะ 4, 12)
+            if (step === 4 || step === 12) {
+                const bufferSize = audioCtx.sampleRate * 0.14;
+                const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+
+                const noise = audioCtx.createBufferSource();
+                noise.buffer = buffer;
+
+                const filter = audioCtx.createBiquadFilter();
+                filter.type = 'highpass';
+                filter.frequency.value = 900;
+
+                const gain = audioCtx.createGain();
+                gain.gain.setValueAtTime(0.45, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
+
+                noise.connect(filter);
+                filter.connect(gain);
+                gain.connect(masterGain);
+                noise.start(now);
+            }
+
+            // 3. Hi-Hat (ทุกจังหวะคู่)
+            if (step % 2 === 0) {
+                const bufferSize = audioCtx.sampleRate * 0.04;
+                const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+
+                const noise = audioCtx.createBufferSource();
+                noise.buffer = buffer;
+
+                const filter = audioCtx.createBiquadFilter();
+                filter.type = 'highpass';
+                filter.frequency.value = 6000;
+
+                const gain = audioCtx.createGain();
+                gain.gain.setValueAtTime(step % 4 === 2 ? 0.22 : 0.12, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+
+                noise.connect(filter);
+                filter.connect(gain);
+                gain.connect(masterGain);
+                noise.start(now);
+            }
+
+            // 4. Dark Cyber Synth Melody (สไตล์ JOKER Trap/Lo-Fi)
+            const notes = {
+                0: 146.83,  // D3
+                3: 174.61,  // F3
+                6: 220.00,  // A3
+                8: 233.08,  // Bb3
+                10: 220.00, // A3
+                12: 174.61, // F3
+                14: 164.81  // E3
             };
-            const tag = document.createElement('script');
-            tag.src = 'https://www.youtube.com/iframe_api';
-            const firstScriptTag = document.getElementsByTagName('script')[0];
-            if (firstScriptTag && firstScriptTag.parentNode) {
-                firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+            if (notes[step]) {
+                const osc = audioCtx.createOscillator();
+                const filter = audioCtx.createBiquadFilter();
+                const gain = audioCtx.createGain();
+
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(notes[step], now);
+
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(1100, now);
+
+                gain.gain.setValueAtTime(0.001, now);
+                gain.gain.linearRampToValueAtTime(0.28, now + 0.03);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+
+                osc.connect(filter);
+                filter.connect(gain);
+                gain.connect(masterGain);
+                osc.start(now);
+                osc.stop(now + 0.36);
             }
         }
 
-        function createYTInstance() {
-            try {
-                ytPlayer = new YT.Player('ytMusicPlayer', {
-                    height: '1',
-                    width: '1',
-                    videoId: 'v84yW5R9K-U', // YOUNG J - JOKER
-                    playerVars: {
-                        autoplay: 0,
-                        loop: 1,
-                        playlist: 'v84yW5R9K-U',
-                        controls: 0
-                    },
-                    events: {
-                        onReady: (event) => {
-                            const slider = document.getElementById('musicVolumeSlider');
-                            event.target.setVolume(slider ? Number(slider.value) : 65);
-                        },
-                        onStateChange: (event) => {
-                            if (event.data === YT.PlayerState.PLAYING) {
-                                updateMusicPlayerUI(true);
-                            } else if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED) {
-                                updateMusicPlayerUI(false);
-                            }
-                        }
-                    }
-                });
-            } catch (e) {}
+        function startBgMusic() {
+            ensureAudioContext();
+            if (beatInterval) clearInterval(beatInterval);
+            beatInterval = setInterval(() => {
+                playBeatStep(beatStep);
+                beatStep = (beatStep + 1) % 16;
+            }, 165); // ~91 BPM จังหวะกำลังดี
+            updateMusicPlayerUI(true);
+        }
+
+        function stopBgMusic() {
+            if (beatInterval) {
+                clearInterval(beatInterval);
+                beatInterval = null;
+            }
+            updateMusicPlayerUI(false);
         }
 
         function updateMusicPlayerUI(playing) {
@@ -1035,31 +1115,26 @@
                 if (playing) eq.classList.remove('eq-paused');
                 else eq.classList.add('eq-paused');
             }
-            if (status) status.textContent = playing ? 'กำลังเล่น...' : 'หยุดชั่วคราว';
+            if (status) status.textContent = playing ? 'กำลังเล่นบีท...' : 'หยุดชั่วคราว';
             safeIcons();
         }
 
         function toggleBgMusic() {
-            if (!ytPlayer || typeof ytPlayer.playVideo !== 'function') {
-                showToast('กำลังเตรียมเครื่องเล่นเพลง กรุณาลองอีกครั้ง 🎵');
-                return;
-            }
             if (isMusicPlaying) {
                 musicUserPaused = true;
-                ytPlayer.pauseVideo();
-                updateMusicPlayerUI(false);
+                stopBgMusic();
+                showToast('หยุดเสียงเพลงชั่วคราว 🔇');
             } else {
                 musicUserPaused = false;
-                ytPlayer.unMute();
-                ytPlayer.playVideo();
-                updateMusicPlayerUI(true);
+                startBgMusic();
+                showToast('เปิดเสียงเพลง JOKER Beat แล้ว 🎵');
             }
         }
 
         function changeMusicVolume(val) {
-            if (ytPlayer && typeof ytPlayer.setVolume === 'function') {
-                ytPlayer.unMute();
-                ytPlayer.setVolume(Number(val));
+            currentMusicVolume = Math.max(0, Math.min(1, Number(val) / 100));
+            if (masterGain && audioCtx) {
+                masterGain.gain.setValueAtTime(currentMusicVolume, audioCtx.currentTime);
             }
         }
 
@@ -2004,9 +2079,8 @@
 
         function handleJoinDiscordClick() {
             safeStorage.set('sundayai_discord_passed', 'true', true);
-            if (ytPlayer && typeof ytPlayer.playVideo === 'function' && !musicUserPaused) {
-                ytPlayer.unMute();
-                ytPlayer.playVideo();
+            if (!musicUserPaused && !isMusicPlaying) {
+                startBgMusic();
             }
             const btnText = document.getElementById('enterAppBtnText');
             if (btnText) btnText.textContent = 'เข้าใช้งาน SundayAI ต่อเลย ✨';
@@ -2015,9 +2089,8 @@
 
         function enterSundayAI() {
             safeStorage.set('sundayai_discord_passed', 'true', true);
-            if (ytPlayer && typeof ytPlayer.playVideo === 'function' && !musicUserPaused) {
-                ytPlayer.unMute();
-                ytPlayer.playVideo();
+            if (!musicUserPaused && !isMusicPlaying) {
+                startBgMusic();
             }
             const modal = document.getElementById('discordGateModal');
             modal.classList.add('opacity-0');
