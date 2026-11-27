@@ -33,7 +33,6 @@
         }
     </script>
     <style>
-        /* Sleek Custom Scrollbar */
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(139, 92, 246, 0.25); border-radius: 9999px; }
@@ -44,7 +43,6 @@
             height: 100dvh;
         }
 
-        /* Ambient Aurora Orbs Background */
         @keyframes auroraFloat1 {
             0%, 100% { transform: translate(0, 0) scale(1); }
             33% { transform: translate(30px, -40px) scale(1.12); }
@@ -54,133 +52,57 @@
             0%, 100% { transform: translate(0, 0) scale(1); }
             50% { transform: translate(-35px, -30px) scale(1.15); }
         }
-        .aurora-orb-1 {
-            animation: auroraFloat1 14s ease-in-out infinite;
-        }
-        .aurora-orb-2 {
-            animation: auroraFloat2 18s ease-in-out infinite;
-        }
+        .aurora-orb-1 { animation: auroraFloat1 14s ease-in-out infinite; }
+        .aurora-orb-2 { animation: auroraFloat2 18s ease-in-out infinite; }
 
-        /* Dramatic Entrance Animations */
         @keyframes heroPop {
-            0% {
-                opacity: 0;
-                transform: translateY(28px) scale(0.85) rotate(-6deg);
-                filter: blur(8px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0) scale(1) rotate(0deg);
-                filter: blur(0);
-            }
+            0% { opacity: 0; transform: translateY(28px) scale(0.85) rotate(-6deg); filter: blur(8px); }
+            100% { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); filter: blur(0); }
         }
         @keyframes slideUpBlur {
-            0% {
-                opacity: 0;
-                transform: translateY(22px);
-                filter: blur(6px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-                filter: blur(0);
-            }
+            0% { opacity: 0; transform: translateY(22px); filter: blur(6px); }
+            100% { opacity: 1; transform: translateY(0); filter: blur(0); }
         }
         @keyframes cardCascade {
-            0% {
-                opacity: 0;
-                transform: translateY(24px) scale(0.94);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
+            0% { opacity: 0; transform: translateY(24px) scale(0.94); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
         }
         @keyframes floatPulse {
-            0%, 100% {
-                transform: translateY(0px);
-                box-shadow: 0 0 30px rgba(99, 102, 241, 0.45), 0 0 60px rgba(168, 85, 247, 0.25);
-            }
-            50% {
-                transform: translateY(-7px);
-                box-shadow: 0 12px 40px rgba(99, 102, 241, 0.65), 0 0 80px rgba(236, 72, 153, 0.35);
-            }
-        }
-        @keyframes spinSlow {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+            0%, 100% { transform: translateY(0px); box-shadow: 0 0 30px rgba(99, 102, 241, 0.45), 0 0 60px rgba(168, 85, 247, 0.25); }
+            50% { transform: translateY(-7px); box-shadow: 0 12px 40px rgba(99, 102, 241, 0.65), 0 0 80px rgba(236, 72, 153, 0.35); }
         }
 
-        .animate-hero-logo {
-            animation: heroPop 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards, floatPulse 3.5s ease-in-out 0.8s infinite;
-        }
-        .animate-hero-title {
-            opacity: 0;
-            animation: slideUpBlur 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
-        }
-        .animate-hero-sub {
-            opacity: 0;
-            animation: slideUpBlur 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.25s forwards;
-        }
-        .animate-card {
-            opacity: 0;
-            animation: cardCascade 0.65s cubic-bezier(0.16, 1, 0.3, 1) var(--delay, 0.3s) forwards;
-        }
-        .animate-input-bar {
-            opacity: 0;
-            animation: slideUpBlur 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.35s forwards;
-        }
+        .animate-hero-logo { animation: heroPop 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards, floatPulse 3.5s ease-in-out 0.8s infinite; }
+        .animate-hero-title { opacity: 0; animation: slideUpBlur 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards; }
+        .animate-hero-sub { opacity: 0; animation: slideUpBlur 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.25s forwards; }
+        .animate-card { opacity: 0; animation: cardCascade 0.65s cubic-bezier(0.16, 1, 0.3, 1) var(--delay, 0.3s) forwards; }
+        .animate-input-bar { opacity: 0; animation: slideUpBlur 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.35s forwards; }
 
-        /* Message Bubble Spring Pop */
         @keyframes msgSpring {
-            0% {
-                opacity: 0;
-                transform: translateY(14px) scale(0.95);
-            }
-            70% {
-                transform: translateY(-2px) scale(1.005);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
+            0% { opacity: 0; transform: translateY(14px) scale(0.95); }
+            70% { transform: translateY(-2px) scale(1.005); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
         }
-        .animate-msg {
-            animation: msgSpring 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
+        .animate-msg { animation: msgSpring 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
-        /* Shimmer Button Effect */
-        .shimmer-btn {
-            position: relative;
-            overflow: hidden;
-        }
+        .shimmer-btn { position: relative; overflow: hidden; }
         .shimmer-btn::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 60%;
-            height: 100%;
+            content: ''; position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            transform: skewX(-20deg);
-            animation: shimmerSweep 3.5s infinite;
+            transform: skewX(-20deg); animation: shimmerSweep 3.5s infinite;
         }
         @keyframes shimmerSweep {
             0%, 60% { left: -100%; }
             100% { left: 200%; }
         }
 
-        /* Gradient Animated Text */
         .gradient-text {
             background: linear-gradient(135deg, #818cf8 0%, #c084fc 50%, #f472b6 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        /* Typing Dots */
-        .typing-dot {
-            animation: typingBounce 1.4s infinite ease-in-out both;
-        }
+        .typing-dot { animation: typingBounce 1.4s infinite ease-in-out both; }
         .typing-dot:nth-child(1) { animation-delay: -0.32s; }
         .typing-dot:nth-child(2) { animation-delay: -0.16s; }
         @keyframes typingBounce {
@@ -188,23 +110,16 @@
             40% { transform: scale(1.1); opacity: 1; }
         }
 
-        /* Glowing Writing Cursor */
         .writing-cursor::after {
-            content: '▋';
-            display: inline-block;
-            margin-left: 3px;
-            color: #818cf8;
-            text-shadow: 0 0 8px rgba(129, 140, 248, 0.8);
-            animation: blinkCursor 0.75s infinite;
+            content: '▋'; display: inline-block; margin-left: 3px; color: #818cf8;
+            text-shadow: 0 0 8px rgba(129, 140, 248, 0.8); animation: blinkCursor 0.75s infinite;
         }
         @keyframes blinkCursor {
             0%, 100% { opacity: 1; }
             50% { opacity: 0; }
         }
 
-        .safe-bottom {
-            padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
-        }
+        .safe-bottom { padding-bottom: max(0.75rem, env(safe-area-inset-bottom)); }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 dark:bg-darkBg dark:text-slate-100 antialiased selection:bg-indigo-500 selection:text-white overflow-hidden app-shell flex relative">
@@ -216,12 +131,42 @@
         <div class="aurora-orb-1 absolute -bottom-24 left-1/3 w-72 sm:w-96 h-72 sm:h-96 rounded-full bg-pink-500/10 dark:bg-fuchsia-600/10 blur-3xl"></div>
     </div>
 
+    <!-- API Key Setup Modal -->
+    <div id="apiKeyModal" class="fixed inset-0 bg-black/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 animate-msg">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-indigo-500/15 text-indigo-400 flex items-center justify-center">
+                        <i data-lucide="key-round" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-base">ตั้งค่า Gemini API Key</h3>
+                        <p class="text-xs text-slate-400">คีย์จะถูกเก็บไว้ในเบราว์เซอร์ของคุณเท่านั้น</p>
+                    </div>
+                </div>
+                <button onclick="closeApiKeyModal()" class="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-darkBorder">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            <div class="space-y-2">
+                <label class="text-xs font-medium text-slate-500 dark:text-slate-300">Gemini API Key (AIzaSy...)</label>
+                <input id="apiKeyInput" type="password" placeholder="วางคีย์จาก Google AI Studio ที่นี่..." class="w-full bg-slate-100 dark:bg-darkBg border border-slate-200 dark:border-darkBorder focus:border-indigo-500 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none">
+                <p class="text-[11px] text-slate-400">
+                    รับคีย์ฟรีได้ที่ <a href="https://aistudio.google.com/apikey" target="_blank" class="text-indigo-400 underline hover:text-indigo-300">Google AI Studio</a>
+                </p>
+            </div>
+            <div class="flex items-center justify-end gap-2 pt-2">
+                <button onclick="closeApiKeyModal()" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-500 hover:bg-slate-100 dark:hover:bg-darkBorder">ยกเลิก</button>
+                <button onclick="saveApiKey()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/25 hover:brightness-110">บันทึกคีย์</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Mobile Sidebar Overlay -->
     <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 hidden md:hidden transition-opacity duration-300"></div>
 
     <!-- Sleek Glass Sidebar -->
     <aside id="sidebar" class="fixed md:static inset-y-0 left-0 z-40 w-72 bg-white/90 dark:bg-darkSidebar/90 backdrop-blur-xl border-r border-slate-200/80 dark:border-darkBorder/80 flex flex-col transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-out">
-        <!-- Brand & New Chat -->
         <div class="p-4 space-y-3">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2.5">
@@ -230,7 +175,7 @@
                     </div>
                     <div>
                         <span class="font-bold text-base tracking-tight block leading-none">Sunday<span class="gradient-text">AI</span></span>
-                        <span class="text-[10px] text-slate-400 font-medium">Next-Gen Workspace</span>
+                        <span class="text-[10px] text-slate-400 font-medium">Real-time Gemini Workspace</span>
                     </div>
                 </div>
                 <button onclick="toggleSidebar()" class="md:hidden p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-darkCard">
@@ -243,14 +188,12 @@
                 <span>สร้างแชทใหม่</span>
             </button>
 
-            <!-- Search Input -->
             <div class="relative">
                 <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
                 <input id="searchInput" type="text" oninput="filterChats()" placeholder="ค้นหาประวัติการสนทนา..." class="w-full bg-slate-100/80 dark:bg-darkCard/80 border border-transparent focus:border-indigo-500/50 rounded-xl pl-9 pr-3 py-2 text-xs focus:outline-none transition-all">
             </div>
         </div>
 
-        <!-- Chat History List -->
         <div class="px-3 pb-1">
             <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 px-2">ประวัติการสนทนา</p>
         </div>
@@ -258,6 +201,14 @@
 
         <!-- Sidebar Footer -->
         <div class="p-3 border-t border-slate-200/80 dark:border-darkBorder/80 space-y-1.5">
+            <button onclick="openApiKeyModal()" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-darkCard transition-colors">
+                <span class="flex items-center gap-2.5">
+                    <i data-lucide="key-round" class="w-4 h-4 text-amber-400"></i>
+                    <span>ตั้งค่า API Key</span>
+                </span>
+                <span id="keyStatusBadge" class="px-2 py-0.5 rounded-md bg-rose-500/10 text-rose-400 text-[10px]">ยังไม่ใส่คีย์</span>
+            </button>
+
             <button onclick="toggleTheme()" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-darkCard transition-colors">
                 <span class="flex items-center gap-2.5">
                     <i id="themeIcon" data-lucide="moon" class="w-4 h-4 text-indigo-400"></i>
@@ -265,13 +216,6 @@
                 </span>
                 <span class="px-2 py-0.5 rounded-md bg-indigo-500/10 text-indigo-400 text-[10px]">สลับธีม</span>
             </button>
-            <div class="px-3 py-1.5 flex items-center justify-between text-[11px] text-slate-400">
-                <span id="sidebarChatId" class="font-mono truncate">ID: c_5a2a458deec5680f</span>
-                <span class="flex items-center gap-1 text-emerald-400">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
-                    ออนไลน์
-                </span>
-            </div>
         </div>
     </aside>
 
@@ -283,25 +227,21 @@
                 <button onclick="toggleSidebar()" class="md:hidden p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-darkCard active:scale-95 transition-all">
                     <i data-lucide="menu" class="w-5 h-5"></i>
                 </button>
-                <!-- Model Selector Pill -->
+                <!-- Mode Selector Pill (เชื่อมต่อตรงกับ backend mode: fast / smart / beast) -->
                 <div class="relative group">
-                    <select id="modelSelect" class="appearance-none bg-white/80 dark:bg-darkCard/90 border border-slate-200/80 dark:border-darkBorder hover:border-indigo-500/50 text-xs sm:text-sm font-semibold rounded-xl pl-3.5 pr-9 py-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500/40 shadow-sm transition-all">
-                        <option value="gemini-3-flash-preview">✨ SundayAI Pro</option>
-                        <option value="gpt-4o-mini">⚡ GPT-4o Mini</option>
-                        <option value="claude-3-5">🧠 Claude 3.5 Sonnet</option>
-                        <option value="deepseek-r1">🚀 DeepSeek R1</option>
+                    <select id="modeSelect" class="appearance-none bg-white/80 dark:bg-darkCard/90 border border-slate-200/80 dark:border-darkBorder hover:border-indigo-500/50 text-xs sm:text-sm font-semibold rounded-xl pl-3.5 pr-9 py-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500/40 shadow-sm transition-all">
+                        <option value="fast">⚡ โหมดเร็ว (ตอบไวทันใจ)</option>
+                        <option value="smart" selected>✨ โหมดฉลาด (คิดวิเคราะห์ลึก)</option>
+                        <option value="beast">🔥 โหมดโหด (โค้ดระดับโปรจัดเต็ม)</option>
                     </select>
                     <i data-lucide="chevron-down" class="w-4 h-4 absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 group-hover:text-indigo-400 pointer-events-none transition-colors"></i>
                 </div>
             </div>
 
             <div class="flex items-center gap-1.5 sm:gap-2">
-                <span id="chatIdBadge" class="hidden sm:inline-flex items-center gap-1.5 text-xs font-mono px-3 py-1.5 rounded-xl bg-white/80 dark:bg-darkCard/80 text-slate-500 dark:text-slate-400 border border-slate-200/80 dark:border-darkBorder shadow-sm">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    c_5a2a458deec5680f
-                </span>
-                <button onclick="copyShareLink()" title="คัดลอกลิงก์แชท" class="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-darkCard hover:text-indigo-500 border border-transparent hover:border-slate-200 dark:hover:border-darkBorder active:scale-95 transition-all">
-                    <i data-lucide="share-2" class="w-4 h-4"></i>
+                <button onclick="openApiKeyModal()" id="headerKeyBtn" class="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 transition-all">
+                    <i data-lucide="key-round" class="w-3.5 h-3.5"></i>
+                    <span class="hidden sm:inline">ใส่ API Key</span>
                 </button>
                 <button onclick="clearCurrentChat()" title="ล้างข้อความในแชทนี้" class="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-red-500/10 hover:text-red-500 active:scale-95 transition-all">
                     <i data-lucide="trash-2" class="w-4 h-4"></i>
@@ -313,9 +253,8 @@
         <div id="messagesContainer" class="flex-1 overflow-y-auto px-3 sm:px-5 py-4 sm:py-6 scroll-smooth overscroll-contain">
             <div id="messagesWrapper" class="max-w-3xl mx-auto space-y-5 sm:space-y-6">
                 
-                <!-- Spectacular Welcome Screen -->
+                <!-- Welcome Screen -->
                 <div id="welcomeScreen" class="py-6 sm:py-12 text-center space-y-6 sm:space-y-7">
-                    <!-- Animated Orbiting Logo -->
                     <div class="relative w-20 h-20 mx-auto">
                         <div class="absolute inset-0 rounded-3xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 blur-lg opacity-60 animate-pulse"></div>
                         <div class="relative w-20 h-20 rounded-3xl bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-500 flex items-center justify-center text-white animate-hero-logo border border-white/20">
@@ -326,32 +265,31 @@
                     <div class="space-y-2.5 px-2">
                         <div class="animate-hero-title inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-medium mb-1">
                             <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-ping"></span>
-                            พร้อมเป็นผู้ช่วยอัจฉริยะของคุณแล้ว
+                            เชื่อมต่อ Gemini Real-time Stream พร้อมใช้งาน
                         </div>
                         <h1 class="animate-hero-title text-2xl sm:text-4xl font-bold tracking-tight">
                             สวัสดี! ให้ <span class="gradient-text">SundayAI</span> ช่วยอะไรดี?
                         </h1>
                         <p class="animate-hero-sub text-xs sm:text-base text-slate-500 dark:text-slate-400 max-w-md mx-auto leading-relaxed">
-                            พิมพ์คำถาม ไอเดียสร้างสรรค์ หรือวางโค้ดที่ต้องการให้ช่วยตรวจสอบและพัฒนาได้เลยทันที
+                            ถามคำถาม เขียนโค้ด หรือสั่งงานได้เลย AI จะตอบกลับแบบเรียลไทม์ตรงตามทุกคำสั่งของคุณ
                         </p>
                     </div>
 
-                    <!-- Staggered Interactive Suggestion Cards -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl mx-auto pt-1 text-left">
-                        <button onclick="useSuggestion('ช่วยเขียนโค้ดหน้าเว็บ Responsive ด้วย Tailwind CSS')" style="--delay: 0.32s" class="animate-card group relative p-4 rounded-2xl bg-white/80 dark:bg-darkCard/80 backdrop-blur-md border border-slate-200/80 dark:border-darkBorder hover:border-indigo-500/70 dark:hover:border-indigo-500/70 hover:-translate-y-1 hover:shadow-xl hover:shadow-indigo-500/10 active:scale-[0.98] transition-all duration-300">
+                        <button onclick="useSuggestion('ช่วยเขียนหน้าเว็บเกมงู Snake Game ไฟล์เดียวสวยๆ รองรับมือถือ')" style="--delay: 0.32s" class="animate-card group relative p-4 rounded-2xl bg-white/80 dark:bg-darkCard/80 backdrop-blur-md border border-slate-200/80 dark:border-darkBorder hover:border-indigo-500/70 hover:-translate-y-1 hover:shadow-xl hover:shadow-indigo-500/10 active:scale-[0.98] transition-all duration-300">
                             <div class="flex items-center justify-between mb-1.5">
                                 <div class="flex items-center gap-2 text-indigo-500 dark:text-indigo-400 font-semibold text-sm">
                                     <span class="p-1.5 rounded-lg bg-indigo-500/10 group-hover:scale-110 transition-transform">
                                         <i data-lucide="code-2" class="w-4 h-4"></i>
                                     </span>
-                                    <span>เขียนโค้ด & พัฒนาเว็บ</span>
+                                    <span>สร้างเว็บ & เกมไฟล์เดียว</span>
                                 </div>
-                                <i data-lucide="arrow-up-right" class="w-4 h-4 text-slate-400 group-hover:text-indigo-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"></i>
+                                <i data-lucide="arrow-up-right" class="w-4 h-4 text-slate-400 group-hover:text-indigo-400 transition-transform"></i>
                             </div>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300">ช่วยเขียนโค้ดหน้าเว็บ Responsive ด้วย Tailwind CSS</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">ช่วยเขียนหน้าเว็บเกมงู Snake Game ไฟล์เดียวสวยๆ รองรับมือถือ</p>
                         </button>
 
-                        <button onclick="useSuggestion('ช่วยคิดไอเดียคอนเทนต์โซเชียลมีเดียที่น่าสนใจ 5 ข้อ')" style="--delay: 0.40s" class="animate-card group relative p-4 rounded-2xl bg-white/80 dark:bg-darkCard/80 backdrop-blur-md border border-slate-200/80 dark:border-darkBorder hover:border-emerald-500/70 dark:hover:border-emerald-500/70 hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-500/10 active:scale-[0.98] transition-all duration-300">
+                        <button onclick="useSuggestion('ช่วยคิดไอเดียคอนเทนต์โซเชียลมีเดียที่น่าสนใจ 5 ข้อ')" style="--delay: 0.40s" class="animate-card group relative p-4 rounded-2xl bg-white/80 dark:bg-darkCard/80 backdrop-blur-md border border-slate-200/80 dark:border-darkBorder hover:border-emerald-500/70 hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-500/10 active:scale-[0.98] transition-all duration-300">
                             <div class="flex items-center justify-between mb-1.5">
                                 <div class="flex items-center gap-2 text-emerald-500 dark:text-emerald-400 font-semibold text-sm">
                                     <span class="p-1.5 rounded-lg bg-emerald-500/10 group-hover:scale-110 transition-transform">
@@ -359,12 +297,12 @@
                                     </span>
                                     <span>ระดมความคิดสร้างสรรค์</span>
                                 </div>
-                                <i data-lucide="arrow-up-right" class="w-4 h-4 text-slate-400 group-hover:text-emerald-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"></i>
+                                <i data-lucide="arrow-up-right" class="w-4 h-4 text-slate-400 group-hover:text-emerald-400 transition-transform"></i>
                             </div>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300">ช่วยคิดไอเดียคอนเทนต์โซเชียลมีเดียที่น่าสนใจ 5 ข้อ</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">ช่วยคิดไอเดียคอนเทนต์โซเชียลมีเดียที่น่าสนใจ 5 ข้อ</p>
                         </button>
 
-                        <button onclick="useSuggestion('อธิบายการทำงานของ API แบบเข้าใจง่ายใน 3 ย่อหน้า')" style="--delay: 0.48s" class="animate-card group relative p-4 rounded-2xl bg-white/80 dark:bg-darkCard/80 backdrop-blur-md border border-slate-200/80 dark:border-darkBorder hover:border-amber-500/70 dark:hover:border-amber-500/70 hover:-translate-y-1 hover:shadow-xl hover:shadow-amber-500/10 active:scale-[0.98] transition-all duration-300">
+                        <button onclick="useSuggestion('อธิบายการทำงานของ API แบบเข้าใจง่ายใน 3 ย่อหน้า')" style="--delay: 0.48s" class="animate-card group relative p-4 rounded-2xl bg-white/80 dark:bg-darkCard/80 backdrop-blur-md border border-slate-200/80 dark:border-darkBorder hover:border-amber-500/70 hover:-translate-y-1 hover:shadow-xl hover:shadow-amber-500/10 active:scale-[0.98] transition-all duration-300">
                             <div class="flex items-center justify-between mb-1.5">
                                 <div class="flex items-center gap-2 text-amber-500 dark:text-amber-400 font-semibold text-sm">
                                     <span class="p-1.5 rounded-lg bg-amber-500/10 group-hover:scale-110 transition-transform">
@@ -372,12 +310,12 @@
                                     </span>
                                     <span>สรุปและอธิบายความรู้</span>
                                 </div>
-                                <i data-lucide="arrow-up-right" class="w-4 h-4 text-slate-400 group-hover:text-amber-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"></i>
+                                <i data-lucide="arrow-up-right" class="w-4 h-4 text-slate-400 group-hover:text-amber-400 transition-transform"></i>
                             </div>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300">อธิบายการทำงานของ API แบบเข้าใจง่ายใน 3 ย่อหน้า</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">อธิบายการทำงานของ API แบบเข้าใจง่ายใน 3 ย่อหน้า</p>
                         </button>
 
-                        <button onclick="useSuggestion('ช่วยแปลและเกลาประโยคภาษาอังกฤษให้ดูเป็นมืออาชีพ')" style="--delay: 0.56s" class="animate-card group relative p-4 rounded-2xl bg-white/80 dark:bg-darkCard/80 backdrop-blur-md border border-slate-200/80 dark:border-darkBorder hover:border-pink-500/70 dark:hover:border-pink-500/70 hover:-translate-y-1 hover:shadow-xl hover:shadow-pink-500/10 active:scale-[0.98] transition-all duration-300">
+                        <button onclick="useSuggestion('ช่วยแปลและเกลาประโยคภาษาอังกฤษให้ดูเป็นมืออาชีพ')" style="--delay: 0.56s" class="animate-card group relative p-4 rounded-2xl bg-white/80 dark:bg-darkCard/80 backdrop-blur-md border border-slate-200/80 dark:border-darkBorder hover:border-pink-500/70 hover:-translate-y-1 hover:shadow-xl hover:shadow-pink-500/10 active:scale-[0.98] transition-all duration-300">
                             <div class="flex items-center justify-between mb-1.5">
                                 <div class="flex items-center gap-2 text-pink-500 dark:text-pink-400 font-semibold text-sm">
                                     <span class="p-1.5 rounded-lg bg-pink-500/10 group-hover:scale-110 transition-transform">
@@ -385,9 +323,9 @@
                                     </span>
                                     <span>แปลภาษาและเกลาข้อความ</span>
                                 </div>
-                                <i data-lucide="arrow-up-right" class="w-4 h-4 text-slate-400 group-hover:text-pink-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"></i>
+                                <i data-lucide="arrow-up-right" class="w-4 h-4 text-slate-400 group-hover:text-pink-400 transition-transform"></i>
                             </div>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300">ช่วยแปลและเกลาประโยคภาษาอังกฤษให้ดูเป็นมืออาชีพ</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">ช่วยแปลและเกลาประโยคภาษาอังกฤษให้ดูเป็นมืออาชีพ</p>
                         </button>
                     </div>
                 </div>
@@ -402,12 +340,9 @@
             <div class="max-w-3xl mx-auto">
                 <div class="relative group rounded-2xl p-[1px] bg-gradient-to-r from-slate-200 via-slate-200 to-slate-200 dark:from-darkBorder dark:via-darkBorder dark:to-darkBorder focus-within:from-indigo-500 focus-within:via-purple-500 focus-within:to-pink-500 shadow-xl shadow-black/10 dark:shadow-black/40 transition-all duration-300">
                     <div class="relative bg-white/95 dark:bg-darkCard/95 backdrop-blur-xl rounded-[15px]">
-                        <textarea id="messageInput" rows="1" placeholder="พิมพ์ข้อความถาม SundayAI ได้เลย..." class="w-full bg-transparent px-4 py-3.5 pr-24 text-base resize-none focus:outline-none max-h-36 overflow-y-auto placeholder:text-slate-400" oninput="autoResize(this)" onkeydown="handleKeyDown(event)"></textarea>
+                        <textarea id="messageInput" rows="1" placeholder="พิมพ์ข้อความถาม SundayAI ได้เลย..." class="w-full bg-transparent px-4 py-3.5 pr-16 text-base resize-none focus:outline-none max-h-36 overflow-y-auto placeholder:text-slate-400" oninput="autoResize(this)" onkeydown="handleKeyDown(event)"></textarea>
                         
                         <div class="absolute right-2 bottom-2 flex items-center gap-1.5">
-                            <button type="button" onclick="attachMockFile()" title="แนบไฟล์" class="p-2 rounded-xl text-slate-400 hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-darkBorder/70 transition-colors">
-                                <i data-lucide="paperclip" class="w-4 h-4"></i>
-                            </button>
                             <button type="button" id="sendButton" onclick="sendMessage()" class="shimmer-btn p-2.5 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 hover:brightness-110 text-white shadow-md shadow-indigo-500/30 disabled:opacity-40 disabled:cursor-not-allowed transition-all active:scale-90">
                                 <i data-lucide="arrow-up" class="w-4 h-4"></i>
                             </button>
@@ -415,7 +350,7 @@
                     </div>
                 </div>
                 <p class="text-[11px] text-center text-slate-400 dark:text-slate-500 mt-2">
-                    SundayAI อาจแสดงข้อมูลที่คลาดเคลื่อนได้ โปรดตรวจสอบข้อมูลสำคัญอีกครั้ง
+                    SundayAI เชื่อมต่อกับ Google Gemini API แบบ Real-time
                 </p>
             </div>
         </div>
@@ -428,63 +363,78 @@
     </div>
 
     <script>
-        // Initialize Lucide Icons
         lucide.createIcons();
 
-        // Gemini API Configuration (https://generativelanguage.googleapis.com)
-        const GEMINI_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
-        const GEMINI_API_KEY = ''; // ใส่ Gemini API Key ของคุณที่นี่ (หากว่างไว้จะใช้โหมดตอบกลับอัตโนมัติ)
-
-        // State Management
-        const urlParams = new URLSearchParams(window.location.search);
-        let currentChatId = urlParams.get('id') || 'c_5a2a458deec5680f';
+        // State Management (เก็บในหน่วยความจำและ sessionStorage สำหรับคีย์)
+        let userApiKey = sessionStorage.getItem('sundayai_gemini_key') || '';
+        let currentChatId = 'c_' + Math.random().toString(36).substring(2, 10);
         let isTyping = false;
         let chats = [
             {
-                id: 'c_5a2a458deec5680f',
-                title: 'เริ่มต้นใช้งาน SundayAI',
+                id: currentChatId,
+                title: 'บทสนทนาใหม่',
                 updatedAt: 'เมื่อสักครู่',
                 messages: []
             }
         ];
 
-        // DOM Elements
         const chatHistoryList = document.getElementById('chatHistoryList');
         const chatMessages = document.getElementById('chatMessages');
         const welcomeScreen = document.getElementById('welcomeScreen');
         const messageInput = document.getElementById('messageInput');
         const messagesContainer = document.getElementById('messagesContainer');
-        const chatIdBadge = document.getElementById('chatIdBadge');
-        const sidebarChatId = document.getElementById('sidebarChatId');
 
-        // Sync URL Query Parameter (?id=...)
-        function syncUrlWithChatId(id) {
-            try {
-                const url = new URL(window.location);
-                url.searchParams.set('id', id);
-                window.history.replaceState({}, '', url);
-            } catch (e) {}
-        }
-
-        // Initialize App
         function init() {
-            if (!chats.find(c => c.id === currentChatId)) {
-                chats.unshift({
-                    id: currentChatId,
-                    title: 'บทสนทนาใหม่',
-                    updatedAt: 'เมื่อสักครู่',
-                    messages: []
-                });
-            }
+            updateKeyStatusUI();
             renderChatList();
             loadChat(currentChatId);
         }
 
-        // Show Custom Toast Notification
+        // API Key Modal Management
+        function openApiKeyModal() {
+            document.getElementById('apiKeyInput').value = userApiKey;
+            document.getElementById('apiKeyModal').classList.remove('hidden');
+            setTimeout(() => document.getElementById('apiKeyInput').focus(), 50);
+        }
+
+        function closeApiKeyModal() {
+            document.getElementById('apiKeyModal').classList.add('hidden');
+        }
+
+        function saveApiKey() {
+            const val = document.getElementById('apiKeyInput').value.trim();
+            userApiKey = val;
+            if (val) {
+                sessionStorage.setItem('sundayai_gemini_key', val);
+                showToast('บันทึก Gemini API Key เรียบร้อยแล้ว');
+            } else {
+                sessionStorage.removeItem('sundayai_gemini_key');
+                showToast('ลบ API Key แล้ว');
+            }
+            updateKeyStatusUI();
+            closeApiKeyModal();
+        }
+
+        function updateKeyStatusUI() {
+            const badge = document.getElementById('keyStatusBadge');
+            const headerBtn = document.getElementById('headerKeyBtn');
+            if (userApiKey) {
+                badge.textContent = 'พร้อมใช้งาน';
+                badge.className = 'px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 text-[10px]';
+                headerBtn.innerHTML = `<i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400"></i><span class="hidden sm:inline text-emerald-400">เชื่อมต่อคีย์แล้ว</span>`;
+                headerBtn.className = 'inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20 transition-all';
+            } else {
+                badge.textContent = 'ยังไม่ใส่คีย์';
+                badge.className = 'px-2 py-0.5 rounded-md bg-rose-500/10 text-rose-400 text-[10px]';
+                headerBtn.innerHTML = `<i data-lucide="key-round" class="w-3.5 h-3.5"></i><span class="hidden sm:inline">ใส่ API Key</span>`;
+                headerBtn.className = 'inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 transition-all';
+            }
+            lucide.createIcons();
+        }
+
         function showToast(msg) {
             const toast = document.getElementById('toast');
-            const toastMessage = document.getElementById('toastMessage');
-            toastMessage.textContent = msg;
+            document.getElementById('toastMessage').textContent = msg;
             toast.classList.remove('opacity-0', 'translate-y-2');
             toast.classList.add('opacity-100', 'translate-y-0');
             setTimeout(() => {
@@ -493,21 +443,14 @@
             }, 2500);
         }
 
-        // Toggle Mobile Sidebar
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebarOverlay');
             const isClosed = sidebar.classList.contains('-translate-x-full');
-            if (isClosed) {
-                sidebar.classList.remove('-translate-x-full');
-                overlay.classList.remove('hidden');
-            } else {
-                sidebar.classList.add('-translate-x-full');
-                overlay.classList.add('hidden');
-            }
+            sidebar.classList.toggle('-translate-x-full', !isClosed);
+            overlay.classList.toggle('hidden', !isClosed);
         }
 
-        // Toggle Dark / Light Mode
         function toggleTheme() {
             const html = document.documentElement;
             const themeIcon = document.getElementById('themeIcon');
@@ -524,16 +467,13 @@
             lucide.createIcons();
         }
 
-        // Render Sidebar Chat List
         function renderChatList(filter = '') {
             chatHistoryList.innerHTML = '';
             const filtered = chats.filter(c => c.title.toLowerCase().includes(filter.toLowerCase()));
-
             if (filtered.length === 0) {
                 chatHistoryList.innerHTML = `<p class="text-xs text-center text-slate-400 py-6">ไม่พบประวัติการแชท</p>`;
                 return;
             }
-
             filtered.forEach(chat => {
                 const isActive = chat.id === currentChatId;
                 const item = document.createElement('div');
@@ -546,7 +486,6 @@
                     loadChat(chat.id);
                     if (window.innerWidth < 768) toggleSidebar();
                 };
-
                 item.innerHTML = `
                     <div class="flex items-center gap-2.5 min-w-0 flex-1">
                         <i data-lucide="message-square" class="w-4 h-4 shrink-0 ${isActive ? 'text-indigo-400' : 'text-slate-400'}"></i>
@@ -564,23 +503,18 @@
             lucide.createIcons();
         }
 
-        // Filter Chats
         function filterChats() {
-            const query = document.getElementById('searchInput').value;
-            renderChatList(query);
+            renderChatList(document.getElementById('searchInput').value);
         }
 
-        // Create New Chat
         function createNewChat() {
-            const randomHex = Array.from({length: 16}, () => Math.floor(Math.random() * 16).toString(16)).join('');
-            const newId = `c_${randomHex}`;
-            const newChat = {
+            const newId = 'c_' + Math.random().toString(36).substring(2, 10);
+            chats.unshift({
                 id: newId,
                 title: 'บทสนทนาใหม่',
                 updatedAt: 'เมื่อสักครู่',
                 messages: []
-            };
-            chats.unshift(newChat);
+            });
             currentChatId = newId;
             renderChatList();
             loadChat(newId);
@@ -588,7 +522,6 @@
             messageInput.focus();
         }
 
-        // Delete Chat
         function deleteChat(event, id) {
             event.stopPropagation();
             chats = chats.filter(c => c.id !== id);
@@ -602,7 +535,6 @@
             showToast('ลบประวัติการแชทแล้ว');
         }
 
-        // Clear Current Chat Messages
         function clearCurrentChat() {
             const chat = chats.find(c => c.id === currentChatId);
             if (chat) {
@@ -612,17 +544,11 @@
             }
         }
 
-        // Load Specific Chat
         function loadChat(id) {
             currentChatId = id;
-            syncUrlWithChatId(id);
             const chat = chats.find(c => c.id === id);
             if (!chat) return;
-
-            chatIdBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> ${chat.id}`;
-            if (sidebarChatId) sidebarChatId.textContent = `ID: ${chat.id}`;
             renderChatList();
-
             if (chat.messages.length === 0) {
                 welcomeScreen.classList.remove('hidden');
                 chatMessages.innerHTML = '';
@@ -634,10 +560,10 @@
             }
         }
 
-        // Format Message Content
         function formatContent(text) {
             let escaped = escapeHtml(text);
-            escaped = escaped.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
+            // รองรับ code block ทั้งแบบปิดแล้วและกำลังสตรีมอยู่
+            escaped = escaped.replace(/```(\w+)?\n([\s\S]*?)(```|$)/g, (match, lang, code) => {
                 const language = lang || 'code';
                 return `
                     <div class="my-3 rounded-xl overflow-hidden border border-slate-200/80 dark:border-darkBorder bg-slate-950 text-slate-100 shadow-md">
@@ -657,7 +583,6 @@
             return escaped.replace(/\n/g, '<br>');
         }
 
-        // Append Message to DOM
         function appendMessageToDOM(role, content, time) {
             welcomeScreen.classList.add('hidden');
             const wrapper = document.createElement('div');
@@ -697,8 +622,7 @@
             scrollToBottom();
         }
 
-        // Stream/Typewriter Effect when AI is writing response
-        function streamMessageToDOM(fullContent, time, onComplete) {
+        function createStreamingBubble(time) {
             welcomeScreen.classList.add('hidden');
             const wrapper = document.createElement('div');
             wrapper.className = 'flex gap-3 sm:gap-3.5 justify-start animate-msg';
@@ -710,41 +634,18 @@
                     <div class="ai-bubble bg-white/90 dark:bg-darkCard/90 backdrop-blur-md border border-indigo-500/30 px-4 py-3.5 rounded-2xl rounded-tl-sm shadow-md shadow-indigo-500/5 text-sm sm:text-base leading-relaxed break-words writing-cursor"></div>
                     <div class="ai-actions hidden flex items-center gap-3 px-1 text-slate-400">
                         <span class="text-[11px]">${time}</span>
-                        <button onclick="copyPlainText(this)" data-text="${escapeHtml(fullContent)}" class="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 flex items-center gap-1 text-[11px] hover:text-indigo-400 transition-opacity">
+                        <button onclick="copyPlainText(this)" class="copy-btn opacity-100 sm:opacity-0 sm:group-hover:opacity-100 flex items-center gap-1 text-[11px] hover:text-indigo-400 transition-opacity">
                             <i data-lucide="copy" class="w-3 h-3"></i>
                             <span>คัดลอก</span>
                         </button>
                     </div>
                 </div>
             `;
-
             chatMessages.appendChild(wrapper);
             lucide.createIcons();
-
-            const bubble = wrapper.querySelector('.ai-bubble');
-            const actions = wrapper.querySelector('.ai-actions');
-            let currentIndex = 0;
-            const totalLength = fullContent.length;
-            const step = totalLength > 300 ? 4 : 2;
-
-            const interval = setInterval(() => {
-                currentIndex = Math.min(currentIndex + step, totalLength);
-                const partialText = fullContent.slice(0, currentIndex);
-                bubble.innerHTML = formatContent(partialText);
-                scrollToBottom();
-
-                if (currentIndex >= totalLength) {
-                    clearInterval(interval);
-                    bubble.classList.remove('writing-cursor', 'border-indigo-500/30');
-                    bubble.classList.add('border-slate-200/80', 'dark:border-darkBorder');
-                    actions.classList.remove('hidden');
-                    lucide.createIcons();
-                    if (onComplete) onComplete();
-                }
-            }, 18);
+            return wrapper;
         }
 
-        // Show Typing Indicator
         function showTypingIndicator() {
             const indicator = document.createElement('div');
             indicator.id = 'typingIndicator';
@@ -764,17 +665,22 @@
             scrollToBottom();
         }
 
-        // Remove Typing Indicator
         function removeTypingIndicator() {
             const indicator = document.getElementById('typingIndicator');
             if (indicator) indicator.remove();
         }
 
-        // Send Message Handler
+        // ส่งข้อความไปยัง /api/chat แบบ Real-time Stream
         async function sendMessage() {
             if (isTyping) return;
             const text = messageInput.value.trim();
             if (!text) return;
+
+            if (!userApiKey) {
+                openApiKeyModal();
+                showToast('กรุณาใส่ Gemini API Key ก่อนส่งข้อความ');
+                return;
+            }
 
             const chat = chats.find(c => c.id === currentChatId);
             if (!chat) return;
@@ -794,84 +700,82 @@
             messageInput.style.height = 'auto';
 
             isTyping = true;
+            document.getElementById('sendButton').disabled = true;
             showTypingIndicator();
-            const selectedModel = document.getElementById('modelSelect').value;
 
-            if (GEMINI_API_KEY) {
-                try {
-                    const modelEndpoint = 'gemini-3-flash-preview';
-                    const apiUrl = `${GEMINI_BASE_URL}/${modelEndpoint}:generateContent?key=${encodeURIComponent(GEMINI_API_KEY)}`;
-                    const contents = chat.messages.map(m => ({
-                        role: m.role === 'user' ? 'user' : 'model',
-                        parts: [{ text: m.content }]
-                    }));
+            const selectedMode = document.getElementById('modeSelect').value;
 
-                    const res = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            contents,
-                            systemInstruction: {
-                                parts: [{ text: 'คุณคือ SundayAI ผู้ช่วยอัจฉริยะ ตอบคำถามเป็นภาษาไทยอย่างสุภาพ ชัดเจน และเป็นประโยชน์' }]
-                            }
-                        })
-                    });
-                    const data = await res.json();
-                    if (!res.ok) {
-                        throw new Error(data.error?.message || 'ไม่สามารถเชื่อมต่อ Gemini API ได้');
-                    }
-                    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || 'ไม่ได้รับข้อความตอบกลับจาก Gemini';
-                    removeTypingIndicator();
-                    chat.messages.push({ role: 'ai', content: reply, time: timeStr });
-                    streamMessageToDOM(reply, timeStr, () => {
-                        isTyping = false;
-                    });
-                } catch (err) {
-                    removeTypingIndicator();
-                    const errMsg = `เกิดข้อผิดพลาดในการเชื่อมต่อ Gemini API: ${err.message}`;
-                    chat.messages.push({ role: 'ai', content: errMsg, time: timeStr });
-                    streamMessageToDOM(errMsg, timeStr, () => {
-                        isTyping = false;
-                    });
-                }
-                return;
-            }
+            try {
+                // แปลง role ให้ตรงกับที่ backend (/api/chat) ต้องการ ('user' และ 'assistant')
+                const apiMessages = chat.messages.map(m => ({
+                    role: m.role === 'user' ? 'user' : 'assistant',
+                    content: m.content
+                }));
 
-            setTimeout(() => {
-                removeTypingIndicator();
-                const reply = generateSmartReply(text, selectedModel);
-                chat.messages.push({ role: 'ai', content: reply, time: timeStr });
-                streamMessageToDOM(reply, timeStr, () => {
-                    isTyping = false;
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-user-key': userApiKey
+                    },
+                    body: JSON.stringify({
+                        messages: apiMessages,
+                        mode: selectedMode
+                    })
                 });
-            }, 650);
+
+                if (!response.ok) {
+                    const errData = await response.json().catch(() => ({}));
+                    throw new Error(errData.error || `เกิดข้อผิดพลาด (${response.status})`);
+                }
+
+                removeTypingIndicator();
+                const wrapper = createStreamingBubble(timeStr);
+                const bubble = wrapper.querySelector('.ai-bubble');
+                const actions = wrapper.querySelector('.ai-actions');
+                const copyBtn = wrapper.querySelector('.copy-btn');
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let fullReply = '';
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    fullReply += decoder.decode(value, { stream: true });
+                    bubble.innerHTML = formatContent(fullReply);
+                    scrollToBottom();
+                }
+
+                bubble.classList.remove('writing-cursor', 'border-indigo-500/30');
+                bubble.classList.add('border-slate-200/80', 'dark:border-darkBorder');
+                copyBtn.setAttribute('data-text', fullReply);
+                actions.classList.remove('hidden');
+                lucide.createIcons();
+
+                chat.messages.push({ role: 'assistant', content: fullReply, time: timeStr });
+            } catch (err) {
+                removeTypingIndicator();
+                const errMsg = `⚠️ ${err.message}`;
+                chat.messages.push({ role: 'assistant', content: errMsg, time: timeStr });
+                appendMessageToDOM('assistant', errMsg, timeStr);
+            } finally {
+                isTyping = false;
+                document.getElementById('sendButton').disabled = false;
+                messageInput.focus();
+            }
         }
 
-        // Simulated Smart AI Responses
-        function generateSmartReply(prompt, model) {
-            const lower = prompt.toLowerCase();
-            if (lower.includes('โค้ด') || lower.includes('code') || lower.includes('html') || lower.includes('tailwind')) {
-                return `นี่คือตัวอย่างโค้ดปุ่มสวยงามด้วย **Tailwind CSS** จากโมเดล **${model}** ครับ:\n\n\`\`\`html\n<button class="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:brightness-110 text-white font-medium rounded-xl shadow-lg transition-all">\n  เริ่มต้นใช้งาน\n</button>\n\`\`\`\n\nคุณสามารถนำไปปรับแต่งสีและขนาดเพิ่มเติมได้ตามต้องการเลยครับ!`;
-            }
-            if (lower.includes('api')) {
-                return `**API (Application Programming Interface)** เปรียบเสมือน "พนักงานเสิร์ฟ" ในร้านอาหารครับ:\n\n1. **คุณ (Client)** สั่งอาหารผ่านเมนู\n2. **พนักงานเสิร์ฟ (API)** นำคำสั่งไปส่งให้ห้องครัว\n3. **ห้องครัว (Server)** ปรุงอาหารและส่งกลับมาให้คุณผ่านพนักงานเสิร์ฟ\n\nและหากต้องการเชื่อมต่อหน้าเว็บ **SundayAI** นี้กับ Gemini API จริง เพียงนำคีย์มาใส่ที่ตัวแปร \`GEMINI_API_KEY\` ในไฟล์ HTML ได้เลยครับ`;
-            }
-            return `ได้รับข้อความของคุณเรียบร้อยแล้วครับ! (**โมเดล: ${model}**)\n\nคุณพิมพ์ว่า: *"${prompt}"*\n\nหน้าเว็บ **SundayAI** เวอร์ชันจัดเต็มนี้พร้อมใช้งานทั้งบนมือถือและคอมพิวเตอร์แล้วครับ`;
-        }
-
-        // Suggestion Card Click
         function useSuggestion(text) {
             messageInput.value = text;
             sendMessage();
         }
 
-        // Auto Resize Textarea
         function autoResize(el) {
             el.style.height = 'auto';
             el.style.height = Math.min(el.scrollHeight, 160) + 'px';
         }
 
-        // Handle Enter vs Shift+Enter
         function handleKeyDown(e) {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -879,29 +783,22 @@
             }
         }
 
-        // Scroll Messages to Bottom
         function scrollToBottom() {
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
-        // Copy Helpers
         function copyToClipboard(text, successMsg) {
-            const textarea = document.createElement('textarea');
-            textarea.value = text;
-            document.body.appendChild(textarea);
-            textarea.select();
-            try {
-                document.execCommand('copy');
+            navigator.clipboard?.writeText(text).then(() => {
                 showToast(successMsg);
-            } catch (err) {
-                showToast('ไม่สามารถคัดลอกได้');
-            }
-            document.body.removeChild(textarea);
-        }
-
-        function copyShareLink() {
-            const url = `${window.location.origin}/chat?id=${currentChatId}`;
-            copyToClipboard(url, `คัดลอกลิงก์แชท (${currentChatId}) แล้ว`);
+            }).catch(() => {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                showToast(successMsg);
+            });
         }
 
         function copyCodeBlock(btn) {
@@ -914,18 +811,12 @@
             copyToClipboard(text, 'คัดลอกข้อความแล้ว');
         }
 
-        function attachMockFile() {
-            showToast('รองรับการอัปโหลดไฟล์เมื่อเชื่อมต่อ Backend API');
-        }
-
-        // Escape HTML Utility
         function escapeHtml(str) {
             const div = document.createElement('div');
             div.textContent = str;
             return div.innerHTML;
         }
 
-        // Run App
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', init);
         } else {
