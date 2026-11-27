@@ -548,9 +548,9 @@
                 <!-- เครื่องเล่นเพลง YOUNG J - JOKER (Mini Music Pill) -->
                 <div id="musicPlayerPill" class="flex items-center gap-1.5 sm:gap-2 px-2.5 py-1.5 rounded-xl bg-slate-950/90 dark:bg-darkCard border border-emerald-500/40 text-white shadow-md shadow-emerald-500/10">
                     <button type="button" id="musicToggleBtn" onclick="toggleBgMusic()" title="เล่น / หยุดเพลง" class="w-6 h-6 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 flex items-center justify-center shrink-0 transition-all active:scale-90">
-                        <i id="musicPlayIcon" data-lucide="pause" class="w-3.5 h-3.5 fill-current"></i>
+                        <i id="musicPlayIcon" data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>
                     </button>
-                    <div id="musicEqBars" class="flex items-end gap-[2px] h-4 px-0.5 shrink-0">
+                    <div id="musicEqBars" class="eq-paused flex items-end gap-[2px] h-4 px-0.5 shrink-0">
                         <span class="eq-bar"></span>
                         <span class="eq-bar"></span>
                         <span class="eq-bar"></span>
@@ -558,7 +558,7 @@
                     </div>
                     <div class="min-w-0 max-w-[85px] sm:max-w-[140px]">
                         <p class="text-[11px] font-bold text-emerald-400 truncate leading-tight">JOKER - ยังเจ</p>
-                        <p id="musicStatusText" class="text-[9px] text-slate-400 truncate leading-tight">กำลังเล่น...</p>
+                        <p id="musicStatusText" class="text-[9px] text-slate-400 truncate leading-tight">กดเพื่อเล่น</p>
                     </div>
                     <div class="hidden md:flex items-center gap-1 pl-1 border-l border-slate-800">
                         <i data-lucide="volume-2" class="w-3.5 h-3.5 text-emerald-400"></i>
@@ -895,6 +895,11 @@
         let isRecordingVoice = false;
         let speechRecognition = null;
 
+        // ตัวแปรควบคุมเครื่องเล่นเพลง YouTube
+        let ytPlayer = null;
+        let isMusicPlaying = false;
+        let musicUserPaused = false;
+
         let chats = (() => {
             try {
                 const saved = window.localStorage.getItem('sundayai_chats_v1');
@@ -954,6 +959,13 @@
                 if (themeText) themeText.textContent = 'โหมดสว่าง (ธีมหลัก)';
             }
 
+            // ตรวจสอบว่าเคยผ่านหน้า Discord แล้วหรือไม่ ถ้าเคยแล้วให้ซ่อนอัตโนมัติ
+            const discordPassed = safeStorage.get('sundayai_discord_passed', true);
+            const discordModal = document.getElementById('discordGateModal');
+            if (discordPassed === 'true' && discordModal) {
+                discordModal.classList.add('hidden');
+            }
+
             safeIcons();
             renderEmojiGrid();
             renderPromptLibrary();
@@ -962,6 +974,87 @@
             loadChat(currentChatId);
             initCardTiltAnimations();
             initMobileSwipeGestures();
+            initYouTubePlayer();
+        }
+
+        // =========================================================
+        // YOUTUBE MUSIC PLAYER CONTROLS
+        // =========================================================
+        function initYouTubePlayer() {
+            if (window.YT && window.YT.Player) {
+                createYTInstance();
+                return;
+            }
+            window.onYouTubeIframeAPIReady = () => {
+                createYTInstance();
+            };
+            const tag = document.createElement('script');
+            tag.src = 'https://www.youtube.com/iframe_api';
+            const firstScriptTag = document.getElementsByTagName('script')[0];
+            if (firstScriptTag && firstScriptTag.parentNode) {
+                firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+            }
+        }
+
+        function createYTInstance() {
+            try {
+                ytPlayer = new YT.Player('ytMusicPlayer', {
+                    height: '1',
+                    width: '1',
+                    videoId: 'v84yW5R9K-U', // YOUNG J - JOKER
+                    playerVars: {
+                        autoplay: 0,
+                        loop: 1,
+                        playlist: 'v84yW5R9K-U',
+                        controls: 0
+                    },
+                    events: {
+                        onReady: (event) => {
+                            const slider = document.getElementById('musicVolumeSlider');
+                            event.target.setVolume(slider ? Number(slider.value) : 65);
+                        },
+                        onStateChange: (event) => {
+                            if (event.data === YT.PlayerState.PLAYING) {
+                                updateMusicPlayerUI(true);
+                            } else if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED) {
+                                updateMusicPlayerUI(false);
+                            }
+                        }
+                    }
+                });
+            } catch (e) {}
+        }
+
+        function updateMusicPlayerUI(playing) {
+            isMusicPlaying = playing;
+            const icon = document.getElementById('musicPlayIcon');
+            const eq = document.getElementById('musicEqBars');
+            const status = document.getElementById('musicStatusText');
+            if (icon) icon.setAttribute('data-lucide', playing ? 'pause' : 'play');
+            if (eq) {
+                if (playing) eq.classList.remove('eq-paused');
+                else eq.classList.add('eq-paused');
+            }
+            if (status) status.textContent = playing ? 'กำลังเล่น...' : 'หยุดชั่วคราว';
+            safeIcons();
+        }
+
+        function toggleBgMusic() {
+            if (!ytPlayer || typeof ytPlayer.playVideo !== 'function') {
+                showToast('กำลังเตรียมเครื่องเล่นเพลง กรุณาลองอีกครั้ง 🎵');
+                return;
+            }
+            if (isMusicPlaying) {
+                musicUserPaused = true;
+                ytPlayer.pauseVideo();
+                updateMusicPlayerUI(false);
+            } else {
+                musicUserPaused = false;
+                ytPlayer.unMute();
+                ytPlayer.playVideo();
+                updateMusicPlayerUI(true);
+            }
+        }
 
         function changeMusicVolume(val) {
             if (ytPlayer && typeof ytPlayer.setVolume === 'function') {
@@ -1269,6 +1362,7 @@
                 spawnEmojiBurst(btn, emoji);
             }
 
+            saveChatsToStorage();
             const bar = btn.closest('.reaction-bar');
             if (bar) {
                 bar.innerHTML = buildReactionButtonsHTML(msgIndex, msg.reactions);
@@ -1718,11 +1812,6 @@
                 else displayPrompt = 'ช่วยดูและวิเคราะห์รูปภาพนี้ให้หน่อย';
             }
 
-            // รวมเนื้อหาไฟล์โค้ดเข้ากับ Prompt ที่ส่งให้ AI
-            const fullPromptForAI = currentDoc
-                ? `${displayPrompt}\n\n--- เนื้อหาไฟล์: ${currentDoc.name} ---\n\`\`\`${currentDoc.ext}\n${currentDoc.content}\n\`\`\``
-                : displayPrompt;
-
             if (!userApiKey) {
                 pendingMessageAfterKey = rawText;
                 openApiKeyModal();
@@ -1786,7 +1875,6 @@
                     }
                     const prev = normalizedHistory[normalizedHistory.length - 1];
                     if (prev && prev.role === normalizedRole) {
-                        // รวมข้อความที่ role ซ้ำติดกันเข้าด้วยกันแทนการส่ง role ซ้ำ
                         prev.content += `\n\n${m.content}`;
                         if (m.doc) prev.doc = m.doc;
                         if (m.image) prev.image = m.image;
@@ -1799,12 +1887,11 @@
                     const isLatestUserMsg = idx === normalizedHistory.length - 1 && m.role === 'user';
                     let formattedContent = String(m.content || '');
                     if (m.doc && m.doc.content) {
-                        // คุมขนาดเนื้อหาไฟล์ไม่ให้เกิน 180,000 ตัวอักษรเพื่อป้องกัน Payload/History Error จาก API
                         const maxChars = isLatestUserMsg ? 180000 : 3000;
                         const docBody = m.doc.content.length > maxChars
                             ? m.doc.content.slice(0, maxChars) + '\n... (ตัดทอนบางส่วนเนื่องจากไฟล์มีขนาดใหญ่มาก)'
                             : m.doc.content;
-                        formattedContent = `${formattedContent}\n\nไฟล์แนบชื่อ: ${m.doc.name}\n\\\`\\\`\\\`${m.doc.ext || 'txt'}\n${docBody}\n\\\`\\\`\\\``;
+                        formattedContent = `${formattedContent}\n\nไฟล์แนบชื่อ: ${m.doc.name}\n\`\`\`${m.doc.ext || 'txt'}\n${docBody}\n\`\`\``;
                     }
                     if (isLatestUserMsg) {
                         const personaKey = document.getElementById('personaSelect')?.value || 'default';
@@ -1818,7 +1905,7 @@
                             formattedContent = `${personaPrompts[personaKey]}\n\n${formattedContent}`;
                         }
                         if (m.doc) {
-                            formattedContent += `\n\n(หมายเหตุ: กรุณาตอบกลับโค้ดฉบับสมบูรณ์ในบล็อก \\\`\\\`\\\`${m.doc.ext || 'txt'}:${m.doc.name} เพื่อให้ดาวน์โหลดเป็นไฟล์ได้ทันที)`;
+                            formattedContent += `\n\n(หมายเหตุ: กรุณาตอบกลับโค้ดฉบับสมบูรณ์ในบล็อก \`\`\`${m.doc.ext || 'txt'}:${m.doc.name} เพื่อให้ดาวน์โหลดเป็นไฟล์ได้ทันที)`;
                         }
                     }
                     const payloadItem = {
@@ -1885,7 +1972,6 @@
             } catch (err) {
                 removeTypingIndicator();
                 if (err.name === 'AbortError') {
-                    // ผู้ใช้กดปุ่มหยุดข้อความกลางคัน
                     if (streamStarted && wrapper) {
                         const stoppedReply = fullReply + (fullReply ? '\n\n*(หยุดการสร้างข้อความแล้ว)*' : '*(หยุดการสร้างข้อความแล้ว)*');
                         finalizeAIMessage(chat, wrapper, stoppedReply, timeStr);
@@ -1917,7 +2003,7 @@
         }
 
         function handleJoinDiscordClick() {
-            safeStorage.set('sundayai_discord_passed', 'true');
+            safeStorage.set('sundayai_discord_passed', 'true', true);
             if (ytPlayer && typeof ytPlayer.playVideo === 'function' && !musicUserPaused) {
                 ytPlayer.unMute();
                 ytPlayer.playVideo();
@@ -1928,7 +2014,7 @@
         }
 
         function enterSundayAI() {
-            safeStorage.set('sundayai_discord_passed', 'true');
+            safeStorage.set('sundayai_discord_passed', 'true', true);
             if (ytPlayer && typeof ytPlayer.playVideo === 'function' && !musicUserPaused) {
                 ytPlayer.unMute();
                 ytPlayer.playVideo();
