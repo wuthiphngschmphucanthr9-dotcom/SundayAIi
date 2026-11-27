@@ -504,25 +504,39 @@
                     <i data-lucide="menu" class="w-5 h-5"></i>
                 </button>
                 <div class="relative group min-w-0">
-                    <select id="modeSelect" class="appearance-none bg-white/85 dark:bg-darkCard/90 border border-slate-200/80 dark:border-darkBorder hover:border-indigo-500/50 text-xs sm:text-sm font-semibold rounded-xl pl-3 pr-8 py-1.5 sm:py-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500/40 shadow-sm transition-all truncate max-w-[175px] sm:max-w-none">
+                    <select id="modeSelect" class="appearance-none bg-white/85 dark:bg-darkCard/90 border border-slate-200/80 dark:border-darkBorder hover:border-indigo-500/50 text-xs sm:text-sm font-semibold rounded-xl pl-3 pr-8 py-1.5 sm:py-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500/40 shadow-sm transition-all truncate max-w-[140px] sm:max-w-none">
                         <option value="fast">⚡ โหมดเร็ว (ตอบไว)</option>
                         <option value="smart" selected>✨ โหมดฉลาด (วิเคราะห์ลึก)</option>
                         <option value="beast">🔥 โหมดโหด (โค้ดระดับโปร)</option>
                     </select>
                     <i data-lucide="chevron-down" class="w-4 h-4 absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 group-hover:text-indigo-400 pointer-events-none transition-colors"></i>
                 </div>
+                <!-- ตัวเลือกบุคลิก AI (AI Persona Selector) -->
+                <div class="relative group min-w-0 hidden sm:block">
+                    <select id="personaSelect" onchange="handlePersonaChange()" class="appearance-none bg-emerald-500/10 dark:bg-emerald-950/40 border border-emerald-500/30 hover:border-emerald-500/60 text-emerald-700 dark:text-emerald-300 text-xs sm:text-sm font-semibold rounded-xl pl-3 pr-8 py-1.5 sm:py-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500/40 shadow-sm transition-all">
+                        <option value="default">🤖 ผู้ช่วยอัจฉริยะทั่วไป</option>
+                        <option value="coder">💻 โปรแกรมเมอร์ระดับเทพ</option>
+                        <option value="designer">🎨 นักออกแบบ UI/UX</option>
+                        <option value="writer">✍️ นักเขียนคอนเทนต์ไวรัล</option>
+                        <option value="tutor">🎓 ติวเตอร์อธิบายเข้าใจง่าย</option>
+                    </select>
+                    <i data-lucide="chevron-down" class="w-4 h-4 absolute right-2 top-1/2 -translate-y-1/2 text-emerald-500 pointer-events-none transition-colors"></i>
+                </div>
             </div>
 
-            <div class="flex items-center gap-1.5 sm:gap-2">
+            <div class="flex items-center gap-1 sm:gap-2">
                 <button type="button" onclick="openDiscordModal()" title="เข้า Discord" class="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1.5 rounded-xl bg-[#5865F2]/15 text-[#7983F5] border border-[#5865F2]/25 hover:bg-[#5865F2]/25 transition-all">
                     <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 127.14 96.36">
                         <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/>
                     </svg>
                     <span class="hidden sm:inline">Discord</span>
                 </button>
-                <button type="button" onclick="openApiKeyModal()" id="headerKeyBtn" class="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 transition-all">
+                <button type="button" onclick="openApiKeyModal()" id="headerKeyBtn" class="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 sm:px-3 py-1.5 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 transition-all">
                     <i data-lucide="key-round" class="w-3.5 h-3.5"></i>
                     <span class="hidden sm:inline">ใส่ API Key</span>
+                </button>
+                <button type="button" onclick="exportChatHistory()" title="ส่งออกประวัติแชท (.md)" class="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-emerald-500/10 hover:text-emerald-500 active:scale-95 transition-all">
+                    <i data-lucide="download-cloud" class="w-4 h-4"></i>
                 </button>
                 <button type="button" onclick="clearCurrentChat()" title="ล้างข้อความในแชทนี้" class="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-red-500/10 hover:text-red-500 active:scale-95 transition-all">
                     <i data-lucide="trash-2" class="w-4 h-4"></i>
@@ -1577,8 +1591,8 @@
             } else {
                 const moodEmoji = detectSmartContextEmoji(content);
                 wrapper.innerHTML = `
-                    <div class="relative w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center text-white shrink-0 mt-1 shadow-md shadow-indigo-500/25">
-                        <i data-lucide="sparkles" class="w-4 h-4"></i>
+                    <div class="relative w-9 h-9 rounded-xl bg-slate-950 border border-emerald-400/60 flex items-center justify-center shrink-0 mt-1 shadow-md shadow-emerald-500/25">
+                        ${getSundayAiAvatarSVG('w-7 h-7')}
                         <span class="absolute -bottom-1.5 -right-1.5 w-5 h-5 rounded-full bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder flex items-center justify-center text-[11px] shadow-sm">${moodEmoji}</span>
                     </div>
                     <div class="max-w-[88%] sm:max-w-[80%] space-y-2 group">
@@ -1591,6 +1605,10 @@
                             </div>
                             <div class="flex items-center gap-2.5 text-slate-400">
                                 <span class="text-[11px]">${time}</span>
+                                <button type="button" onclick="speakMessageText(this)" data-text="${escapeHtml(content)}" title="ฟังเสียงอ่านข้อความ" class="flex items-center gap-1 text-[11px] hover:text-emerald-500 transition-colors">
+                                    <i data-lucide="volume-2" class="w-3 h-3"></i>
+                                    <span>ฟังเสียง</span>
+                                </button>
                                 <button type="button" onclick="regenerateLastResponse()" title="สร้างคำตอบใหม่" class="flex items-center gap-1 text-[11px] hover:text-purple-400 transition-colors">
                                     <i data-lucide="rotate-ccw" class="w-3 h-3"></i>
                                     <span>ตอบใหม่</span>
@@ -1615,16 +1633,20 @@
             const wrapper = document.createElement('div');
             wrapper.className = 'flex gap-3 sm:gap-3.5 justify-start animate-msg';
             wrapper.innerHTML = `
-                <div class="relative w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center text-white shrink-0 mt-1 shadow-md shadow-indigo-500/25">
-                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                <div class="relative w-9 h-9 rounded-xl bg-slate-950 border border-emerald-400/60 flex items-center justify-center shrink-0 mt-1 shadow-md shadow-emerald-500/25">
+                    ${getSundayAiAvatarSVG('w-7 h-7')}
                     <span class="ai-mood-badge absolute -bottom-1.5 -right-1.5 w-5 h-5 rounded-full bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder flex items-center justify-center text-[11px] shadow-sm animate-bounce">✨</span>
                 </div>
                 <div class="max-w-[88%] sm:max-w-[80%] space-y-2 group">
-                    <div class="ai-bubble bg-white/90 dark:bg-darkCard/90 backdrop-blur-md border border-indigo-500/30 px-4 py-3.5 rounded-2xl rounded-tl-sm shadow-md shadow-indigo-500/5 text-sm sm:text-base leading-relaxed break-words writing-cursor"></div>
+                    <div class="ai-bubble bg-white/90 dark:bg-darkCard/90 backdrop-blur-md border border-emerald-500/40 px-4 py-3.5 rounded-2xl rounded-tl-sm shadow-md shadow-emerald-500/10 text-sm sm:text-base leading-relaxed break-words writing-cursor"></div>
                     <div class="ai-actions hidden flex flex-wrap items-center justify-between gap-2 px-1">
                         <div class="reaction-bar flex flex-wrap items-center gap-1"></div>
                         <div class="flex items-center gap-2.5 text-slate-400">
                             <span class="text-[11px]">${time}</span>
+                            <button type="button" onclick="speakMessageText(this)" class="speak-btn flex items-center gap-1 text-[11px] hover:text-emerald-500 transition-colors">
+                                <i data-lucide="volume-2" class="w-3 h-3"></i>
+                                <span>ฟังเสียง</span>
+                            </button>
                             <button type="button" onclick="regenerateLastResponse()" title="สร้างคำตอบใหม่" class="flex items-center gap-1 text-[11px] hover:text-purple-400 transition-colors">
                                 <i data-lucide="rotate-ccw" class="w-3 h-3"></i>
                                 <span>ตอบใหม่</span>
@@ -1640,6 +1662,49 @@
             chatMessages.appendChild(wrapper);
             safeIcons();
             return wrapper;
+        }
+
+        function getSundayAiAvatarSVG(sizeClass = 'w-7 h-7') {
+            return `
+                <svg viewBox="0 0 100 100" class="${sizeClass}">
+                    <circle cx="50" cy="50" r="38" fill="none" stroke="#22c55e" stroke-width="3.5" stroke-opacity="0.7"/>
+                    <path d="M68 24 H38 L28 48 H56 L48 76 H24" fill="none" stroke="#22c55e" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M68 24 H38 L28 48 H56 L48 76 H24" fill="none" stroke="#f8fafc" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <ellipse cx="50" cy="52" rx="44" ry="13" transform="rotate(-22 50 52)" fill="none" stroke="#4ade80" stroke-width="4"/>
+                    <polygon points="82,25 84,31 90,33 84,35 82,41 80,35 74,33 80,31" fill="#ffffff"/>
+                </svg>
+            `;
+        }
+
+        function showTypingIndicator() {
+            const indicator = document.createElement('div');
+            indicator.id = 'typingIndicator';
+            indicator.className = 'flex gap-3 sm:gap-3.5 justify-start animate-msg';
+            indicator.innerHTML = `
+                <div class="w-9 h-9 rounded-xl bg-slate-950 border border-emerald-400/60 flex items-center justify-center shrink-0 mt-1 shadow-md shadow-emerald-500/25 animate-pulse">
+                    ${getSundayAiAvatarSVG('w-7 h-7')}
+                </div>
+                <div class="bg-white/90 dark:bg-darkCard/90 backdrop-blur-md border border-slate-200/80 dark:border-darkBorder px-4 py-3.5 rounded-2xl rounded-tl-sm flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 typing-dot"></span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 typing-dot"></span>
+                    <span class="w-2 h-2 rounded-full bg-teal-400 typing-dot"></span>
+                </div>
+            `;
+            chatMessages.appendChild(indicator);
+            safeIcons();
+            scrollToBottom();
+        }
+
+        function getSundayAiAvatarSVG(sizeClass = 'w-7 h-7') {
+            return `
+                <svg viewBox="0 0 100 100" class="${sizeClass}">
+                    <circle cx="50" cy="50" r="38" fill="none" stroke="#22c55e" stroke-width="3.5" stroke-opacity="0.7"/>
+                    <path d="M68 24 H38 L28 48 H56 L48 76 H24" fill="none" stroke="#22c55e" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M68 24 H38 L28 48 H56 L48 76 H24" fill="none" stroke="#f8fafc" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <ellipse cx="50" cy="52" rx="44" ry="13" transform="rotate(-22 50 52)" fill="none" stroke="#4ade80" stroke-width="4"/>
+                    <polygon points="82,25 84,31 90,33 84,35 82,41 80,35 74,33 80,31" fill="#ffffff"/>
+                </svg>
+            `;
         }
 
         function showTypingIndicator() {
@@ -1742,29 +1807,67 @@
             let wrapper = null;
 
             try {
-                // จัดรูปแบบประวัติการสนทนาให้สะอาดและถูกต้อง (ไม่ส่งข้อความว่างและแนบไฟล์เฉพาะข้อความที่เกี่ยวข้อง)
-                const validHistory = chat.messages.filter(m => {
-                    const txt = (m.content || '').trim();
-                    return txt && !txt.startsWith('⚠️') && !txt.startsWith('⏹️');
+                // จัดรูปแบบประวัติการสนทนาให้ถูกต้องตามมาตรฐาน API (สลับ user/assistant เท่านั้น และไม่ซ้ำ role ติดกัน)
+                const rawValid = chat.messages.filter(m => {
+                    const txt = String(m.content || '').trim();
+                    return txt.length > 0 && !txt.startsWith('⚠️') && !txt.startsWith('⏹️');
                 }).slice(-8);
 
-                const apiMessages = validHistory.map((m, idx) => {
-                    const isLatestUserMsg = idx === validHistory.length - 1 && m.role === 'user';
-                    let formattedContent = m.content;
-                    if (m.doc) {
-                        // ถ้าเป็นข้อความล่าสุดส่งโค้ดเต็ม ถ้าเป็นประวัติเก่าส่งแบบกระชับเพื่อไม่ให้ประวัติเพี้ยนหรือเกินลิมิต
-                        const docBody = isLatestUserMsg ? m.doc.content : m.doc.content.slice(0, 4000);
-                        formattedContent = `${m.content}\n\n[ไฟล์แนบ: ${m.doc.name}]\n\`\`\`${m.doc.ext}\n${docBody}\n\`\`\``;
+                // ป้องกันกรณีมีข้อความ role เดียวกันติดกัน (ซึ่งทำให้ API แจ้งว่ารูปแบบประวัติข้อความไม่ถูกต้อง)
+                const normalizedHistory = [];
+                for (const m of rawValid) {
+                    const normalizedRole = m.role === 'user' ? 'user' : 'assistant';
+                    if (normalizedHistory.length === 0 && normalizedRole !== 'user') {
+                        continue; // ประวัติต้องเริ่มต้นด้วย user เสมอ
                     }
-                    // แนบคำสั่งระบบในข้อความล่าสุดเพื่อให้ AI ส่งโค้ดพร้อมชื่อไฟล์เมื่อผู้ใช้ขอสร้างไฟล์
+                    const prev = normalizedHistory[normalizedHistory.length - 1];
+                    if (prev && prev.role === normalizedRole) {
+                        // รวมข้อความที่ role ซ้ำติดกันเข้าด้วยกันแทนการส่ง role ซ้ำ
+                        prev.content += `\n\n${m.content}`;
+                        if (m.doc) prev.doc = m.doc;
+                        if (m.image) prev.image = m.image;
+                    } else {
+                        normalizedHistory.push({ ...m, role: normalizedRole });
+                    }
+                }
+
+                const apiMessages = normalizedHistory.map((m, idx) => {
+                    const isLatestUserMsg = idx === normalizedHistory.length - 1 && m.role === 'user';
+                    let formattedContent = String(m.content || '');
+                    if (m.doc && m.doc.content) {
+                        // คุมขนาดเนื้อหาไฟล์ไม่ให้เกิน 180,000 ตัวอักษรเพื่อป้องกัน Payload/History Error จาก API
+                        const maxChars = isLatestUserMsg ? 180000 : 3000;
+                        const docBody = m.doc.content.length > maxChars
+                            ? m.doc.content.slice(0, maxChars) + '\n... (ตัดทอนบางส่วนเนื่องจากไฟล์มีขนาดใหญ่มาก)'
+                            : m.doc.content;
+                        formattedContent = `${formattedContent}\n\nไฟล์แนบชื่อ: ${m.doc.name}\n\\\`\\\`\\\`${m.doc.ext || 'txt'}\n${docBody}\n\\\`\\\`\\\``;
+                    }
                     if (isLatestUserMsg) {
-                        formattedContent += `\n\n[คำแนะนำระบบ: หากผู้ใช้ขอให้สร้างไฟล์ แก้ไขไฟล์ หรือเขียนโค้ด กรุณาตอบกลับโค้ดฉบับสมบูรณ์ในบล็อก \`\`\`ภาษา:ชื่อไฟล์.นามสกุล เช่น \`\`\`html:index.html หรือ \`\`\`py:main.py เพื่อให้ระบบสร้างปุ่มดาวน์โหลดไฟล์ให้ผู้ใช้ทันที]`;
+                        const personaKey = document.getElementById('personaSelect')?.value || 'default';
+                        const personaPrompts = {
+                            coder: '[บทบาท: โปรแกรมเมอร์ระดับ Senior Engineer ตอบโค้ดที่สะอาด ปลอดภัย ประสิทธิภาพสูง พร้อมคอมเมนต์ชัดเจน]',
+                            designer: '[บทบาท: นักออกแบบ UI/UX ระดับโลก เน้นความสวยงาม ทันสมัย สัดส่วนลงตัว และประสบการณ์ผู้ใช้ที่ดีเยี่ยม]',
+                            writer: '[บทบาท: นักเขียนคอนเทนต์มืออาชีพ ใช้ภาษาที่ดึงดูด น่าอ่าน ชวนติดตาม]',
+                            tutor: '[บทบาท: ติวเตอร์ใจดี อธิบายเรื่องยากให้เข้าใจง่ายทีละขั้นตอน พร้อมยกตัวอย่างประกอบ]'
+                        };
+                        if (personaPrompts[personaKey]) {
+                            formattedContent = `${personaPrompts[personaKey]}\n\n${formattedContent}`;
+                        }
+                        if (m.doc) {
+                            formattedContent += `\n\n(หมายเหตุ: กรุณาตอบกลับโค้ดฉบับสมบูรณ์ในบล็อก \\\`\\\`\\\`${m.doc.ext || 'txt'}:${m.doc.name} เพื่อให้ดาวน์โหลดเป็นไฟล์ได้ทันที)`;
+                        }
                     }
-                    return {
-                        role: m.role === 'user' ? 'user' : 'assistant',
-                        content: formattedContent,
-                        ...(isLatestUserMsg && m.image ? { image: { base64: m.image.base64, mimeType: m.image.mimeType } } : {})
+                    const payloadItem = {
+                        role: m.role,
+                        content: formattedContent
                     };
+                    if (isLatestUserMsg && m.image && m.image.base64) {
+                        payloadItem.image = {
+                            base64: m.image.base64,
+                            mimeType: m.image.mimeType || 'image/jpeg'
+                        };
+                    }
+                    return payloadItem;
                 });
 
                 const response = await fetch('/api/chat', {
@@ -2034,6 +2137,7 @@
             const bubble = wrapper.querySelector('.ai-bubble');
             const actions = wrapper.querySelector('.ai-actions');
             const copyBtn = wrapper.querySelector('.copy-btn');
+            const speakBtn = wrapper.querySelector('.speak-btn');
             const moodBadge = wrapper.querySelector('.ai-mood-badge');
             const reactionBar = wrapper.querySelector('.reaction-bar');
 
@@ -2048,10 +2152,69 @@
             moodBadge.classList.remove('animate-bounce');
             moodBadge.classList.add('animate-reaction-pop');
             copyBtn.setAttribute('data-text', finalContent);
+            if (speakBtn) speakBtn.setAttribute('data-text', finalContent);
             reactionBar.innerHTML = buildReactionButtonsHTML(aiMsgIdx, {});
             actions.classList.remove('hidden');
             safeIcons();
             scrollToBottom();
+        }
+
+        // =========================================================
+        // TEXT-TO-SPEECH, PERSONA & EXPORT CHAT HISTORY
+        // =========================================================
+        function handlePersonaChange() {
+            const select = document.getElementById('personaSelect');
+            if (!select) return;
+            const label = select.options[select.selectedIndex].text;
+            showToast(`เปลี่ยนบทบาทผู้ช่วยเป็น: ${label}`);
+        }
+
+        function speakMessageText(btn) {
+            if (!('speechSynthesis' in window)) {
+                showToast('เบราว์เซอร์นี้ไม่รองรับการอ่านออกเสียง');
+                return;
+            }
+            if (window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+                showToast('หยุดเสียงอ่านแล้ว 🔇');
+                return;
+            }
+            const raw = btn.getAttribute('data-text') || '';
+            // ลบสัญลักษณ์โค้ดและ Markdown ออกเพื่อให้อ่านเป็นธรรมชาติ
+            const cleanText = raw.replace(/```[\s\S]*?```/g, ' (มีส่วนประกอบของโค้ด) ').replace(/[*#`]/g, '').trim();
+            if (!cleanText) return;
+
+            const utterance = new SpeechSynthesisUtterance(cleanText);
+            utterance.lang = /[ก-๙]/.test(cleanText) ? 'th-TH' : 'en-US';
+            utterance.rate = 1.05;
+            window.speechSynthesis.speak(utterance);
+            showToast('กำลังอ่านออกเสียง... 🔊 (กดซ้ำเพื่อหยุด)');
+        }
+
+        function exportChatHistory() {
+            const chat = chats.find(c => c.id === currentChatId);
+            if (!chat || chat.messages.length === 0) {
+                showToast('ยังไม่มีข้อความในห้องแชทนี้สำหรับส่งออก');
+                return;
+            }
+            const lines = [
+                `# ประวัติการสนทนา SundayAI: ${chat.title}`,
+                `อัปเดตล่าสุด: ${chat.updatedAt}\n`,
+                ...chat.messages.map(m => {
+                    const sender = m.role === 'user' ? '👤 คุณ' : '🤖 SundayAI';
+                    return `### ${sender} (${m.time})\n${m.content}\n`;
+                })
+            ];
+            const blob = new Blob([lines.join('\n---\n\n')], { type: 'text/markdown;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `SundayAI-${chat.title.replace(/[^a-zA-Z0-9ก-๙_-]/g, '_')}.md`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast('ส่งออกไฟล์ประวัติการสนทนาเรียบร้อยแล้ว 📥');
         }
 
         function useSuggestion(text) {
