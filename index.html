@@ -85,6 +85,39 @@
         }
         .animate-msg { animation: msgSpring 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
+        /* Emoji Reaction Pop & Floating Burst */
+        @keyframes reactionPop {
+            0% { transform: scale(0.5); }
+            60% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+        .animate-reaction-pop {
+            animation: reactionPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes emojiFloatUp {
+            0% {
+                opacity: 1;
+                transform: translate(-50%, 0) scale(0.6) rotate(0deg);
+            }
+            50% {
+                opacity: 1;
+                transform: translate(calc(-50% + var(--drift, 0px)), -42px) scale(1.35) rotate(var(--rot, 12deg));
+            }
+            100% {
+                opacity: 0;
+                transform: translate(calc(-50% + var(--drift, 0px)), -85px) scale(0.9) rotate(var(--rot, -12deg));
+            }
+        }
+        .floating-emoji-burst {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            font-size: 1.65rem;
+            filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.25));
+            animation: emojiFloatUp 0.95s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
         .shimmer-btn { position: relative; overflow: hidden; }
         .shimmer-btn::after {
             content: ''; position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
@@ -141,23 +174,23 @@
                     </div>
                     <div>
                         <h3 class="font-bold text-base">ตั้งค่า Gemini API Key</h3>
-                        <p class="text-xs text-slate-400">คีย์จะถูกเก็บไว้ในเบราว์เซอร์ของคุณเท่านั้น</p>
+                        <p class="text-xs text-slate-400">ใส่คีย์เพื่อเริ่มสนทนากับ SundayAI</p>
                     </div>
                 </div>
-                <button onclick="closeApiKeyModal()" class="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-darkBorder">
+                <button type="button" onclick="closeApiKeyModal()" class="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-darkBorder">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
             <div class="space-y-2">
                 <label class="text-xs font-medium text-slate-500 dark:text-slate-300">Gemini API Key (AIzaSy...)</label>
-                <input id="apiKeyInput" type="password" placeholder="วางคีย์จาก Google AI Studio ที่นี่..." class="w-full bg-slate-100 dark:bg-darkBg border border-slate-200 dark:border-darkBorder focus:border-indigo-500 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none">
+                <input id="apiKeyInput" type="password" onkeydown="if(event.key==='Enter') saveApiKey()" placeholder="วางคีย์จาก Google AI Studio ที่นี่..." class="w-full bg-slate-100 dark:bg-darkBg border border-slate-200 dark:border-darkBorder focus:border-indigo-500 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none">
                 <p class="text-[11px] text-slate-400">
-                    รับคีย์ฟรีได้ที่ <a href="https://aistudio.google.com/apikey" target="_blank" class="text-indigo-400 underline hover:text-indigo-300">Google AI Studio</a>
+                    รับคีย์ฟรีได้ที่ <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" class="text-indigo-400 underline hover:text-indigo-300">Google AI Studio</a>
                 </p>
             </div>
             <div class="flex items-center justify-end gap-2 pt-2">
-                <button onclick="closeApiKeyModal()" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-500 hover:bg-slate-100 dark:hover:bg-darkBorder">ยกเลิก</button>
-                <button onclick="saveApiKey()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/25 hover:brightness-110">บันทึกคีย์</button>
+                <button type="button" onclick="closeApiKeyModal()" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-500 hover:bg-slate-100 dark:hover:bg-darkBorder">ยกเลิก</button>
+                <button type="button" onclick="saveApiKey()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/25 hover:brightness-110">บันทึกคีย์</button>
             </div>
         </div>
     </div>
@@ -178,12 +211,12 @@
                         <span class="text-[10px] text-slate-400 font-medium">Real-time Gemini Workspace</span>
                     </div>
                 </div>
-                <button onclick="toggleSidebar()" class="md:hidden p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-darkCard">
+                <button type="button" onclick="toggleSidebar()" class="md:hidden p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-darkCard">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
 
-            <button onclick="createNewChat()" class="shimmer-btn w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 hover:brightness-110 text-white font-medium text-sm flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/25 transition-all active:scale-[0.97]">
+            <button type="button" onclick="createNewChat()" class="shimmer-btn w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 hover:brightness-110 text-white font-medium text-sm flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/25 transition-all active:scale-[0.97]">
                 <i data-lucide="plus" class="w-4 h-4"></i>
                 <span>สร้างแชทใหม่</span>
             </button>
@@ -201,7 +234,7 @@
 
         <!-- Sidebar Footer -->
         <div class="p-3 border-t border-slate-200/80 dark:border-darkBorder/80 space-y-1.5">
-            <button onclick="openApiKeyModal()" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-darkCard transition-colors">
+            <button type="button" onclick="openApiKeyModal()" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-darkCard transition-colors">
                 <span class="flex items-center gap-2.5">
                     <i data-lucide="key-round" class="w-4 h-4 text-amber-400"></i>
                     <span>ตั้งค่า API Key</span>
@@ -209,7 +242,7 @@
                 <span id="keyStatusBadge" class="px-2 py-0.5 rounded-md bg-rose-500/10 text-rose-400 text-[10px]">ยังไม่ใส่คีย์</span>
             </button>
 
-            <button onclick="toggleTheme()" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-darkCard transition-colors">
+            <button type="button" onclick="toggleTheme()" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-darkCard transition-colors">
                 <span class="flex items-center gap-2.5">
                     <i id="themeIcon" data-lucide="moon" class="w-4 h-4 text-indigo-400"></i>
                     <span id="themeText">โหมดมืด</span>
@@ -224,10 +257,9 @@
         <!-- Top Glass Header -->
         <header class="h-16 border-b border-slate-200/70 dark:border-darkBorder/70 bg-white/70 dark:bg-darkBg/70 backdrop-blur-xl px-3 sm:px-5 flex items-center justify-between sticky top-0 z-20">
             <div class="flex items-center gap-2.5">
-                <button onclick="toggleSidebar()" class="md:hidden p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-darkCard active:scale-95 transition-all">
+                <button type="button" onclick="toggleSidebar()" class="md:hidden p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-darkCard active:scale-95 transition-all">
                     <i data-lucide="menu" class="w-5 h-5"></i>
                 </button>
-                <!-- Mode Selector Pill (เชื่อมต่อตรงกับ backend mode: fast / smart / beast) -->
                 <div class="relative group">
                     <select id="modeSelect" class="appearance-none bg-white/80 dark:bg-darkCard/90 border border-slate-200/80 dark:border-darkBorder hover:border-indigo-500/50 text-xs sm:text-sm font-semibold rounded-xl pl-3.5 pr-9 py-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500/40 shadow-sm transition-all">
                         <option value="fast">⚡ โหมดเร็ว (ตอบไวทันใจ)</option>
@@ -239,11 +271,11 @@
             </div>
 
             <div class="flex items-center gap-1.5 sm:gap-2">
-                <button onclick="openApiKeyModal()" id="headerKeyBtn" class="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 transition-all">
+                <button type="button" onclick="openApiKeyModal()" id="headerKeyBtn" class="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 transition-all">
                     <i data-lucide="key-round" class="w-3.5 h-3.5"></i>
                     <span class="hidden sm:inline">ใส่ API Key</span>
                 </button>
-                <button onclick="clearCurrentChat()" title="ล้างข้อความในแชทนี้" class="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-red-500/10 hover:text-red-500 active:scale-95 transition-all">
+                <button type="button" onclick="clearCurrentChat()" title="ล้างข้อความในแชทนี้" class="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-red-500/10 hover:text-red-500 active:scale-95 transition-all">
                     <i data-lucide="trash-2" class="w-4 h-4"></i>
                 </button>
             </div>
@@ -271,12 +303,12 @@
                             สวัสดี! ให้ <span class="gradient-text">SundayAI</span> ช่วยอะไรดี?
                         </h1>
                         <p class="animate-hero-sub text-xs sm:text-base text-slate-500 dark:text-slate-400 max-w-md mx-auto leading-relaxed">
-                            ถามคำถาม เขียนโค้ด หรือสั่งงานได้เลย AI จะตอบกลับแบบเรียลไทม์ตรงตามทุกคำสั่งของคุณ
+                            ถามคำถาม เขียนโค้ด หรือสั่งงานได้เลย AI จะตอบกลับแบบเรียลไทม์พร้อมอีโมจิและปุ่มรีแอคชันสุดล้ำ ✨
                         </p>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl mx-auto pt-1 text-left">
-                        <button onclick="useSuggestion('ช่วยเขียนหน้าเว็บเกมงู Snake Game ไฟล์เดียวสวยๆ รองรับมือถือ')" style="--delay: 0.32s" class="animate-card group relative p-4 rounded-2xl bg-white/80 dark:bg-darkCard/80 backdrop-blur-md border border-slate-200/80 dark:border-darkBorder hover:border-indigo-500/70 hover:-translate-y-1 hover:shadow-xl hover:shadow-indigo-500/10 active:scale-[0.98] transition-all duration-300">
+                        <button type="button" onclick="useSuggestion('ช่วยเขียนหน้าเว็บเกมงู Snake Game ไฟล์เดียวสวยๆ รองรับมือถือ')" style="--delay: 0.32s" class="animate-card group relative p-4 rounded-2xl bg-white/80 dark:bg-darkCard/80 backdrop-blur-md border border-slate-200/80 dark:border-darkBorder hover:border-indigo-500/70 hover:-translate-y-1 hover:shadow-xl hover:shadow-indigo-500/10 active:scale-[0.98] transition-all duration-300">
                             <div class="flex items-center justify-between mb-1.5">
                                 <div class="flex items-center gap-2 text-indigo-500 dark:text-indigo-400 font-semibold text-sm">
                                     <span class="p-1.5 rounded-lg bg-indigo-500/10 group-hover:scale-110 transition-transform">
@@ -289,7 +321,7 @@
                             <p class="text-xs text-slate-500 dark:text-slate-400">ช่วยเขียนหน้าเว็บเกมงู Snake Game ไฟล์เดียวสวยๆ รองรับมือถือ</p>
                         </button>
 
-                        <button onclick="useSuggestion('ช่วยคิดไอเดียคอนเทนต์โซเชียลมีเดียที่น่าสนใจ 5 ข้อ')" style="--delay: 0.40s" class="animate-card group relative p-4 rounded-2xl bg-white/80 dark:bg-darkCard/80 backdrop-blur-md border border-slate-200/80 dark:border-darkBorder hover:border-emerald-500/70 hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-500/10 active:scale-[0.98] transition-all duration-300">
+                        <button type="button" onclick="useSuggestion('ช่วยคิดไอเดียคอนเทนต์โซเชียลมีเดียที่น่าสนใจ 5 ข้อ')" style="--delay: 0.40s" class="animate-card group relative p-4 rounded-2xl bg-white/80 dark:bg-darkCard/80 backdrop-blur-md border border-slate-200/80 dark:border-darkBorder hover:border-emerald-500/70 hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-500/10 active:scale-[0.98] transition-all duration-300">
                             <div class="flex items-center justify-between mb-1.5">
                                 <div class="flex items-center gap-2 text-emerald-500 dark:text-emerald-400 font-semibold text-sm">
                                     <span class="p-1.5 rounded-lg bg-emerald-500/10 group-hover:scale-110 transition-transform">
@@ -302,7 +334,7 @@
                             <p class="text-xs text-slate-500 dark:text-slate-400">ช่วยคิดไอเดียคอนเทนต์โซเชียลมีเดียที่น่าสนใจ 5 ข้อ</p>
                         </button>
 
-                        <button onclick="useSuggestion('อธิบายการทำงานของ API แบบเข้าใจง่ายใน 3 ย่อหน้า')" style="--delay: 0.48s" class="animate-card group relative p-4 rounded-2xl bg-white/80 dark:bg-darkCard/80 backdrop-blur-md border border-slate-200/80 dark:border-darkBorder hover:border-amber-500/70 hover:-translate-y-1 hover:shadow-xl hover:shadow-amber-500/10 active:scale-[0.98] transition-all duration-300">
+                        <button type="button" onclick="useSuggestion('อธิบายการทำงานของ API แบบเข้าใจง่ายใน 3 ย่อหน้า')" style="--delay: 0.48s" class="animate-card group relative p-4 rounded-2xl bg-white/80 dark:bg-darkCard/80 backdrop-blur-md border border-slate-200/80 dark:border-darkBorder hover:border-amber-500/70 hover:-translate-y-1 hover:shadow-xl hover:shadow-amber-500/10 active:scale-[0.98] transition-all duration-300">
                             <div class="flex items-center justify-between mb-1.5">
                                 <div class="flex items-center gap-2 text-amber-500 dark:text-amber-400 font-semibold text-sm">
                                     <span class="p-1.5 rounded-lg bg-amber-500/10 group-hover:scale-110 transition-transform">
@@ -315,7 +347,7 @@
                             <p class="text-xs text-slate-500 dark:text-slate-400">อธิบายการทำงานของ API แบบเข้าใจง่ายใน 3 ย่อหน้า</p>
                         </button>
 
-                        <button onclick="useSuggestion('ช่วยแปลและเกลาประโยคภาษาอังกฤษให้ดูเป็นมืออาชีพ')" style="--delay: 0.56s" class="animate-card group relative p-4 rounded-2xl bg-white/80 dark:bg-darkCard/80 backdrop-blur-md border border-slate-200/80 dark:border-darkBorder hover:border-pink-500/70 hover:-translate-y-1 hover:shadow-xl hover:shadow-pink-500/10 active:scale-[0.98] transition-all duration-300">
+                        <button type="button" onclick="useSuggestion('ช่วยแปลและเกลาประโยคภาษาอังกฤษให้ดูเป็นมืออาชีพ')" style="--delay: 0.56s" class="animate-card group relative p-4 rounded-2xl bg-white/80 dark:bg-darkCard/80 backdrop-blur-md border border-slate-200/80 dark:border-darkBorder hover:border-pink-500/70 hover:-translate-y-1 hover:shadow-xl hover:shadow-pink-500/10 active:scale-[0.98] transition-all duration-300">
                             <div class="flex items-center justify-between mb-1.5">
                                 <div class="flex items-center gap-2 text-pink-500 dark:text-pink-400 font-semibold text-sm">
                                     <span class="p-1.5 rounded-lg bg-pink-500/10 group-hover:scale-110 transition-transform">
@@ -337,14 +369,31 @@
 
         <!-- Floating Glass Input Area -->
         <div class="px-3 pt-2 sm:p-4 safe-bottom bg-gradient-to-t from-slate-50 via-slate-50/90 to-transparent dark:from-darkBg dark:via-darkBg/95 animate-input-bar">
-            <div class="max-w-3xl mx-auto">
+            <div class="max-w-3xl mx-auto relative">
+                
+                <!-- Modern Floating Emoji Picker Popover -->
+                <div id="emojiPickerPopover" class="hidden absolute bottom-full right-0 mb-2.5 w-72 sm:w-80 bg-white/95 dark:bg-darkCard/95 backdrop-blur-xl border border-slate-200/80 dark:border-darkBorder rounded-2xl p-3 shadow-2xl z-30 animate-msg">
+                    <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-200/60 dark:border-darkBorder/60">
+                        <span class="text-xs font-semibold text-slate-600 dark:text-slate-300 flex items-center gap-1.5">
+                            <span>✨</span> เลือกอีโมจิใส่ข้อความ
+                        </span>
+                        <button type="button" onclick="toggleEmojiPicker()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-0.5 rounded-lg">
+                            <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                    <div id="emojiGrid" class="grid grid-cols-8 gap-1 max-h-44 overflow-y-auto pr-1"></div>
+                </div>
+
                 <div class="relative group rounded-2xl p-[1px] bg-gradient-to-r from-slate-200 via-slate-200 to-slate-200 dark:from-darkBorder dark:via-darkBorder dark:to-darkBorder focus-within:from-indigo-500 focus-within:via-purple-500 focus-within:to-pink-500 shadow-xl shadow-black/10 dark:shadow-black/40 transition-all duration-300">
                     <div class="relative bg-white/95 dark:bg-darkCard/95 backdrop-blur-xl rounded-[15px]">
-                        <textarea id="messageInput" rows="1" placeholder="พิมพ์ข้อความถาม SundayAI ได้เลย..." class="w-full bg-transparent px-4 py-3.5 pr-16 text-base resize-none focus:outline-none max-h-36 overflow-y-auto placeholder:text-slate-400" oninput="autoResize(this)" onkeydown="handleKeyDown(event)"></textarea>
+                        <textarea id="messageInput" rows="1" placeholder="พิมพ์ข้อความถาม SundayAI ได้เลย..." class="w-full bg-transparent px-4 py-3.5 pr-24 text-base resize-none focus:outline-none max-h-36 overflow-y-auto placeholder:text-slate-400" oninput="autoResize(this)" onkeydown="handleKeyDown(event)"></textarea>
                         
-                        <div class="absolute right-2 bottom-2 flex items-center gap-1.5">
-                            <button type="button" id="sendButton" onclick="sendMessage()" class="shimmer-btn p-2.5 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 hover:brightness-110 text-white shadow-md shadow-indigo-500/30 disabled:opacity-40 disabled:cursor-not-allowed transition-all active:scale-90">
-                                <i data-lucide="arrow-up" class="w-4 h-4"></i>
+                        <div class="absolute right-2 bottom-2 flex items-center gap-1">
+                            <button type="button" id="emojiPickerBtn" onclick="toggleEmojiPicker()" title="แทรกอีโมจิ" class="p-2.5 rounded-xl text-slate-400 hover:text-amber-400 hover:bg-slate-100 dark:hover:bg-darkBorder/70 transition-all active:scale-90">
+                                <i data-lucide="smile" class="w-4 h-4 pointer-events-none"></i>
+                            </button>
+                            <button type="button" id="sendButton" onclick="sendMessage()" class="shimmer-btn p-2.5 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 hover:brightness-110 text-white shadow-md shadow-indigo-500/30 disabled:opacity-40 disabled:cursor-not-allowed transition-all active:scale-90 cursor-pointer">
+                                <i data-lucide="arrow-up" class="w-4 h-4 pointer-events-none"></i>
                             </button>
                         </div>
                     </div>
@@ -363,12 +412,35 @@
     </div>
 
     <script>
-        lucide.createIcons();
+        function safeIcons() {
+            try { if (window.lucide) window.lucide.createIcons(); } catch (e) {}
+        }
 
-        // State Management (เก็บในหน่วยความจำและ sessionStorage สำหรับคีย์)
-        let userApiKey = sessionStorage.getItem('sundayai_gemini_key') || '';
+        const safeStorage = {
+            get(key) {
+                try { return window.sessionStorage.getItem(key) || ''; } catch (e) { return ''; }
+            },
+            set(key, val) {
+                try { window.sessionStorage.setItem(key, val); } catch (e) {}
+            },
+            remove(key) {
+                try { window.sessionStorage.removeItem(key); } catch (e) {}
+            }
+        };
+
+        // รายการอีโมจิสำหรับ Quick Reaction และช่องพิมพ์
+        const REACTION_EMOJIS = ['❤️', '🔥', '👍', '🤯', '😂', '✨'];
+        const PICKER_EMOJIS = [
+            '😀','😂','🥰','😎','🤔','🤩','🥳','😭',
+            '👍','👏','🙌','🙏','💪','✨','🔥','❤️',
+            '💡','🚀','💻','⚡','🎯','🎨','📌','✅',
+            '🎉','🌟','🤖','🧠','📚','💬','🌈','☕'
+        ];
+
+        let userApiKey = safeStorage.get('sundayai_gemini_key');
         let currentChatId = 'c_' + Math.random().toString(36).substring(2, 10);
         let isTyping = false;
+        let pendingMessageAfterKey = '';
         let chats = [
             {
                 id: currentChatId,
@@ -385,12 +457,122 @@
         const messagesContainer = document.getElementById('messagesContainer');
 
         function init() {
+            safeIcons();
+            renderEmojiGrid();
             updateKeyStatusUI();
             renderChatList();
             loadChat(currentChatId);
+
+            // ปิด Emoji Picker เมื่อคลิกพื้นที่อื่น
+            document.addEventListener('click', (e) => {
+                const popover = document.getElementById('emojiPickerPopover');
+                const btn = document.getElementById('emojiPickerBtn');
+                if (popover && !popover.classList.contains('hidden') && !popover.contains(e.target) && !btn.contains(e.target)) {
+                    popover.classList.add('hidden');
+                }
+            });
         }
 
-        // API Key Modal Management
+        // สร้างตารางเลือกอีโมจิใน Input
+        function renderEmojiGrid() {
+            const grid = document.getElementById('emojiGrid');
+            if (!grid) return;
+            grid.innerHTML = PICKER_EMOJIS.map(emoji => `
+                <button type="button" onclick="insertEmojiToInput('${emoji}')" class="w-8 h-8 flex items-center justify-center text-lg rounded-xl hover:bg-indigo-500/15 hover:scale-125 active:scale-95 transition-all">
+                    ${emoji}
+                </button>
+            `).join('');
+        }
+
+        function toggleEmojiPicker() {
+            const popover = document.getElementById('emojiPickerPopover');
+            popover.classList.toggle('hidden');
+        }
+
+        function insertEmojiToInput(emoji) {
+            const start = messageInput.selectionStart;
+            const end = messageInput.selectionEnd;
+            const text = messageInput.value;
+            messageInput.value = text.substring(0, start) + emoji + text.substring(end);
+            messageInput.focus();
+            messageInput.selectionStart = messageInput.selectionEnd = start + emoji.length;
+            autoResize(messageInput);
+        }
+
+        // วิเคราะห์อารมณ์/เนื้อหาคำตอบของ AI เพื่อแสดง Badge อีโมจิประจำข้อความอัตโนมัติ
+        function detectSmartContextEmoji(text) {
+            if (!text) return '✨';
+            if (/```/.test(text) || /โค้ด|html|javascript|python|css|api/i.test(text)) return '💻';
+            if (/ขออภัย|ผิดพลาด|ไม่สำเร็จ|⚠️|error/i.test(text)) return '🛠️';
+            if (/ไอเดีย|สร้างสรรค์|แนะนำ|เคล็ดลับ|เทคนิค/i.test(text)) return '💡';
+            if (/สรุป|อธิบาย|ความหมาย|ขั้นตอน|1\./i.test(text)) return '📘';
+            if (/แปล|ภาษา|ประโยค|อังกฤษ/i.test(text)) return '🌐';
+            if (/ยินดี|สำเร็จ|เยี่ยม|สุดยอด|ขอบคุณ/i.test(text)) return '🎉';
+            return '✨';
+        }
+
+        // สร้างเอฟเฟกต์อีโมจิลอยขึ้นเมื่อผู้ใช้กดรีแอคชัน
+        function spawnEmojiBurst(btnElement, emoji) {
+            const rect = btnElement.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top;
+
+            for (let i = 0; i < 3; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'floating-emoji-burst';
+                particle.textContent = emoji;
+                const drift = (i - 1) * 24 + (Math.random() * 14 - 7);
+                const rot = (Math.random() * 40 - 20) + 'deg';
+                particle.style.left = `${centerX}px`;
+                particle.style.top = `${centerY}px`;
+                particle.style.setProperty('--drift', `${drift}px`);
+                particle.style.setProperty('--rot', rot);
+                particle.style.animationDelay = `${i * 0.06}s`;
+                document.body.appendChild(particle);
+                setTimeout(() => particle.remove(), 1100);
+            }
+        }
+
+        // สลับสถานะการกดรีแอคชันใต้ข้อความ AI
+        function toggleMessageReaction(btn, msgIndex, emoji) {
+            const chat = chats.find(c => c.id === currentChatId);
+            if (!chat || !chat.messages[msgIndex]) return;
+
+            const msg = chat.messages[msgIndex];
+            if (!msg.reactions) msg.reactions = {};
+
+            const wasActive = !!msg.reactions[emoji];
+            if (wasActive) {
+                delete msg.reactions[emoji];
+            } else {
+                msg.reactions[emoji] = 1;
+                spawnEmojiBurst(btn, emoji);
+            }
+
+            // อัปเดตแถบรีแอคชันของข้อความนั้น
+            const bar = btn.closest('.reaction-bar');
+            if (bar) {
+                bar.innerHTML = buildReactionButtonsHTML(msgIndex, msg.reactions);
+            }
+        }
+
+        function buildReactionButtonsHTML(msgIndex, reactions = {}) {
+            return REACTION_EMOJIS.map(emoji => {
+                const active = !!reactions[emoji];
+                return `
+                    <button type="button" onclick="toggleMessageReaction(this, ${msgIndex}, '${emoji}')"
+                        class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs transition-all duration-200 select-none ${
+                            active
+                                ? 'bg-indigo-500/20 border border-indigo-500/50 text-indigo-300 shadow-sm shadow-indigo-500/20 animate-reaction-pop scale-105'
+                                : 'bg-slate-100/70 dark:bg-darkCard/80 border border-slate-200/70 dark:border-darkBorder/80 hover:border-indigo-400/50 hover:scale-110 opacity-75 hover:opacity-100'
+                        }">
+                        <span>${emoji}</span>
+                        ${active ? '<span class="text-[10px] font-bold">1</span>' : ''}
+                    </button>
+                `;
+            }).join('');
+        }
+
         function openApiKeyModal() {
             document.getElementById('apiKeyInput').value = userApiKey;
             document.getElementById('apiKeyModal').classList.remove('hidden');
@@ -405,14 +587,20 @@
             const val = document.getElementById('apiKeyInput').value.trim();
             userApiKey = val;
             if (val) {
-                sessionStorage.setItem('sundayai_gemini_key', val);
-                showToast('บันทึก Gemini API Key เรียบร้อยแล้ว');
+                safeStorage.set('sundayai_gemini_key', val);
+                showToast('บันทึก Gemini API Key เรียบร้อยแล้ว ✨');
             } else {
-                sessionStorage.removeItem('sundayai_gemini_key');
+                safeStorage.remove('sundayai_gemini_key');
                 showToast('ลบ API Key แล้ว');
             }
             updateKeyStatusUI();
             closeApiKeyModal();
+
+            if (val && pendingMessageAfterKey) {
+                messageInput.value = pendingMessageAfterKey;
+                pendingMessageAfterKey = '';
+                sendMessage();
+            }
         }
 
         function updateKeyStatusUI() {
@@ -429,7 +617,7 @@
                 headerBtn.innerHTML = `<i data-lucide="key-round" class="w-3.5 h-3.5"></i><span class="hidden sm:inline">ใส่ API Key</span>`;
                 headerBtn.className = 'inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 transition-all';
             }
-            lucide.createIcons();
+            safeIcons();
         }
 
         function showToast(msg) {
@@ -464,7 +652,7 @@
                 themeIcon.setAttribute('data-lucide', 'moon');
                 themeText.textContent = 'โหมดมืด';
             }
-            lucide.createIcons();
+            safeIcons();
         }
 
         function renderChatList(filter = '') {
@@ -494,13 +682,13 @@
                             <p class="text-[11px] text-slate-400 truncate">${chat.updatedAt}</p>
                         </div>
                     </div>
-                    <button onclick="deleteChat(event, '${chat.id}')" title="ลบแชท" class="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 p-1 rounded-lg hover:bg-red-500/10 hover:text-red-500 transition-opacity">
+                    <button type="button" onclick="deleteChat(event, '${chat.id}')" title="ลบแชท" class="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 p-1 rounded-lg hover:bg-red-500/10 hover:text-red-500 transition-opacity">
                         <i data-lucide="trash" class="w-3.5 h-3.5"></i>
                     </button>
                 `;
                 chatHistoryList.appendChild(item);
             });
-            lucide.createIcons();
+            safeIcons();
         }
 
         function filterChats() {
@@ -555,21 +743,20 @@
             } else {
                 welcomeScreen.classList.add('hidden');
                 chatMessages.innerHTML = '';
-                chat.messages.forEach(msg => appendMessageToDOM(msg.role, msg.content, msg.time));
+                chat.messages.forEach((msg, index) => appendMessageToDOM(msg.role, msg.content, msg.time, index, msg.reactions));
                 scrollToBottom();
             }
         }
 
         function formatContent(text) {
             let escaped = escapeHtml(text);
-            // รองรับ code block ทั้งแบบปิดแล้วและกำลังสตรีมอยู่
             escaped = escaped.replace(/```(\w+)?\n([\s\S]*?)(```|$)/g, (match, lang, code) => {
                 const language = lang || 'code';
                 return `
                     <div class="my-3 rounded-xl overflow-hidden border border-slate-200/80 dark:border-darkBorder bg-slate-950 text-slate-100 shadow-md">
                         <div class="flex items-center justify-between px-3.5 py-2 bg-slate-900 border-b border-slate-800 text-xs text-slate-400">
                             <span class="font-mono text-indigo-400">${language}</span>
-                            <button onclick="copyCodeBlock(this)" class="flex items-center gap-1 hover:text-white transition-colors">
+                            <button type="button" onclick="copyCodeBlock(this)" class="flex items-center gap-1 hover:text-white transition-colors">
                                 <i data-lucide="copy" class="w-3.5 h-3.5"></i>
                                 <span>คัดลอกโค้ด</span>
                             </button>
@@ -583,7 +770,7 @@
             return escaped.replace(/\n/g, '<br>');
         }
 
-        function appendMessageToDOM(role, content, time) {
+        function appendMessageToDOM(role, content, time, msgIndex, reactions = {}) {
             welcomeScreen.classList.add('hidden');
             const wrapper = document.createElement('div');
             wrapper.className = `flex gap-3 sm:gap-3.5 animate-msg ${role === 'user' ? 'justify-end' : 'justify-start'}`;
@@ -598,27 +785,34 @@
                     </div>
                 `;
             } else {
+                const moodEmoji = detectSmartContextEmoji(content);
                 wrapper.innerHTML = `
-                    <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center text-white shrink-0 mt-1 shadow-md shadow-indigo-500/25">
+                    <div class="relative w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center text-white shrink-0 mt-1 shadow-md shadow-indigo-500/25">
                         <i data-lucide="sparkles" class="w-4 h-4"></i>
+                        <span class="absolute -bottom-1.5 -right-1.5 w-5 h-5 rounded-full bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder flex items-center justify-center text-[11px] shadow-sm">${moodEmoji}</span>
                     </div>
-                    <div class="max-w-[88%] sm:max-w-[80%] space-y-1.5 group">
+                    <div class="max-w-[88%] sm:max-w-[80%] space-y-2 group">
                         <div class="bg-white/90 dark:bg-darkCard/90 backdrop-blur-md border border-slate-200/80 dark:border-darkBorder px-4 py-3.5 rounded-2xl rounded-tl-sm shadow-sm text-sm sm:text-base leading-relaxed break-words">
                             ${formatContent(content)}
                         </div>
-                        <div class="flex items-center gap-3 px-1 text-slate-400">
-                            <span class="text-[11px]">${time}</span>
-                            <button onclick="copyPlainText(this)" data-text="${escapeHtml(content)}" class="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 flex items-center gap-1 text-[11px] hover:text-indigo-400 transition-opacity">
-                                <i data-lucide="copy" class="w-3 h-3"></i>
-                                <span>คัดลอก</span>
-                            </button>
+                        <div class="flex flex-wrap items-center justify-between gap-2 px-1">
+                            <div class="reaction-bar flex flex-wrap items-center gap-1">
+                                ${buildReactionButtonsHTML(msgIndex, reactions)}
+                            </div>
+                            <div class="flex items-center gap-2.5 text-slate-400">
+                                <span class="text-[11px]">${time}</span>
+                                <button type="button" onclick="copyPlainText(this)" data-text="${escapeHtml(content)}" class="flex items-center gap-1 text-[11px] hover:text-indigo-400 transition-colors">
+                                    <i data-lucide="copy" class="w-3 h-3"></i>
+                                    <span>คัดลอก</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 `;
             }
 
             chatMessages.appendChild(wrapper);
-            lucide.createIcons();
+            safeIcons();
             scrollToBottom();
         }
 
@@ -627,22 +821,26 @@
             const wrapper = document.createElement('div');
             wrapper.className = 'flex gap-3 sm:gap-3.5 justify-start animate-msg';
             wrapper.innerHTML = `
-                <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center text-white shrink-0 mt-1 shadow-md shadow-indigo-500/25">
+                <div class="relative w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center text-white shrink-0 mt-1 shadow-md shadow-indigo-500/25">
                     <i data-lucide="sparkles" class="w-4 h-4"></i>
+                    <span class="ai-mood-badge absolute -bottom-1.5 -right-1.5 w-5 h-5 rounded-full bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder flex items-center justify-center text-[11px] shadow-sm animate-bounce">✨</span>
                 </div>
-                <div class="max-w-[88%] sm:max-w-[80%] space-y-1.5 group">
+                <div class="max-w-[88%] sm:max-w-[80%] space-y-2 group">
                     <div class="ai-bubble bg-white/90 dark:bg-darkCard/90 backdrop-blur-md border border-indigo-500/30 px-4 py-3.5 rounded-2xl rounded-tl-sm shadow-md shadow-indigo-500/5 text-sm sm:text-base leading-relaxed break-words writing-cursor"></div>
-                    <div class="ai-actions hidden flex items-center gap-3 px-1 text-slate-400">
-                        <span class="text-[11px]">${time}</span>
-                        <button onclick="copyPlainText(this)" class="copy-btn opacity-100 sm:opacity-0 sm:group-hover:opacity-100 flex items-center gap-1 text-[11px] hover:text-indigo-400 transition-opacity">
-                            <i data-lucide="copy" class="w-3 h-3"></i>
-                            <span>คัดลอก</span>
-                        </button>
+                    <div class="ai-actions hidden flex flex-wrap items-center justify-between gap-2 px-1">
+                        <div class="reaction-bar flex flex-wrap items-center gap-1"></div>
+                        <div class="flex items-center gap-2.5 text-slate-400">
+                            <span class="text-[11px]">${time}</span>
+                            <button type="button" onclick="copyPlainText(this)" class="copy-btn flex items-center gap-1 text-[11px] hover:text-indigo-400 transition-colors">
+                                <i data-lucide="copy" class="w-3 h-3"></i>
+                                <span>คัดลอก</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             `;
             chatMessages.appendChild(wrapper);
-            lucide.createIcons();
+            safeIcons();
             return wrapper;
         }
 
@@ -661,7 +859,7 @@
                 </div>
             `;
             chatMessages.appendChild(indicator);
-            lucide.createIcons();
+            safeIcons();
             scrollToBottom();
         }
 
@@ -670,13 +868,17 @@
             if (indicator) indicator.remove();
         }
 
-        // ส่งข้อความไปยัง /api/chat แบบ Real-time Stream
         async function sendMessage() {
             if (isTyping) return;
             const text = messageInput.value.trim();
-            if (!text) return;
+            if (!text) {
+                messageInput.focus();
+                showToast('กรุณาพิมพ์ข้อความก่อนกดส่ง');
+                return;
+            }
 
             if (!userApiKey) {
+                pendingMessageAfterKey = text;
                 openApiKeyModal();
                 showToast('กรุณาใส่ Gemini API Key ก่อนส่งข้อความ');
                 return;
@@ -693,11 +895,13 @@
             const now = new Date();
             const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
+            const userMsgIdx = chat.messages.length;
             chat.messages.push({ role: 'user', content: text, time: timeStr });
-            appendMessageToDOM('user', text, timeStr);
+            appendMessageToDOM('user', text, timeStr, userMsgIdx);
 
             messageInput.value = '';
             messageInput.style.height = 'auto';
+            document.getElementById('emojiPickerPopover').classList.add('hidden');
 
             isTyping = true;
             document.getElementById('sendButton').disabled = true;
@@ -706,7 +910,6 @@
             const selectedMode = document.getElementById('modeSelect').value;
 
             try {
-                // แปลง role ให้ตรงกับที่ backend (/api/chat) ต้องการ ('user' และ 'assistant')
                 const apiMessages = chat.messages.map(m => ({
                     role: m.role === 'user' ? 'user' : 'assistant',
                     content: m.content
@@ -734,6 +937,8 @@
                 const bubble = wrapper.querySelector('.ai-bubble');
                 const actions = wrapper.querySelector('.ai-actions');
                 const copyBtn = wrapper.querySelector('.copy-btn');
+                const moodBadge = wrapper.querySelector('.ai-mood-badge');
+                const reactionBar = wrapper.querySelector('.reaction-bar');
 
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder();
@@ -744,21 +949,27 @@
                     if (done) break;
                     fullReply += decoder.decode(value, { stream: true });
                     bubble.innerHTML = formatContent(fullReply);
+                    moodBadge.textContent = detectSmartContextEmoji(fullReply);
                     scrollToBottom();
                 }
 
+                const aiMsgIdx = chat.messages.length;
+                chat.messages.push({ role: 'assistant', content: fullReply, time: timeStr, reactions: {} });
+
                 bubble.classList.remove('writing-cursor', 'border-indigo-500/30');
                 bubble.classList.add('border-slate-200/80', 'dark:border-darkBorder');
+                moodBadge.classList.remove('animate-bounce');
+                moodBadge.classList.add('animate-reaction-pop');
                 copyBtn.setAttribute('data-text', fullReply);
+                reactionBar.innerHTML = buildReactionButtonsHTML(aiMsgIdx, {});
                 actions.classList.remove('hidden');
-                lucide.createIcons();
-
-                chat.messages.push({ role: 'assistant', content: fullReply, time: timeStr });
+                safeIcons();
             } catch (err) {
                 removeTypingIndicator();
                 const errMsg = `⚠️ ${err.message}`;
-                chat.messages.push({ role: 'assistant', content: errMsg, time: timeStr });
-                appendMessageToDOM('assistant', errMsg, timeStr);
+                const errIdx = chat.messages.length;
+                chat.messages.push({ role: 'assistant', content: errMsg, time: timeStr, reactions: {} });
+                appendMessageToDOM('assistant', errMsg, timeStr, errIdx, {});
             } finally {
                 isTyping = false;
                 document.getElementById('sendButton').disabled = false;
@@ -803,12 +1014,12 @@
 
         function copyCodeBlock(btn) {
             const code = btn.closest('div').nextElementSibling.innerText;
-            copyToClipboard(code, 'คัดลอกโค้ดลงคลิปบอร์ดแล้ว');
+            copyToClipboard(code, 'คัดลอกโค้ดลงคลิปบอร์ดแล้ว 📋');
         }
 
         function copyPlainText(btn) {
             const text = btn.getAttribute('data-text');
-            copyToClipboard(text, 'คัดลอกข้อความแล้ว');
+            copyToClipboard(text, 'คัดลอกข้อความแล้ว 📋');
         }
 
         function escapeHtml(str) {
