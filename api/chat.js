@@ -10,7 +10,7 @@ const SAFETY = ['HARASSMENT', 'HATE_SPEECH', 'SEXUALLY_EXPLICIT', 'DANGEROUS_CON
   threshold: 'BLOCK_ONLY_HIGH'
 }));
 
-const NUDGE = '\n\n[หมายเหตุถึงระบบ: ตอบคำถามของผู้ใช้ให้ตรงประเด็นและครบถ้วน ใส่อีโมจิประกอบอย่างสวยงามพอดี (ยกเว้นในโค้ด) หากผู้ใช้สั่งเขียนหรือแก้โค้ด ให้ตอบด้วยโค้ดที่สมบูรณ์รันได้จริง]';
+const NUDGE = '\n\n[หมายเหตุถึงระบบ: ตอบให้ตรงประเด็น กระชับชัดเจน และครบถ้วน ใส่อีโมจิประกอบพอดี (ยกเว้นในโค้ด) หากสั่งเขียนหรือแก้โค้ด ให้ตอบด้วยโค้ดที่สมบูรณ์รันได้จริง]';
 const RETRY = '\n[ย้ำ: ตอบคำขอนี้ให้ครบถ้วนทันที]';
 const BEAST = "โหมดโหด: ทำงานระดับมือโปรสายท็อป 1) วางโครงสร้างให้สะอาด อ่านง่าย และต่อยอดได้ 2) จัดการกรณีขอบ ข้อผิดพลาด และอินพุตแปลกๆ ให้ครบ 3) ใส่ใจประสิทธิภาพ 4) ถ้าเป็นหน้าเว็บ เกม หรือแอป ให้ทำให้อลังการ ดีไซน์โดดเด่น แอนิเมชันลื่น รองรับมือถือ 5) ใส่คอมเมนต์ภาษาไทยเฉพาะจุดสำคัญ 6) ปิดท้ายด้วยสรุป 3-5 ข้อพร้อมอีโมจินำหน้าหัวข้อว่าเด่นตรงไหนและวิธีใช้";
 
@@ -41,11 +41,13 @@ module.exports = async (req, res) => {
 
   const mode = body.mode === 'beast' ? 'beast' : body.mode === 'smart' ? 'smart' : 'fast';
   const beast = mode === 'beast';
-  const budget = beast ? 8192 : mode === 'smart' ? 2048 : 0;
+  // ลด thinkingBudget เพื่อลดเวลาคิดก่อนเริ่มสตรีมคำตอบแรก (TTFT)
+  const budget = beast ? 2048 : mode === 'smart' ? 512 : 0;
 
   const build = (thinkingBudget, extra) => {
     const config = {
-      maxOutputTokens: beast ? 32000 : 16000,
+      temperature: beast ? 0.7 : 0.6,
+      maxOutputTokens: beast ? 16384 : 8192,
     };
     if (thinkingBudget > 0) {
       config.thinkingConfig = { thinkingBudget };
@@ -66,12 +68,20 @@ module.exports = async (req, res) => {
 
   async function open(payload, model) {
     let r, swapped = false;
-    for (let i = 0; i < 4; i++) {
-      r = await fetch(urlFor(model), {
-        method: 'POST',
-        headers: { 'x-goog-api-key': key, 'content-type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
+    // ลดจำนวนรอบลองใหม่และเวลารอ เพื่อไม่ให้ผู้ใช้รอนานหากเกิดปัญหาชั่วคราว
+    for (let i = 0; i < 2; i++) {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 25000);
+      try {
+        r = await fetch(urlFor(model), {
+          method: 'POST',
+          headers: { 'x-goog-api-key': key, 'content-type': 'application/json' },
+          body: JSON.stringify(payload),
+          signal: controller.signal,
+        });
+      } finally {
+        clearTimeout(timeoutId);
+      }
       if (r.ok) return r;
       if (r.status === 404 && !swapped) {
         model = model === FAST ? SMART : FAST;
@@ -91,7 +101,7 @@ module.exports = async (req, res) => {
         }
       }
       if (r.status === 503) {
-        await wait(1200);
+        await wait(400);
         continue;
       }
       break;
@@ -151,8 +161,9 @@ module.exports = async (req, res) => {
     res.setHeader('X-Accel-Buffering', 'no');
 
     let out = await pump(r);
-    if (!out.got) {
-      const r2 = await open(build(1024, RETRY), SMART);
+    // ลองซ้ำเฉพาะกรณีไม่ถูกบล็อกความปลอดภัยและไม่มีข้อความตอบกลับเลย
+    if (!out.got && out.reason !== 'SAFETY' && out.reason !== 'PROHIBITED_CONTENT') {
+      const r2 = await open(build(0, RETRY), FAST);
       if (r2.ok) out = await pump(r2);
     }
     if (!out.got) {
@@ -162,7 +173,7 @@ module.exports = async (req, res) => {
     return res.end();
   } catch (e) {
     console.error('chat error', e && e.message);
-    if (!res.headersSent) return res.status(502).json({ error: 'เชื่อมต่อ AI ไม่ได้' });
+    if (!res.headersSent) return res.status(502).json({ error: 'เชื่อมต่อ AI ไม่ได้หรือหมดเวลาการรอ' });
     return res.end();
   }
 };
