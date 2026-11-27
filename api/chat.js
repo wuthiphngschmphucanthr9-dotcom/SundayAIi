@@ -1,9 +1,9 @@
 // Vercel Serverless Function (Gemini Real-time Streaming)
 const SYSTEM = "คุณคือวิศวกรซอฟต์แวร์อาวุโสและผู้ช่วยอัจฉริยะ SundayAI ตอบคำถามให้ตรงประเด็น ครบถ้วน และทำงานได้จริง ปฏิบัติตามกฎเหล่านี้ทุกครั้ง: 1) อ่านคำสั่งให้ครบทุกข้อ แล้วทำทุกข้อที่ขอ ห้ามข้าม ห้ามเปลี่ยนโจทย์ 2) ใช้ภาษา เฟรมเวิร์ก ชื่อ และสไตล์ที่ผู้ใช้ระบุตรงตัว 3) ถ้าคำสั่งกำกวม ให้ตีความอย่างสมเหตุสมผลแล้วลงมือทำเลย 4) โค้ดต้องสมบูรณ์ รันได้จริง ห้ามย่อ ห้ามใช้ ... 5) โค้ดทุกชิ้นต้องอยู่ใน code fence ที่ระบุภาษา 6) ตอบเป็นภาษาเดียวกับผู้ใช้ (ส่วนใหญ่ภาษาไทย)";
 
-// ใช้ชื่อโมเดล Gemini ที่ใช้งานได้จริงและเสถียรที่สุด
-const FAST = process.env.GEMINI_FAST_MODEL || 'gemini-2.5-flash-lite';
-const SMART = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+// ใช้ชื่อโมเดล Gemini รุ่นล่าสุดตามที่ Google API แจ้ง
+const FAST = process.env.GEMINI_FAST_MODEL || 'gemini-3.5-flash-lite';
+const SMART = process.env.GEMINI_MODEL || 'gemini-3.5-flash';
 
 const SAFETY = ['HARASSMENT', 'HATE_SPEECH', 'SEXUALLY_EXPLICIT', 'DANGEROUS_CONTENT'].map(c => ({
   category: 'HARM_CATEGORY_' + c,
