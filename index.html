@@ -910,7 +910,8 @@
             const selectedMode = document.getElementById('modeSelect').value;
 
             try {
-                const apiMessages = chat.messages.map(m => ({
+                // ส่งเฉพาะ 8 ข้อความล่าสุดเพื่อลดขนาด Payload และเร่งความเร็วในการประมวลผล
+                const apiMessages = chat.messages.slice(-8).map(m => ({
                     role: m.role === 'user' ? 'user' : 'assistant',
                     content: m.content
                 }));
@@ -943,15 +944,27 @@
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder();
                 let fullReply = '';
+                let renderScheduled = false;
+
+                // ใช้ requestAnimationFrame ผสานการอัปเดต DOM เพื่อไม่ให้หน้าเว็บกระตุกตอนสตรีมเร็ว
+                const flushStreamUI = () => {
+                    renderScheduled = false;
+                    bubble.innerHTML = formatContent(fullReply);
+                    moodBadge.textContent = detectSmartContextEmoji(fullReply);
+                    scrollToBottom();
+                };
 
                 while (true) {
                     const { done, value } = await reader.read();
                     if (done) break;
                     fullReply += decoder.decode(value, { stream: true });
-                    bubble.innerHTML = formatContent(fullReply);
-                    moodBadge.textContent = detectSmartContextEmoji(fullReply);
-                    scrollToBottom();
+                    if (!renderScheduled) {
+                        renderScheduled = true;
+                        requestAnimationFrame(flushStreamUI);
+                    }
                 }
+                fullReply += decoder.decode();
+                flushStreamUI();
 
                 const aiMsgIdx = chat.messages.length;
                 chat.messages.push({ role: 'assistant', content: fullReply, time: timeStr, reactions: {} });
