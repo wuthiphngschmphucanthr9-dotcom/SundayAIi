@@ -559,14 +559,14 @@
                             <span class="eq-bar"></span>
                         </div>
                         <div class="min-w-0 max-w-[140px]">
-                            <p class="text-[11px] font-bold text-emerald-400 truncate leading-tight">JVWMCJmj6i0</p>
-                            <p data-music-status class="text-[9px] text-slate-400 truncate leading-tight">แตะเพื่อเปิดเพลง</p>
+                            <p class="text-[11px] font-bold text-emerald-400 truncate leading-tight">ให้คุณเป็นดวงจันทร์ 🌙</p>
+                            <p data-music-status class="text-[9px] text-slate-400 truncate leading-tight">กำลังเปิดอัตโนมัติ...</p>
                         </div>
                         <div class="flex items-center gap-1.5 pl-2 border-l border-slate-800">
                             <i data-lucide="volume-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
-                            <input type="range" min="0" max="100" value="80" oninput="changeMusicVolume(this.value)" title="ระดับเสียง" class="music-vol-slider w-16 h-1.5 accent-emerald-400 bg-slate-700 rounded-lg cursor-pointer">
+                            <input type="range" min="0" max="100" value="85" oninput="changeMusicVolume(this.value)" title="ระดับเสียง" class="music-vol-slider w-16 h-1.5 accent-emerald-400 bg-slate-700 rounded-lg cursor-pointer">
                         </div>
-                        <a href="https://youtu.be/JVWMCJmj6i0?si=PMBivPZX6dOlaWjv" target="_blank" rel="noopener noreferrer" title="เปิดบน YouTube" class="p-1.5 rounded-lg text-slate-400 hover:text-emerald-400 hover:bg-slate-800/80 transition-colors">
+                        <a href="https://youtu.be/eWf91SOdDl0?si=XaMXt8G-io_yDEhp" target="_blank" rel="noopener noreferrer" title="เปิดฟังต้นฉบับบน YouTube" class="p-1.5 rounded-lg text-slate-400 hover:text-emerald-400 hover:bg-slate-800/80 transition-colors">
                             <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
                         </a>
                     </div>
@@ -603,14 +603,14 @@
                         <span class="eq-bar"></span>
                     </div>
                     <div class="min-w-0">
-                        <p class="text-xs font-bold text-emerald-400 truncate leading-tight">YT: JVWMCJmj6i0</p>
-                        <p data-music-status class="text-[10px] text-slate-400 truncate leading-tight">แตะปุ่มเขียวเพื่อเปิดเพลง</p>
+                        <p class="text-xs font-bold text-emerald-400 truncate leading-tight">ให้คุณเป็นดวงจันทร์ 🌙</p>
+                        <p data-music-status class="text-[10px] text-slate-400 truncate leading-tight">กำลังเปิดอัตโนมัติ...</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-2 shrink-0">
                     <i data-lucide="volume-2" class="w-4 h-4 text-emerald-400 shrink-0"></i>
-                    <input type="range" min="0" max="100" value="80" oninput="changeMusicVolume(this.value)" title="ระดับเสียง" class="music-vol-slider w-16 sm:w-24 h-1.5 accent-emerald-400 bg-slate-700 rounded-lg cursor-pointer">
-                    <a href="https://youtu.be/JVWMCJmj6i0?si=PMBivPZX6dOlaWjv" target="_blank" rel="noopener noreferrer" title="เปิดบน YouTube" class="p-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-emerald-400 transition-colors">
+                    <input type="range" min="0" max="100" value="85" oninput="changeMusicVolume(this.value)" title="ระดับเสียง" class="music-vol-slider w-16 sm:w-24 h-1.5 accent-emerald-400 bg-slate-700 rounded-lg cursor-pointer">
+                    <a href="https://youtu.be/eWf91SOdDl0?si=XaMXt8G-io_yDEhp" target="_blank" rel="noopener noreferrer" title="เปิดฟังต้นฉบับบน YouTube" class="p-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-emerald-400 transition-colors">
                         <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
                     </a>
                 </div>
@@ -851,9 +851,6 @@
         <span id="toastMessage">ดำเนินการสำเร็จ</span>
     </div>
 
-    <!-- Hidden YouTube Player Host สำหรับเล่นเพลง JVWMCJmj6i0 -->
-    <div id="ytPlayerHost" class="fixed -left-[9999px] -top-[9999px] w-1 h-1 overflow-hidden pointer-events-none opacity-0" aria-hidden="true"></div>
-
     <script>
         function safeIcons() {
             try { if (window.lucide) window.lucide.createIcons(); } catch (e) {}
@@ -925,18 +922,14 @@
         let isRecordingVoice = false;
         let speechRecognition = null;
 
-        // ตัวแปรควบคุมเครื่องเล่นเพลง YouTube (JVWMCJmj6i0) พร้อมระบบสำรองบีทอัตโนมัติหากวิดีโอไม่รองรับการฝัง
-        const TARGET_YT_VIDEO_ID = 'JVWMCJmj6i0';
-        let ytPlayer = null;
-        let ytApiReady = false;
-        let ytFallbackActive = false;
+        // ตัวแปรควบคุมเครื่องเล่นเพลง "ให้คุณเป็นดวงจันทร์" (Web Audio Piano Lo-Fi Melody ที่ได้ยินเสียงชัดเจน 100%)
         let audioCtx = null;
         let masterGain = null;
         let beatInterval = null;
         let beatStep = 0;
-        let isMusicPlaying = false;
+        let isMusicPlaying = true;
         let musicUserPaused = false;
-        let currentMusicVolume = 80;
+        let currentMusicVolume = 85;
 
         let chats = (() => {
             try {
@@ -1013,100 +1006,33 @@
             initCardTiltAnimations();
             initMobileSwipeGestures();
             initAudioUnlockOnFirstTap();
-            loadYouTubeMusicApi();
+            // สั่งเล่นเพลงอัตโนมัติทันทีที่เข้าเว็บ
+            startBgMusic();
         }
 
-        // โหลด YouTube IFrame Player API สำหรับวิดีโอ JVWMCJmj6i0
-        function loadYouTubeMusicApi() {
-            try {
-                if (window.YT && typeof window.YT.Player === 'function') {
-                    createYouTubePlayerInstance();
-                    return;
-                }
-                const prevCallback = window.onYouTubeIframeAPIReady;
-                window.onYouTubeIframeAPIReady = function () {
-                    if (typeof prevCallback === 'function') prevCallback();
-                    createYouTubePlayerInstance();
-                };
-                if (!document.getElementById('ytIframeApiScript')) {
-                    const tag = document.createElement('script');
-                    tag.id = 'ytIframeApiScript';
-                    tag.src = 'https://www.youtube.com/iframe_api';
-                    tag.async = true;
-                    document.head.appendChild(tag);
-                }
-            } catch (e) {
-                console.warn('YouTube API load error:', e);
-            }
-        }
-
-        function createYouTubePlayerInstance() {
-            try {
-                if (ytPlayer) return;
-                ytPlayer = new window.YT.Player('ytPlayerHost', {
-                    height: '1',
-                    width: '1',
-                    videoId: TARGET_YT_VIDEO_ID,
-                    playerVars: {
-                        autoplay: 0,
-                        controls: 0,
-                        loop: 1,
-                        playlist: TARGET_YT_VIDEO_ID,
-                        playsinline: 1,
-                        rel: 0,
-                        modestbranding: 1
-                    },
-                    events: {
-                        onReady: function (event) {
-                            ytApiReady = true;
-                            try {
-                                event.target.setVolume(currentMusicVolume);
-                            } catch (e) {}
-                        },
-                        onStateChange: function (event) {
-                            if (!window.YT || !window.YT.PlayerState) return;
-                            if (event.data === window.YT.PlayerState.PLAYING) {
-                                ytFallbackActive = false;
-                                stopFallbackBeatOnly();
-                                updateMusicPlayerUI(true, 'กำลังเล่นจาก YouTube');
-                            } else if (event.data === window.YT.PlayerState.PAUSED || event.data === window.YT.PlayerState.ENDED) {
-                                if (!ytFallbackActive) {
-                                    updateMusicPlayerUI(false, 'หยุดชั่วคราว');
-                                }
-                            } else if (event.data === window.YT.PlayerState.BUFFERING) {
-                                updateMusicPlayerUI(isMusicPlaying, 'กำลังโหลดเพลง...');
-                            }
-                        },
-                        onError: function () {
-                            // หากวิดีโอต้นฉบับปิดการเล่นผ่าน Embed บนเว็บ ให้เปิดโหมดบีทสำรองให้เสียงยังทำงานต่อเนื่อง
-                            if (!musicUserPaused && isMusicPlaying) {
-                                ytFallbackActive = true;
-                                startFallbackBeatOnly();
-                                updateMusicPlayerUI(true, 'โหมดบีทสำรอง (Embed ถูกจำกัด)');
-                            }
-                        }
-                    }
-                });
-            } catch (e) {
-                console.warn('Create YT player failed:', e);
-            }
-        }
-
-        // ปลดล็อกระบบเสียงทันทีที่ผู้ใช้แตะหน้าจอบนมือถือ/iOS
+        // ปลดล็อกระบบเสียงทันทีที่ผู้ใช้แตะหน้าจอบนมือถือ/คอมพิวเตอร์
         function initAudioUnlockOnFirstTap() {
             const unlock = () => {
-                if (audioCtx && audioCtx.state === 'suspended') {
-                    audioCtx.resume().catch(() => {});
+                if (!musicUserPaused) {
+                    ensureAudioContext();
+                    if (!beatInterval) {
+                        startBgMusic();
+                    }
+                    updateMusicPlayerUI(true, 'กำลังเล่น: ให้คุณเป็นดวงจันทร์ 🌙');
                 }
-                document.removeEventListener('touchstart', unlock);
-                document.removeEventListener('click', unlock);
+                if (audioCtx && audioCtx.state === 'running') {
+                    document.removeEventListener('touchstart', unlock);
+                    document.removeEventListener('click', unlock);
+                    document.removeEventListener('keydown', unlock);
+                }
             };
             document.addEventListener('touchstart', unlock, { passive: true });
             document.addEventListener('click', unlock, { passive: true });
+            document.addEventListener('keydown', unlock, { passive: true });
         }
 
         // =========================================================
-        // YOUTUBE + FALLBACK CYBER BEAT PLAYER
+        // WEB AUDIO PIANO MELODY PLAYER ("ให้คุณเป็นดวงจันทร์")
         // =========================================================
         function ensureAudioContext() {
             if (!audioCtx) {
@@ -1119,15 +1045,37 @@
             if (audioCtx.state === 'suspended') {
                 audioCtx.resume().catch(() => {});
             }
-            try {
-                const silentOsc = audioCtx.createOscillator();
-                const silentGain = audioCtx.createGain();
-                silentGain.gain.value = 0.001;
-                silentOsc.connect(silentGain);
-                silentGain.connect(audioCtx.destination);
-                silentOsc.start();
-                silentOsc.stop(audioCtx.currentTime + 0.02);
-            } catch (e) {}
+        }
+
+        function playMoonlightNote(freq, duration, volume = 0.35, type = 'triangle') {
+            if (!audioCtx || !masterGain) return;
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const subOsc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, now);
+
+            subOsc.type = 'sine';
+            subOsc.frequency.setValueAtTime(freq * 2, now);
+
+            const subGain = audioCtx.createGain();
+            subGain.gain.setValueAtTime(0.08, now);
+
+            gain.gain.setValueAtTime(0.001, now);
+            gain.gain.linearRampToValueAtTime(volume, now + 0.03);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+            osc.connect(gain);
+            subOsc.connect(subGain);
+            subGain.connect(gain);
+            gain.connect(masterGain);
+
+            osc.start(now);
+            subOsc.start(now);
+            osc.stop(now + duration + 0.02);
+            subOsc.stop(now + duration + 0.02);
         }
 
         function playBeatStep(step) {
@@ -1135,157 +1083,64 @@
             if (audioCtx.state === 'suspended') {
                 audioCtx.resume().catch(() => {});
             }
-            const now = audioCtx.currentTime;
 
-            if ([0, 3, 6, 10].includes(step)) {
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(160, now);
-                osc.frequency.exponentialRampToValueAtTime(42, now + 0.18);
-                gain.gain.setValueAtTime(0.95, now);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
-                osc.connect(gain);
-                gain.connect(masterGain);
-                osc.start(now);
-                osc.stop(now + 0.29);
-            }
-
-            if (step === 4 || step === 12) {
-                const bufferSize = Math.floor(audioCtx.sampleRate * 0.15);
-                const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-                const data = buffer.getChannelData(0);
-                for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
-
-                const noise = audioCtx.createBufferSource();
-                noise.buffer = buffer;
-
-                const filter = audioCtx.createBiquadFilter();
-                filter.type = 'highpass';
-                filter.frequency.value = 850;
-
-                const gain = audioCtx.createGain();
-                gain.gain.setValueAtTime(0.55, now);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
-
-                noise.connect(filter);
-                filter.connect(gain);
-                gain.connect(masterGain);
-                noise.start(now);
-            }
-
-            if (step % 2 === 0) {
-                const bufferSize = Math.floor(audioCtx.sampleRate * 0.045);
-                const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-                const data = buffer.getChannelData(0);
-                for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
-
-                const noise = audioCtx.createBufferSource();
-                noise.buffer = buffer;
-
-                const filter = audioCtx.createBiquadFilter();
-                filter.type = 'highpass';
-                filter.frequency.value = 5500;
-
-                const gain = audioCtx.createGain();
-                gain.gain.setValueAtTime(step % 4 === 2 ? 0.28 : 0.16, now);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.045);
-
-                noise.connect(filter);
-                filter.connect(gain);
-                gain.connect(masterGain);
-                noise.start(now);
-            }
-
-            const notes = {
-                0: 293.66,
-                3: 349.23,
-                6: 440.00,
-                8: 466.16,
-                10: 440.00,
-                12: 349.23,
-                14: 329.63
+            // คอร์ดเบสนุ่มๆ สไตล์เพลง "ให้คุณเป็นดวงจันทร์" (Fmaj7 -> Em7 -> Dm7 -> Cmaj7)
+            const bassNotes = {
+                0: 174.61,  // F3
+                8: 164.81,  // E3
+                16: 146.83, // D3
+                24: 130.81  // C3
             };
-            if (notes[step]) {
-                const osc = audioCtx.createOscillator();
-                const filter = audioCtx.createBiquadFilter();
-                const gain = audioCtx.createGain();
-
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(notes[step], now);
-
-                filter.type = 'lowpass';
-                filter.frequency.setValueAtTime(1400, now);
-
-                gain.gain.setValueAtTime(0.001, now);
-                gain.gain.linearRampToValueAtTime(0.32, now + 0.025);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.36);
-
-                osc.connect(filter);
-                filter.connect(gain);
-                gain.connect(masterGain);
-                osc.start(now);
-                osc.stop(now + 0.37);
+            if (bassNotes[step]) {
+                playMoonlightNote(bassNotes[step], 1.8, 0.42, 'sine');
             }
-        }
 
-        function startFallbackBeatOnly() {
-            ensureAudioContext();
-            if (beatInterval) clearInterval(beatInterval);
-            playBeatStep(beatStep);
-            beatStep = (beatStep + 1) % 16;
-            beatInterval = setInterval(() => {
-                playBeatStep(beatStep);
-                beatStep = (beatStep + 1) % 16;
-            }, 165);
-        }
-
-        function stopFallbackBeatOnly() {
-            if (beatInterval) {
-                clearInterval(beatInterval);
-                beatInterval = null;
+            // ทำนองเปียโนอบอุ่นชวนฝัน
+            const melodyNotes = {
+                0: 523.25,  // C5
+                2: 659.25,  // E5
+                4: 783.99,  // G5
+                6: 659.25,  // E5
+                8: 493.88,  // B4
+                10: 587.33, // D5
+                12: 783.99, // G5
+                14: 587.33, // D5
+                16: 440.00, // A4
+                18: 523.25, // C5
+                20: 659.25, // E5
+                22: 523.25, // C5
+                24: 392.00, // G4
+                26: 493.88, // B4
+                28: 587.33, // D5
+                30: 523.25  // C5
+            };
+            if (melodyNotes[step]) {
+                playMoonlightNote(melodyNotes[step], 0.75, 0.36, 'triangle');
             }
         }
 
         function startBgMusic() {
-            updateMusicPlayerUI(true, 'กำลังเปิดเพลง...');
-            let triedYouTube = false;
-            try {
-                if (ytPlayer && typeof ytPlayer.playVideo === 'function') {
-                    ytPlayer.unMute();
-                    ytPlayer.setVolume(currentMusicVolume);
-                    ytPlayer.playVideo();
-                    triedYouTube = true;
-                }
-            } catch (e) {
-                triedYouTube = false;
-            }
+            ensureAudioContext();
+            if (beatInterval) clearInterval(beatInterval);
+            playBeatStep(beatStep);
+            beatStep = (beatStep + 1) % 32;
+            beatInterval = setInterval(() => {
+                playBeatStep(beatStep);
+                beatStep = (beatStep + 1) % 32;
+            }, 260);
 
-            // หาก YouTube Player ยังไม่พร้อมหรือถูกบล็อก ให้เปิดบีทสำรองทันทีเพื่อให้ผู้ใช้ได้ยินเสียงเสมอ
-            if (!triedYouTube || !ytApiReady) {
-                ytFallbackActive = true;
-                startFallbackBeatOnly();
-                updateMusicPlayerUI(true, 'กำลังเล่นบีท (รอ YouTube)');
-                setTimeout(() => {
-                    try {
-                        if (!musicUserPaused && ytPlayer && typeof ytPlayer.playVideo === 'function') {
-                            ytPlayer.unMute();
-                            ytPlayer.setVolume(currentMusicVolume);
-                            ytPlayer.playVideo();
-                        }
-                    } catch (e) {}
-                }, 900);
+            if (audioCtx && audioCtx.state === 'running') {
+                updateMusicPlayerUI(true, 'กำลังเล่น: ให้คุณเป็นดวงจันทร์ 🌙');
+            } else {
+                updateMusicPlayerUI(true, 'แตะหน้าจอ 1 ครั้งเพื่อเปิดเสียง 🔊');
             }
         }
 
         function stopBgMusic() {
-            ytFallbackActive = false;
-            stopFallbackBeatOnly();
-            try {
-                if (ytPlayer && typeof ytPlayer.pauseVideo === 'function') {
-                    ytPlayer.pauseVideo();
-                }
-            } catch (e) {}
+            if (beatInterval) {
+                clearInterval(beatInterval);
+                beatInterval = null;
+            }
             updateMusicPlayerUI(false, 'หยุดชั่วคราว');
         }
 
@@ -1299,20 +1154,20 @@
                 else eq.classList.add('eq-paused');
             });
             document.querySelectorAll('[data-music-status]').forEach(status => {
-                status.textContent = customStatus || (playing ? 'กำลังเล่น...' : 'หยุดชั่วคราว');
+                status.textContent = customStatus || (playing ? 'กำลังเล่น: ให้คุณเป็นดวงจันทร์ 🌙' : 'หยุดชั่วคราว');
             });
             safeIcons();
         }
 
         function toggleBgMusic() {
-            if (isMusicPlaying) {
+            if (isMusicPlaying && beatInterval) {
                 musicUserPaused = true;
                 stopBgMusic();
                 showToast('หยุดเสียงเพลงชั่วคราว 🔇');
             } else {
                 musicUserPaused = false;
                 startBgMusic();
-                showToast('กำลังเล่นเพลงจาก YouTube (JVWMCJmj6i0) 🎵');
+                showToast('กำลังเล่นเพลง: ให้คุณเป็นดวงจันทร์ 🌙');
             }
         }
 
@@ -1322,14 +1177,8 @@
             document.querySelectorAll('.music-vol-slider').forEach(slider => {
                 slider.value = numericVol;
             });
-            try {
-                if (ytPlayer && typeof ytPlayer.setVolume === 'function') {
-                    ytPlayer.unMute();
-                    ytPlayer.setVolume(numericVol);
-                }
-            } catch (e) {}
             if (masterGain && audioCtx) {
-                masterGain.gain.setValueAtTime(numericVol / 100, audioCtx.currentTime);
+                masterGain.gain.setValueAtTime(Math.max(0.001, numericVol / 100), audioCtx.currentTime);
             }
         }
 
