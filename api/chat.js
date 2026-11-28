@@ -1,8 +1,8 @@
-// Vercel Serverless Function (Gemini Updated Model Streaming)
+// Vercel Serverless Function (Gemini 2.5 Flash Real-time Streaming)
 const SYSTEM = "คุณคือวิศวกรซอฟต์แวร์อาวุโสและผู้ช่วยอัจฉริยะ ตอบคำถามให้ตรงประเด็น ครบถ้วน รวดเร็ว และทำงานได้จริง โค้ดต้องสมบูรณ์ รันได้จริง ห้ามย่อ ห้ามใช้ ... และอยู่ใน code fence เท่านั้น";
 
-// ใช้โมเดลล่าสุดตามที่ Google API แนะนำ
-const MODEL_NAME = process.env.GEMINI_MODEL || 'gemini-3.1-pro-preview';
+// ใช้ชื่อโมเดลที่ถูกต้องและรองรับในปัจจุบัน
+const FAST_MODEL = process.env.GEMINI_FAST_MODEL || 'gemini-2.5-flash';
 
 module.exports = async (req, res) => {
   if (req.method !== 'POST') {
@@ -38,7 +38,7 @@ module.exports = async (req, res) => {
     }
   };
 
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:streamGenerateContent?alt=sse`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${FAST_MODEL}:streamGenerateContent?alt=sse`;
 
   try {
     const controller = new AbortController();
