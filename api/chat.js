@@ -1,10 +1,10 @@
 // Vercel Serverless Function (Gemini Real-time Streaming)
 const SYSTEM = "คุณคือวิศวกรซอฟต์แวร์อาวุโสและผู้ช่วยอัจฉริยะ SundayAI ตอบคำถามให้ตรงประเด็น ครบถ้วน และทำงานได้จริง ปฏิบัติตามกฎเหล่านี้ทุกครั้ง: 1) อ่านคำสั่งให้ครบทุกข้อ แล้วทำทุกข้อที่ขอ ห้ามข้าม ห้ามเปลี่ยนโจทย์ 2) ใช้ภาษา เฟรมเวิร์ก ชื่อ และสไตล์ที่ผู้ใช้ระบุตรงตัว 3) ถ้าคำสั่งกำกวม ให้ตีความอย่างสมเหตุสมผลแล้วลงมือทำเลย 4) โค้ดต้องสมบูรณ์ รันได้จริง ห้ามย่อ ห้ามใช้ ... 5) โค้ดทุกชิ้นต้องอยู่ใน code fence ที่ระบุภาษา 6) ตอบเป็นภาษาเดียวกับผู้ใช้ (ส่วนใหญ่ภาษาไทย) 7) ใส่อีโมจิที่เหมาะสมและทันสมัยประกอบหัวข้อหรือข้อความสำคัญอย่างพอดี (ไม่รกจนเกินไป) เพื่อให้อ่านง่าย น่าสนใจ และเป็นกันเอง (ห้ามใส่อีโมจิในบล็อกโค้ดเด็ดขาด)";
 
-// โมเดลหลักและโมเดลสำรองกรณีเจอ 503 (คนใช้งานหนาแน่น)
-const FAST = process.env.GEMINI_FAST_MODEL || 'gemini-3.8-flash';
+// โมเดลหลักและโมเดลสำรองกรณีเจอ 503 (ปรับให้โหมด FAST ใช้รุ่น Lite เพื่อความเร็วสูงสุด)
+const FAST = process.env.GEMINI_FAST_MODEL || 'gemini-3.8-flash-lite';
 const SMART = process.env.GEMINI_MODEL || 'gemini-3.8-flash';
-const FALLBACK_MODELS = ['gemini-3.8-flash-lite', 'gemini-3.5-flash', 'gemini-3.5-flash-lite'];
+const FALLBACK_MODELS = ['gemini-3.8-flash', 'gemini-3.8-flash-lite', 'gemini-3.5-flash-lite', 'gemini-3.5-flash'];
 
 const SAFETY = ['HARASSMENT', 'HATE_SPEECH', 'SEXUALLY_EXPLICIT', 'DANGEROUS_CONTENT'].map(c => ({
   category: 'HARM_CATEGORY_' + c,
@@ -42,7 +42,8 @@ module.exports = async (req, res) => {
 
   const mode = body.mode === 'beast' ? 'beast' : body.mode === 'smart' ? 'smart' : 'fast';
   const beast = mode === 'beast';
-  const budget = beast ? 2048 : mode === 'smart' ? 512 : 0;
+  // ปิด thinkingBudget ในโหมด fast/smart เพื่อให้เริ่มสตรีมคำตอบแรกทันที (TTFT ต่ำสุด)
+  const budget = beast ? 1024 : 0;
 
   const build = (thinkingBudget, extra) => {
     const config = {
@@ -51,6 +52,9 @@ module.exports = async (req, res) => {
     };
     if (thinkingBudget > 0) {
       config.thinkingConfig = { thinkingBudget };
+    } else {
+      // บังคับปิดการคิดล่วงหน้าอย่างชัดเจนในรุ่นที่รองรับ เพื่อให้ตอบทันที
+      config.thinkingConfig = { thinkingBudget: 0 };
     }
 
     return {
@@ -74,7 +78,8 @@ module.exports = async (req, res) => {
     for (let i = 0; i < queue.length; i++) {
       const model = queue[i];
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 25000);
+      // ลด Timeout เหลือ 12 วินาที เพื่อไม่ให้ค้างนานหากเซิร์ฟเวอร์ปลายทางตอบสนองช้า
+      const timeoutId = setTimeout(() => controller.abort(), 12000);
       try {
         r = await fetch(urlFor(model), {
           method: 'POST',
@@ -88,9 +93,8 @@ module.exports = async (req, res) => {
 
       if (r.ok) return r;
 
-      // หากโมเดลไม่พบ (404) หรือคนใช้งานแน่นเกินไป (503) ให้สลับไปใช้โมเดลสำรองในคิวทันที
+      // หากโมเดลไม่พบ (404) หรือคนใช้งานแน่นเกินไป (503) ให้สลับไปใช้โมเดลสำรองทันทีโดยไม่หน่วงเวลา
       if (r.status === 404 || r.status === 503) {
-        if (r.status === 503) await wait(500);
         continue;
       }
 
