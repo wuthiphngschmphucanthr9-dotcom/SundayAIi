@@ -45,25 +45,6 @@
             height: 100dvh;
         }
 
-        /* Custom Wallpaper Theme Styling */
-        html.custom-theme body {
-            background-color: #06080f !important;
-            background-image: none !important;
-        }
-        html.custom-theme aside,
-        html.custom-theme header {
-            background-color: rgba(12, 15, 26, 0.72) !important;
-            backdrop-filter: blur(18px) !important;
-            -webkit-backdrop-filter: blur(18px) !important;
-        }
-        html.custom-theme .ai-bubble,
-        html.custom-theme .tilt-card,
-        html.custom-theme #inputDropZone > div {
-            background-color: rgba(18, 22, 36, 0.78) !important;
-            backdrop-filter: blur(16px) !important;
-            -webkit-backdrop-filter: blur(16px) !important;
-        }
-
         @keyframes auroraFloat1 {
             0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); }
             33% { transform: translate(35px, -45px) scale(1.14) rotate(6deg); }
@@ -241,6 +222,7 @@
             height: 4px !important;
         }
 
+        /* ซ่อน YouTube IFrame นอกหน้าจอแบบไม่ใช้ opacity-0 เพื่อไม่ให้เบราว์เซอร์ตัดเสียง */
         .yt-offscreen-holder {
             position: fixed;
             left: -9999px;
@@ -252,12 +234,6 @@
     </style>
 </head>
 <body class="bg-gradient-to-br from-slate-50 via-white to-indigo-50/40 text-slate-800 dark:bg-none dark:bg-darkBg dark:text-slate-100 antialiased selection:bg-indigo-500 selection:text-white overflow-hidden app-shell flex relative">
-
-    <!-- Custom Wallpaper Background Layer -->
-    <div id="customWallpaperLayer" class="fixed inset-0 pointer-events-none z-0 hidden transition-opacity duration-500">
-        <div class="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3PVvJqjhVuZlZ0QIhkBCEc5-bCKiGHrfvzYYwzF3qag&s=10');"></div>
-        <div class="absolute inset-0 bg-gradient-to-b from-slate-950/65 via-slate-950/75 to-slate-950/90 backdrop-blur-[2px]"></div>
-    </div>
 
     <!-- Ambient Animated Aurora Background -->
     <div id="ambientParticles" class="fixed inset-0 pointer-events-none overflow-hidden z-0">
@@ -487,24 +463,13 @@
                 <span id="keyStatusBadge" class="px-2 py-0.5 rounded-md bg-rose-500/10 text-rose-400 text-[10px]">ยังไม่ใส่คีย์</span>
             </button>
 
-            <!-- Theme Selector (3 Modes: Custom Wallpaper, Dark, Light) -->
-            <div class="pt-1">
-                <p class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 px-2 mb-1.5">เลือกธีมหน้าจอ</p>
-                <div class="grid grid-cols-3 gap-1.5 bg-slate-100/80 dark:bg-darkBg/90 p-1 rounded-xl border border-slate-200/60 dark:border-darkBorder/80">
-                    <button type="button" id="themeBtnCustom" onclick="setThemeMode('custom')" class="flex flex-col items-center justify-center gap-1 py-1.5 px-1 rounded-lg text-[10px] font-semibold transition-all">
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3PVvJqjhVuZlZ0QIhkBCEc5-bCKiGHrfvzYYwzF3qag&s=10" alt="ธีมภาพ" class="w-4 h-4 rounded-full object-cover border border-white/40">
-                        <span>ธีมพิเศษ</span>
-                    </button>
-                    <button type="button" id="themeBtnDark" onclick="setThemeMode('dark')" class="flex flex-col items-center justify-center gap-1 py-1.5 px-1 rounded-lg text-[10px] font-semibold transition-all">
-                        <i data-lucide="moon" class="w-3.5 h-3.5 text-indigo-400"></i>
-                        <span>โหมดมืด</span>
-                    </button>
-                    <button type="button" id="themeBtnLight" onclick="setThemeMode('light')" class="flex flex-col items-center justify-center gap-1 py-1.5 px-1 rounded-lg text-[10px] font-semibold transition-all">
-                        <i data-lucide="sun" class="w-3.5 h-3.5 text-amber-500"></i>
-                        <span>โหมดสว่าง</span>
-                    </button>
-                </div>
-            </div>
+            <button type="button" onclick="toggleTheme()" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-darkCard transition-colors">
+                <span class="flex items-center gap-2.5">
+                    <i id="themeIcon" data-lucide="sun" class="w-4 h-4 text-amber-500"></i>
+                    <span id="themeText">โหมดสว่าง (ธีมหลัก)</span>
+                </span>
+                <span class="px-2 py-0.5 rounded-md bg-indigo-500/10 text-indigo-500 dark:text-indigo-400 text-[10px]">สลับธีม</span>
+            </button>
         </div>
     </aside>
 
@@ -892,6 +857,7 @@
         let isRecordingVoice = false;
         let speechRecognition = null;
 
+        // ตัวแปรควบคุมเครื่องเล่นเพลง YouTube ต้นฉบับ ("ให้คุณเป็นดวงจันทร์" - eWf91SOdDl0)
         const YT_MUSIC_VIDEO_ID = 'eWf91SOdDl0';
         let ytPlayer = null;
         let ytPlayerReady = false;
@@ -943,49 +909,20 @@
         const messageInput = document.getElementById('messageInput');
         const messagesContainer = document.getElementById('messagesContainer');
 
-        function setThemeMode(mode) {
-            const html = document.documentElement;
-            const wallpaperLayer = document.getElementById('customWallpaperLayer');
-            const ambientLayer = document.getElementById('ambientParticles');
-            const btnCustom = document.getElementById('themeBtnCustom');
-            const btnDark = document.getElementById('themeBtnDark');
-            const btnLight = document.getElementById('themeBtnLight');
-
-            html.classList.remove('dark', 'custom-theme');
-            if (wallpaperLayer) wallpaperLayer.classList.add('hidden');
-            if (ambientLayer) ambientLayer.classList.remove('hidden');
-
-            [btnCustom, btnDark, btnLight].forEach(btn => {
-                if (!btn) return;
-                btn.className = 'flex flex-col items-center justify-center gap-1 py-1.5 px-1 rounded-lg text-[10px] font-medium text-slate-500 dark:text-slate-400 hover:bg-white/60 dark:hover:bg-darkCard/60 transition-all';
-            });
-
-            if (mode === 'custom') {
-                html.classList.add('dark', 'custom-theme');
-                if (wallpaperLayer) wallpaperLayer.classList.remove('hidden');
-                if (ambientLayer) ambientLayer.classList.add('hidden');
-                if (btnCustom) {
-                    btnCustom.className = 'flex flex-col items-center justify-center gap-1 py-1.5 px-1 rounded-lg text-[10px] font-bold bg-indigo-600 text-white shadow-md shadow-indigo-500/30 transition-all';
-                }
-            } else if (mode === 'dark') {
-                html.classList.add('dark');
-                if (btnDark) {
-                    btnDark.className = 'flex flex-col items-center justify-center gap-1 py-1.5 px-1 rounded-lg text-[10px] font-bold bg-indigo-600 text-white shadow-md shadow-indigo-500/30 transition-all';
-                }
-            } else {
-                if (btnLight) {
-                    btnLight.className = 'flex flex-col items-center justify-center gap-1 py-1.5 px-1 rounded-lg text-[10px] font-bold bg-white text-indigo-600 shadow-sm border border-slate-200/80 transition-all';
-                }
-            }
-
-            safeStorage.set('sundayai_theme', mode, true);
-            safeIcons();
-        }
-
         function init() {
-            // ตั้งค่าเริ่มต้นเป็นธีมพิเศษ (ภาพพื้นหลังที่ผู้ใช้เพิ่มเข้ามา)
-            const savedTheme = safeStorage.get('sundayai_theme', true) || 'custom';
-            setThemeMode(savedTheme);
+            const savedTheme = safeStorage.get('sundayai_theme', true);
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+            if (savedTheme === 'dark') {
+                html.classList.add('dark');
+                if (themeIcon) themeIcon.setAttribute('data-lucide', 'moon');
+                if (themeText) themeText.textContent = 'โหมดมืด';
+            } else {
+                html.classList.remove('dark');
+                if (themeIcon) themeIcon.setAttribute('data-lucide', 'sun');
+                if (themeText) themeText.textContent = 'โหมดสว่าง (ธีมหลัก)';
+            }
 
             const discordPassed = safeStorage.get('sundayai_discord_passed', true);
             const discordModal = document.getElementById('discordGateModal');
@@ -1005,6 +942,7 @@
             loadYouTubeMusicAPI();
         }
 
+        // โหลด YouTube IFrame Player API สำหรับเล่นเพลงต้นฉบับ
         function loadYouTubeMusicAPI() {
             if (window.YT && window.YT.Player) {
                 onYouTubeIframeAPIReady();
@@ -1023,7 +961,7 @@
                 videoId: YT_MUSIC_VIDEO_ID,
                 playerVars: {
                     autoplay: 1,
-                    mute: 1,
+                    mute: 1, // เริ่มแบบ mute ก่อนเพื่อให้เบราว์เซอร์ยอมโหลดและเล่นทันที
                     controls: 0,
                     disablekb: 1,
                     fs: 0,
@@ -1071,6 +1009,7 @@
             });
         };
 
+        // ปลดล็อกเสียง YouTube ทันทีที่ผู้ใช้แตะปุ่มหรือหน้าจอครั้งแรก
         function initAudioUnlockOnFirstTap() {
             const unlock = () => {
                 audioUnlocked = true;
@@ -1559,6 +1498,24 @@
             overlay.classList.toggle('hidden', !isClosed);
         }
 
+        function toggleTheme() {
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                themeIcon.setAttribute('data-lucide', 'sun');
+                themeText.textContent = 'โหมดสว่าง (ธีมหลัก)';
+                safeStorage.set('sundayai_theme', 'light', true);
+            } else {
+                html.classList.add('dark');
+                themeIcon.setAttribute('data-lucide', 'moon');
+                themeText.textContent = 'โหมดมืด';
+                safeStorage.set('sundayai_theme', 'dark', true);
+            }
+            safeIcons();
+        }
+
         function renderChatList(filter = '') {
             chatHistoryList.innerHTML = '';
             const filtered = chats.filter(c => c.title.toLowerCase().includes(filter.toLowerCase()));
@@ -1755,7 +1712,7 @@
                         <span class="absolute -bottom-1.5 -right-1.5 w-5 h-5 rounded-full bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder flex items-center justify-center text-[11px] shadow-sm">${moodEmoji}</span>
                     </div>
                     <div class="max-w-[88%] sm:max-w-[80%] space-y-2 group">
-                        <div class="ai-bubble bg-white/90 dark:bg-darkCard/90 backdrop-blur-md border border-slate-200/80 dark:border-darkBorder px-4 py-3.5 rounded-2xl rounded-tl-sm shadow-sm text-sm sm:text-base leading-relaxed break-words">
+                        <div class="bg-white/90 dark:bg-darkCard/90 backdrop-blur-md border border-slate-200/80 dark:border-darkBorder px-4 py-3.5 rounded-2xl rounded-tl-sm shadow-sm text-sm sm:text-base leading-relaxed break-words">
                             ${formatContent(content)}
                         </div>
                         <div class="flex flex-wrap items-center justify-between gap-2 px-1">
