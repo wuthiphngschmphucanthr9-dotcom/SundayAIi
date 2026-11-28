@@ -1,10 +1,17 @@
 // Vercel Serverless Function (Gemini Real-time Streaming - อ่านครบถ้วน & ตอบเร็ว)
 const SYSTEM = "คุณคือวิศวกรซอฟต์แวร์อาวุโสและผู้ช่วยอัจฉริยะ SundayAI ตอบคำถามให้ตรงประเด็น ครบถ้วน และทำงานได้จริง ปฏิบัติตามกฎเหล่านี้ทุกครั้ง: 1) อ่านคำสั่งและไฟล์ที่แนบมาให้ครบทุกบรรทัด แล้วทำทุกข้อที่ขอ ห้ามข้าม ห้ามเปลี่ยนโจทย์ 2) ใช้ภาษา เฟรมเวิร์ก ชื่อ และสไตล์ที่ผู้ใช้ระบุตรงตัว 3) ถ้าคำสั่งกำกวม ให้ตีความอย่างสมเหตุสมผลแล้วลงมือทำเลย 4) โค้ดต้องสมบูรณ์ รันได้จริง ห้ามย่อ ห้ามใช้ ... 5) โค้ดทุกชิ้นต้องอยู่ใน code fence ที่ระบุภาษา 6) ตอบเป็นภาษาเดียวกับผู้ใช้ (ส่วนใหญ่ภาษาไทย) 7) ใส่อีโมจิที่เหมาะสมและทันสมัยประกอบหัวข้อหรือข้อความสำคัญอย่างพอดี (ไม่รกจนเกินไป) เพื่อให้อ่านง่าย น่าสนใจ และเป็นกันเอง (ห้ามใส่อีโมจิในบล็อกโค้ดเด็ดขาด)";
 
-// ใช้โมเดล Gemini รุ่นล่าสุดที่เสถียรและตอบสนองไวที่สุด
-const FAST = process.env.GEMINI_FAST_MODEL || 'gemini-2.5-flash-lite';
-const SMART = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
-const FALLBACK_MODEL = 'gemini-2.0-flash';
+// อัปเดตชื่อโมเดล Gemini รุ่นล่าสุดตามที่ Google API แนะนำ
+const FAST = process.env.GEMINI_FAST_MODEL || 'gemini-3.8-flash-lite';
+const SMART = process.env.GEMINI_MODEL || 'gemini-3.8-flash';
+const BACKUP_MODELS = [
+    'gemini-3.8-flash',
+    'gemini-3.8-flash-lite',
+    'gemini-3.5-flash',
+    'gemini-3.5-flash-lite',
+    'gemini-2.5-flash',
+    'gemini-2.5-flash-lite'
+];
 
 const SAFETY = ['HARASSMENT', 'HATE_SPEECH', 'SEXUALLY_EXPLICIT', 'DANGEROUS_CONTENT'].map(c => ({
     category: 'HARM_CATEGORY_' + c,
@@ -17,10 +24,30 @@ const BEAST = "โหมดโหด: ทำงานระดับมือโ
 
 const wait = ms => new Promise(s => setTimeout(s, ms));
 
+// ค้นหาโมเดล Flash ที่คีย์นี้รองรับโดยอัตโนมัติ หากชื่อโมเดลหลักเกิด 404
+async function discoverAvailableFlashModel(key, triedSet) {
+    try {
+        const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models', {
+            headers: { 'x-goog-api-key': key }
+        });
+        if (!res.ok) return null;
+        const data = await res.json();
+        const models = (data.models || [])
+            .filter(m => Array.isArray(m.supportedGenerationMethods) && m.supportedGenerationMethods.includes('streamGenerateContent'))
+            .map(m => String(m.name || '').replace(/^models\//, ''))
+            .filter(name => /flash/i.test(name) && !/image|audio|tts|exp/i.test(name));
+
+        // เรียงจากเวอร์ชันใหม่สุดไปเก่าสุด
+        models.sort((a, b) => b.localeCompare(a, undefined, { numeric: true }));
+        return models.find(name => !triedSet.has(name)) || null;
+    } catch (e) {
+        return null;
+    }
+}
+
 module.exports = async (req, res) => {
     if (req.method !== 'POST') return res.status(405).json({ error: 'ใช้ได้เฉพาะ POST' });
 
-    // รับคีย์ Gemini จาก Header (ไม่เก็บลงฐานข้อมูล)
     const key = String(req.headers['x-user-key'] || '').trim();
     if (!key) return res.status(401).json({ error: 'กรุณาใส่ Gemini API Key ก่อนเริ่มแชท' });
 
@@ -31,7 +58,6 @@ module.exports = async (req, res) => {
         return res.status(400).json({ error: 'รูปแบบข้อมูล JSON ไม่ถูกต้อง' });
     }
 
-    // ขยายให้รับประวัติได้ 20 ข้อความล่าสุด และอ่านไฟล์/ข้อความยาวได้ถึง 250,000 ตัวอักษร
     const messages = Array.isArray(body.messages) ? body.messages.slice(-20) : [];
     const valid = messages.length > 0 &&
         messages.every(m => m && (m.role === 'user' || m.role === 'assistant') &&
@@ -43,21 +69,14 @@ module.exports = async (req, res) => {
 
     const mode = body.mode === 'beast' ? 'beast' : body.mode === 'smart' ? 'smart' : 'fast';
     const beast = mode === 'beast';
-
-    // ตั้งค่า thinkingBudget = 0 สำหรับโหมดเร็วและโหมดฉลาด เพื่อให้เริ่มสตรีมคำตอบทันที (Zero-Latency TTFT)
-    // ส่วนโหมดโหดใช้ 1024 เพื่อให้คิดรอบคอบและยังตอบไว
     const budget = beast ? 1024 : 0;
 
     const build = (thinkingBudget, extra) => {
         const config = {
             temperature: beast ? 0.65 : 0.5,
             maxOutputTokens: beast ? 16384 : 8192,
+            thinkingConfig: { thinkingBudget: thinkingBudget > 0 ? thinkingBudget : 0 }
         };
-        if (thinkingBudget > 0) {
-            config.thinkingConfig = { thinkingBudget };
-        } else {
-            config.thinkingConfig = { thinkingBudget: 0 };
-        }
 
         return {
             systemInstruction: { parts: [{ text: beast ? SYSTEM + '\n\n' + BEAST : SYSTEM }] },
@@ -67,7 +86,6 @@ module.exports = async (req, res) => {
                     text: isLast ? m.content + NUDGE + (extra || '') : m.content
                 }];
 
-                // รองรับการแนบรูปภาพส่งให้ AI อ่านและวิเคราะห์
                 if (m.image && m.image.base64) {
                     parts.push({
                         inlineData: {
@@ -89,11 +107,13 @@ module.exports = async (req, res) => {
 
     const urlFor = m => `https://generativelanguage.googleapis.com/v1beta/models/${m}:streamGenerateContent?alt=sse`;
 
-    async function open(payload, model) {
+    async function open(payload, initialModel) {
         let r;
+        let model = initialModel;
         const triedModels = new Set([model]);
+        let discovered = false;
 
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < 6; i++) {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 30000);
             try {
@@ -107,19 +127,24 @@ module.exports = async (req, res) => {
                 clearTimeout(timeoutId);
             }
 
-            if (r.ok) return r;
+            if (r.ok) return { response: r, usedModel: model };
 
-            // หากชื่อโมเดลไม่พบ (404) ให้สลับไปใช้โมเดลสำรองทันที
+            // หากชื่อโมเดลไม่พบ (404) ให้ไล่สลับโมเดลสำรอง หรือค้นหารุ่นล่าสุดจาก API อัตโนมัติ
             if (r.status === 404) {
-                if (!triedModels.has(SMART)) {
-                    model = SMART;
+                const nextBackup = BACKUP_MODELS.find(m => !triedModels.has(m));
+                if (nextBackup) {
+                    model = nextBackup;
                     triedModels.add(model);
                     continue;
                 }
-                if (!triedModels.has(FALLBACK_MODEL)) {
-                    model = FALLBACK_MODEL;
-                    triedModels.add(model);
-                    continue;
+                if (!discovered) {
+                    discovered = true;
+                    const foundModel = await discoverAvailableFlashModel(key, triedModels);
+                    if (foundModel) {
+                        model = foundModel;
+                        triedModels.add(model);
+                        continue;
+                    }
                 }
             }
 
@@ -142,7 +167,7 @@ module.exports = async (req, res) => {
             }
             break;
         }
-        return r;
+        return { response: r, usedModel: model };
     }
 
     async function pump(r) {
@@ -163,7 +188,6 @@ module.exports = async (req, res) => {
                     const c = (d.candidates || [])[0];
                     if (c) {
                         const parts = (c.content && c.content.parts) || [];
-                        // กรองเฉพาะข้อความคำตอบจริง (ไม่เอาส่วน thought ของโมเดล)
                         const t = parts.filter(p => !p.thought).map(p => p.text || '').join('');
                         if (t) {
                             got = true;
@@ -179,8 +203,8 @@ module.exports = async (req, res) => {
     }
 
     try {
-        const model = mode === 'fast' ? FAST : SMART;
-        const r = await open(build(budget), model);
+        const startModel = mode === 'fast' ? FAST : SMART;
+        const { response: r, usedModel } = await open(build(budget), startModel);
         if (!r.ok) {
             const data = await r.json().catch(() => ({}));
             const msg = (data.error && data.error.message) || '';
@@ -197,10 +221,9 @@ module.exports = async (req, res) => {
         res.setHeader('X-Accel-Buffering', 'no');
 
         let out = await pump(r);
-        // ลองซ้ำทันทีด้วยโมเดล FAST หากไม่มีข้อความตอบกลับและไม่ได้ถูกบล็อกความปลอดภัย
         if (!out.got && out.reason !== 'SAFETY' && out.reason !== 'PROHIBITED_CONTENT') {
-            const r2 = await open(build(0, RETRY), FAST);
-            if (r2.ok) out = await pump(r2);
+            const retryRes = await open(build(0, RETRY), usedModel);
+            if (retryRes.response && retryRes.response.ok) out = await pump(retryRes.response);
         }
         if (!out.got) {
             res.write('ขออภัย AI ไม่สามารถตอบคำขอนี้ได้' + (out.reason ? ` (เหตุผล: ${out.reason})` : '') + '\n\nลองปรับคำถามให้ชัดเจนขึ้นแล้วส่งใหม่ครับ');
