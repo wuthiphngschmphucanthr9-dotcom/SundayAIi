@@ -1,9 +1,9 @@
 // Vercel Serverless Function (Gemini Real-time Streaming)
 const SYSTEM = "คุณคือวิศวกรซอฟต์แวร์อาวุโสและผู้ช่วยอัจฉริยะ SundayAI ตอบคำถามให้ตรงประเด็น ครบถ้วน และทำงานได้จริง ปฏิบัติตามกฎเหล่านี้ทุกครั้ง: 1) อ่านคำสั่งให้ครบทุกข้อ แล้วทำทุกข้อที่ขอ ห้ามข้าม ห้ามเปลี่ยนโจทย์ 2) ใช้ภาษา เฟรมเวิร์ก ชื่อ และสไตล์ที่ผู้ใช้ระบุตรงตัว 3) ถ้าคำสั่งกำกวม ให้ตีความอย่างสมเหตุสมผลแล้วลงมือทำเลย 4) โค้ดต้องสมบูรณ์ รันได้จริง ห้ามย่อ ห้ามใช้ ... 5) โค้ดทุกชิ้นต้องอยู่ใน code fence ที่ระบุภาษา 6) ตอบเป็นภาษาเดียวกับผู้ใช้ (ส่วนใหญ่ภาษาไทย) 7) ใส่อีโมจิที่เหมาะสมและทันสมัยประกอบหัวข้อหรือข้อความสำคัญอย่างพอดี (ไม่รกจนเกินไป) เพื่อให้อ่านง่าย น่าสนใจ และเป็นกันเอง (ห้ามใส่อีโมจิในบล็อกโค้ดเด็ดขาด)";
 
-// ใช้ชื่อโมเดล Gemini รุ่นล่าสุด (ตรวจสอบให้แน่ใจว่าตั้งค่า ENV หรือใช้ชื่อรุ่นที่ API รองรับ)
-const FAST = process.env.GEMINI_FAST_MODEL || 'gemini-2.5-flash';
-const SMART = process.env.GEMINI_MODEL || 'gemini-2.5-pro';
+// อัปเดตชื่อโมเดลเป็น gemini-3.8-flash ตามที่ Google API แจ้ง
+const FAST = process.env.GEMINI_FAST_MODEL || 'gemini-3.8-flash';
+const SMART = process.env.GEMINI_MODEL || 'gemini-3.8-flash';
 
 const SAFETY = ['HARASSMENT', 'HATE_SPEECH', 'SEXUALLY_EXPLICIT', 'DANGEROUS_CONTENT'].map(c => ({
   category: 'HARM_CATEGORY_' + c,
@@ -64,7 +64,6 @@ module.exports = async (req, res) => {
     };
   };
 
-  // [จุดที่แก้ 1] เพิ่มเครื่องหมาย Backtick (`) ครอบ URL
   const urlFor = m => `https://generativelanguage.googleapis.com/v1beta/models/${m}:streamGenerateContent?alt=sse`;
 
   async function open(payload, model) {
@@ -153,7 +152,6 @@ module.exports = async (req, res) => {
       const bad = status === 401 || status === 403 || (status === 400 && /api key/i.test(msg));
       if (bad) return res.status(401).json({ error: 'คีย์ Gemini ใช้ไม่ได้ กรุณาตรวจสอบแล้วใส่ใหม่' });
       if (status === 429) return res.status(429).json({ error: 'โควตาของคีย์นี้เต็มหรือส่งถี่เกินไป รอสักครู่แล้วลองใหม่' });
-      // [จุดที่แก้ 2] เพิ่มเครื่องหมาย Backtick (`) ครอบข้อความ error
       return res.status(502).json({ error: `AI ขัดข้อง (${status}): ${msg || 'ลองใหม่อีกครั้ง'}` });
     }
 
@@ -169,7 +167,6 @@ module.exports = async (req, res) => {
       if (r2 && r2.ok) out = await pump(r2);
     }
     if (!out.got) {
-      // [จุดที่แก้ 3] เพิ่มเครื่องหมาย Backtick (`) ครอบข้อความเหตุผล
       res.write('ขออภัย AI ไม่สามารถตอบคำขอนี้ได้' + (out.reason ? ` (เหตุผล: ${out.reason})` : '') + '\n\nลองปรับคำถามให้ชัดเจนขึ้นแล้วส่งใหม่ครับ');
     }
     if (out.trunc) res.write('\n\n⚠️ (ข้อความถูกตัดเนื่องจากยาวเกินขีดจำกัด)');
