@@ -1,9 +1,10 @@
 // Vercel Serverless Function (Gemini Real-time Streaming)
 const SYSTEM = "คุณคือวิศวกรซอฟต์แวร์อาวุโสและผู้ช่วยอัจฉริยะ SundayAI ตอบคำถามให้ตรงประเด็น ครบถ้วน และทำงานได้จริง ปฏิบัติตามกฎเหล่านี้ทุกครั้ง: 1) อ่านคำสั่งให้ครบทุกข้อ แล้วทำทุกข้อที่ขอ ห้ามข้าม ห้ามเปลี่ยนโจทย์ 2) ใช้ภาษา เฟรมเวิร์ก ชื่อ และสไตล์ที่ผู้ใช้ระบุตรงตัว 3) ถ้าคำสั่งกำกวม ให้ตีความอย่างสมเหตุสมผลแล้วลงมือทำเลย 4) โค้ดต้องสมบูรณ์ รันได้จริง ห้ามย่อ ห้ามใช้ ... 5) โค้ดทุกชิ้นต้องอยู่ใน code fence ที่ระบุภาษา 6) ตอบเป็นภาษาเดียวกับผู้ใช้ (ส่วนใหญ่ภาษาไทย) 7) ใส่อีโมจิที่เหมาะสมและทันสมัยประกอบหัวข้อหรือข้อความสำคัญอย่างพอดี (ไม่รกจนเกินไป) เพื่อให้อ่านง่าย น่าสนใจ และเป็นกันเอง (ห้ามใส่อีโมจิในบล็อกโค้ดเด็ดขาด)";
 
-// อัปเดตชื่อโมเดลเป็น gemini-3.8-flash ตามที่ Google API แจ้ง
+// โมเดลหลักและโมเดลสำรองกรณีเจอ 503 (คนใช้งานหนาแน่น)
 const FAST = process.env.GEMINI_FAST_MODEL || 'gemini-3.8-flash';
 const SMART = process.env.GEMINI_MODEL || 'gemini-3.8-flash';
+const FALLBACK_MODELS = ['gemini-3.8-flash-lite', 'gemini-3.5-flash', 'gemini-3.5-flash-lite'];
 
 const SAFETY = ['HARASSMENT', 'HATE_SPEECH', 'SEXUALLY_EXPLICIT', 'DANGEROUS_CONTENT'].map(c => ({
   category: 'HARM_CATEGORY_' + c,
@@ -41,7 +42,6 @@ module.exports = async (req, res) => {
 
   const mode = body.mode === 'beast' ? 'beast' : body.mode === 'smart' ? 'smart' : 'fast';
   const beast = mode === 'beast';
-  // ลด thinkingBudget เพื่อลดเวลาคิดก่อนเริ่มสตรีมคำตอบแรก (TTFT)
   const budget = beast ? 2048 : mode === 'smart' ? 512 : 0;
 
   const build = (thinkingBudget, extra) => {
@@ -66,9 +66,13 @@ module.exports = async (req, res) => {
 
   const urlFor = m => `https://generativelanguage.googleapis.com/v1beta/models/${m}:streamGenerateContent?alt=sse`;
 
-  async function open(payload, model) {
-    let r, swapped = false;
-    for (let i = 0; i < 2; i++) {
+  async function open(payload, initialModel) {
+    // สร้างรายการคิวโมเดลที่จะลองเรียก (เริ่มจากตัวหลัก ตามด้วยตัวสำรองที่ไม่ซ้ำกัน)
+    const queue = [initialModel, ...FALLBACK_MODELS.filter(m => m !== initialModel)];
+    let r;
+
+    for (let i = 0; i < queue.length; i++) {
+      const model = queue[i];
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 25000);
       try {
@@ -81,27 +85,28 @@ module.exports = async (req, res) => {
       } finally {
         clearTimeout(timeoutId);
       }
+
       if (r.ok) return r;
-      if (r.status === 404 && !swapped) {
-        model = model === FAST ? SMART : FAST;
-        swapped = true;
+
+      // หากโมเดลไม่พบ (404) หรือคนใช้งานแน่นเกินไป (503) ให้สลับไปใช้โมเดลสำรองในคิวทันที
+      if (r.status === 404 || r.status === 503) {
+        if (r.status === 503) await wait(500);
         continue;
       }
+
       if (r.status === 400) {
         const j = await r.clone().json().catch(() => ({}));
         if (/api key/i.test((j.error && j.error.message) || '')) break;
         if (payload.generationConfig && payload.generationConfig.thinkingConfig) {
           delete payload.generationConfig.thinkingConfig;
+          i--; // ลองโมเดลเดิมซ้ำโดยตัด thinkingConfig ออก
           continue;
         }
         if (payload.safetySettings) {
           delete payload.safetySettings;
+          i--;
           continue;
         }
-      }
-      if (r.status === 503) {
-        await wait(400);
-        continue;
       }
       break;
     }
@@ -126,7 +131,6 @@ module.exports = async (req, res) => {
           const c = (d.candidates || [])[0];
           if (c) {
             const parts = (c.content && c.content.parts) || [];
-            // กรองเฉพาะข้อความคำตอบจริง (ไม่เอาส่วน thought ของโมเดล)
             const t = parts.filter(p => !p.thought).map(p => p.text || '').join('');
             if (t) {
               got = true;
@@ -152,6 +156,7 @@ module.exports = async (req, res) => {
       const bad = status === 401 || status === 403 || (status === 400 && /api key/i.test(msg));
       if (bad) return res.status(401).json({ error: 'คีย์ Gemini ใช้ไม่ได้ กรุณาตรวจสอบแล้วใส่ใหม่' });
       if (status === 429) return res.status(429).json({ error: 'โควตาของคีย์นี้เต็มหรือส่งถี่เกินไป รอสักครู่แล้วลองใหม่' });
+      if (status === 503) return res.status(503).json({ error: 'เซิร์ฟเวอร์ AI กำลังมีผู้ใช้งานหนาแน่นชั่วคราว กรุณาลองใหม่อีกครั้งในอีกสักครู่' });
       return res.status(502).json({ error: `AI ขัดข้อง (${status}): ${msg || 'ลองใหม่อีกครั้ง'}` });
     }
 
@@ -161,7 +166,6 @@ module.exports = async (req, res) => {
     res.setHeader('X-Accel-Buffering', 'no');
 
     let out = await pump(r);
-    // ลองซ้ำเฉพาะกรณีไม่ถูกบล็อกความปลอดภัยและไม่มีข้อความตอบกลับเลย
     if (!out.got && out.reason !== 'SAFETY' && out.reason !== 'PROHIBITED_CONTENT') {
       const r2 = await open(build(0, RETRY), FAST);
       if (r2 && r2.ok) out = await pump(r2);
