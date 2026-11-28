@@ -57,7 +57,6 @@
         .aurora-orb-1 { animation: auroraFloat1 13s ease-in-out infinite; }
         .aurora-orb-2 { animation: auroraFloat2 17s ease-in-out infinite; }
 
-        /* แอนิเมชันการ์ดลอยนุ่มนวลและแสงวิ่งผ่าน */
         @keyframes gentleFloat {
             0%, 100% { transform: translateY(0px); }
             50% { transform: translateY(-5px); }
@@ -66,24 +65,6 @@
             animation: gentleFloat 4s ease-in-out infinite;
         }
 
-        @keyframes pulseRing {
-            0% { transform: scale(0.95); opacity: 0.7; }
-            70% { transform: scale(1.18); opacity: 0; }
-            100% { transform: scale(1.18); opacity: 0; }
-        }
-        .animate-pulse-ring::before {
-            content: '';
-            position: absolute;
-            inset: -4px;
-            border-radius: inherit;
-            border: 2px solid rgba(99, 102, 241, 0.45);
-            animation: pulseRing 2.4s cubic-bezier(0.24, 0, 0.38, 1) infinite;
-        }
-
-        @keyframes heroPop {
-            0% { opacity: 0; transform: translateY(28px) scale(0.85) rotate(-6deg); filter: blur(8px); }
-            100% { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); filter: blur(0); }
-        }
         @keyframes slideUpBlur {
             0% { opacity: 0; transform: translateY(22px); filter: blur(6px); }
             100% { opacity: 1; transform: translateY(0); filter: blur(0); }
@@ -92,12 +73,7 @@
             0% { opacity: 0; transform: translateY(24px) scale(0.94); }
             100% { opacity: 1; transform: translateY(0) scale(1); }
         }
-        @keyframes floatPulse {
-            0%, 100% { transform: translateY(0px); box-shadow: 0 0 30px rgba(99, 102, 241, 0.45), 0 0 60px rgba(168, 85, 247, 0.25); }
-            50% { transform: translateY(-7px); box-shadow: 0 12px 40px rgba(99, 102, 241, 0.65), 0 0 80px rgba(236, 72, 153, 0.35); }
-        }
 
-        .animate-hero-logo { animation: heroPop 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards, floatPulse 3.5s ease-in-out 0.8s infinite; }
         .animate-hero-title { opacity: 0; animation: slideUpBlur 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards; }
         .animate-hero-sub { opacity: 0; animation: slideUpBlur 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.25s forwards; }
         .animate-card { opacity: 0; animation: cardCascade 0.65s cubic-bezier(0.16, 1, 0.3, 1) var(--delay, 0.3s) forwards; }
@@ -170,9 +146,6 @@
         .safe-bottom { padding-bottom: max(0.75rem, env(safe-area-inset-bottom)); }
         .safe-top { padding-top: max(0px, env(safe-area-inset-top)); }
 
-        /* ========================================================= */
-        /* ENHANCED RICH ANIMATIONS & MOBILE GESTURE EFFECTS         */
-        /* ========================================================= */
         @keyframes modalPopIn {
             0% { opacity: 0; transform: translateY(30px) scale(0.92); filter: blur(6px); }
             100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
@@ -193,22 +166,6 @@
             }
         }
 
-        /* ละอองดาวและแสงลอยตัว (Floating Cosmic Particles) */
-        @keyframes particleFloat {
-            0% { transform: translateY(0) translateX(0) scale(0.8); opacity: 0; }
-            25% { opacity: 0.85; }
-            75% { opacity: 0.65; }
-            100% { transform: translateY(-120px) translateX(var(--px, 20px)) scale(1.2); opacity: 0; }
-        }
-        .cosmic-particle {
-            position: absolute;
-            border-radius: 9999px;
-            pointer-events: none;
-            animation: particleFloat var(--dur, 7s) ease-in-out infinite;
-            animation-delay: var(--del, 0s);
-        }
-
-        /* เอฟเฟกต์คลื่นกระเพื่อมเมื่อแตะ (Touch Ripple) */
         @keyframes rippleExpand {
             0% { transform: scale(0); opacity: 0.55; }
             100% { transform: scale(2.8); opacity: 0; }
@@ -221,7 +178,6 @@
             animation: rippleExpand 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        /* แสงขอบหมุนวนรอบกล่องพิมพ์ข้อความ (Animated Gradient Border) */
         @keyframes borderGlowFlow {
             0%, 100% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
@@ -231,7 +187,6 @@
             animation: borderGlowFlow 4s ease infinite;
         }
 
-        /* แอนิเมชันรายการใน Sidebar ทยอยเด้งเข้า */
         @keyframes listItemSlide {
             0% { opacity: 0; transform: translateX(-14px); }
             100% { opacity: 1; transform: translateX(0); }
@@ -241,7 +196,6 @@
             animation: listItemSlide 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        /* ป้องกันการกระตุกและไฮไลต์สีฟ้าเวลาแตะบนมือถือ */
         * {
             -webkit-tap-highlight-color: transparent;
         }
@@ -249,7 +203,6 @@
             touch-action: pan-y;
         }
 
-        /* แอนิเมชันแท่งคลื่นเสียง Equalizer สำหรับเครื่องเล่นเพลง */
         @keyframes eqBar {
             0%, 100% { height: 4px; }
             50% { height: 15px; }
@@ -268,33 +221,42 @@
             animation-play-state: paused;
             height: 4px !important;
         }
+
+        /* ซ่อน YouTube IFrame นอกหน้าจอแบบไม่ใช้ opacity-0 เพื่อไม่ให้เบราว์เซอร์ตัดเสียง */
+        .yt-offscreen-holder {
+            position: fixed;
+            left: -9999px;
+            top: 0;
+            width: 240px;
+            height: 135px;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-slate-50 via-white to-indigo-50/40 text-slate-800 dark:bg-none dark:bg-darkBg dark:text-slate-100 antialiased selection:bg-indigo-500 selection:text-white overflow-hidden app-shell flex relative">
 
-    <!-- Ambient Animated Aurora & Cosmic Particles Background -->
+    <!-- Ambient Animated Aurora Background -->
     <div id="ambientParticles" class="fixed inset-0 pointer-events-none overflow-hidden z-0">
         <div class="aurora-orb-1 absolute -top-24 -left-20 w-72 sm:w-96 h-72 sm:h-96 rounded-full bg-indigo-400/20 dark:bg-indigo-600/15 blur-3xl"></div>
         <div class="aurora-orb-2 absolute top-1/3 -right-24 w-80 sm:w-[28rem] h-80 sm:h-[28rem] rounded-full bg-purple-400/20 dark:bg-purple-600/15 blur-3xl"></div>
         <div class="aurora-orb-1 absolute -bottom-24 left-1/3 w-72 sm:w-96 h-72 sm:h-96 rounded-full bg-sky-400/15 dark:bg-fuchsia-600/10 blur-3xl"></div>
     </div>
 
-    <!-- ========================================================= -->
-    <!-- 1. DISCORD GATE MODAL (แสดงตอนเข้าเว็บก่อนใช้งาน AI)     -->
-    <!-- ========================================================= -->
+    <!-- ตัวเล่น YouTube วางไว้นอกจอด้วยขนาดมาตรฐาน 240x135 เพื่อให้เบราว์เซอร์ยอมเล่นเสียง -->
+    <div class="yt-offscreen-holder" aria-hidden="true">
+        <div id="ytMusicPlayer"></div>
+    </div>
+
+    <!-- 1. DISCORD GATE MODAL -->
     <div id="discordGateModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-xl z-[60] flex items-end sm:items-center justify-center p-0 sm:p-4 transition-opacity duration-300">
         <div class="relative bg-white dark:bg-darkCard border-t sm:border border-slate-200/80 dark:border-darkBorder rounded-t-3xl sm:rounded-3xl max-w-md w-full p-6 sm:p-8 pb-8 sm:pb-8 shadow-2xl text-center space-y-6 animate-modal-spring mobile-bottom-sheet overflow-hidden">
-            <!-- แถบจับสำหรับมือถือ -->
             <div class="w-12 h-1.5 rounded-full bg-slate-300 dark:bg-slate-700 mx-auto sm:hidden -mt-2 mb-2"></div>
-            <!-- แสงฟุ้งตกแต่งใน Card -->
             <div class="absolute -top-24 -right-24 w-48 h-48 rounded-full bg-[#5865F2]/25 blur-3xl pointer-events-none"></div>
             <div class="absolute -bottom-24 -left-24 w-48 h-48 rounded-full bg-purple-500/20 blur-3xl pointer-events-none"></div>
 
-            <!-- โลโก้ Discord -->
             <div class="relative w-20 h-20 mx-auto">
                 <div class="absolute inset-0 rounded-3xl bg-[#5865F2] blur-xl opacity-50 animate-pulse"></div>
                 <div class="relative w-20 h-20 rounded-3xl bg-gradient-to-br from-[#5865F2] to-[#4752C4] flex items-center justify-center text-white shadow-xl border border-white/20">
-                    <!-- Discord Official SVG Icon -->
                     <svg class="w-11 h-11 fill-current" viewBox="0 0 127.14 96.36">
                         <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/>
                     </svg>
@@ -313,7 +275,6 @@
             </div>
 
             <div class="space-y-3 pt-1">
-                <!-- ลิงก์เชิญ Discord ของคุณ -->
                 <a id="discordInviteLink" href="https://discord.gg/cTwYMKj4A" target="_blank" rel="noopener noreferrer" onclick="handleJoinDiscordClick()"
                    class="shimmer-btn w-full py-3.5 px-5 rounded-2xl bg-[#5865F2] hover:bg-[#4752C4] text-white font-semibold text-sm flex items-center justify-center gap-2.5 shadow-xl shadow-[#5865F2]/30 transition-all active:scale-[0.98]">
                     <svg class="w-5 h-5 fill-current" viewBox="0 0 127.14 96.36">
@@ -338,9 +299,7 @@
         </div>
     </div>
 
-    <!-- ========================================================= -->
-    <!-- PROMPT LIBRARY MODAL (คลังคำสั่งสำเร็จรูป)                 -->
-    <!-- ========================================================= -->
+    <!-- PROMPT LIBRARY MODAL -->
     <div id="promptLibraryModal" onclick="if(event.target===this) closePromptLibrary()" class="fixed inset-0 bg-black/70 backdrop-blur-md z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
         <div class="bg-white dark:bg-darkCard border-t sm:border border-slate-200 dark:border-darkBorder rounded-t-3xl sm:rounded-3xl max-w-lg w-full p-5 sm:p-6 pb-8 sm:pb-6 shadow-2xl space-y-4 animate-modal-spring mobile-bottom-sheet">
             <div class="w-12 h-1.5 rounded-full bg-slate-300 dark:bg-slate-700 mx-auto sm:hidden -mt-1 mb-1"></div>
@@ -362,12 +321,12 @@
         </div>
     </div>
 
-    <!-- Image Lightbox Modal (ดูรูปขนาดเต็มเมื่อคลิกที่รูปในแชท) -->
+    <!-- Image Lightbox Modal -->
     <div id="imageLightbox" onclick="closeLightbox()" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 cursor-zoom-out">
         <img id="lightboxImg" src="" alt="Preview" class="max-w-full max-h-[90vh] rounded-2xl shadow-2xl border border-white/10 object-contain">
     </div>
 
-    <!-- Live HTML File Preview Modal (รันไฟล์เว็บ/เกมที่ AI สร้างให้ดูสดๆ) -->
+    <!-- Live HTML File Preview Modal -->
     <div id="filePreviewModal" onclick="if(event.target===this) closeFilePreview()" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-[55] hidden flex items-center justify-center p-2 sm:p-5">
         <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-2xl sm:rounded-3xl w-full max-w-5xl h-[88vh] flex flex-col overflow-hidden shadow-2xl animate-modal-spring">
             <div class="flex items-center justify-between px-4 py-3 bg-slate-100 dark:bg-darkSidebar border-b border-slate-200 dark:border-darkBorder">
@@ -486,7 +445,6 @@
 
         <!-- Sidebar Footer -->
         <div class="p-3 border-t border-slate-200/80 dark:border-darkBorder/80 space-y-1.5">
-            <!-- ปุ่มเปิด Discord ใน Sidebar -->
             <a href="https://discord.gg/cTwYMKj4A" target="_blank" rel="noopener noreferrer" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium text-[#7983F5] bg-[#5865F2]/10 hover:bg-[#5865F2]/20 border border-[#5865F2]/20 transition-colors">
                 <span class="flex items-center gap-2.5">
                     <svg class="w-4 h-4 fill-current" viewBox="0 0 127.14 96.36">
@@ -519,7 +477,6 @@
     <main class="flex-1 flex flex-col min-w-0 relative z-10">
         <!-- Top Glass Header -->
         <header class="border-b border-slate-200/70 dark:border-darkBorder/70 bg-white/85 dark:bg-darkBg/85 backdrop-blur-xl sticky top-0 z-20 safe-top">
-            <!-- แถวบน: เมนู, โหมด AI และปุ่มเครื่องมือ -->
             <div class="h-14 sm:h-16 px-2.5 sm:px-5 flex items-center justify-between gap-2">
                 <div class="flex items-center gap-1.5 sm:gap-2.5 min-w-0">
                     <button type="button" onclick="toggleSidebar()" class="md:hidden p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-darkCard active:scale-90 transition-all shrink-0">
@@ -533,7 +490,6 @@
                         </select>
                         <i data-lucide="chevron-down" class="w-3.5 h-3.5 sm:w-4 sm:h-4 absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 group-hover:text-indigo-400 pointer-events-none transition-colors"></i>
                     </div>
-                    <!-- ตัวเลือกบุคลิก AI (AI Persona Selector) -->
                     <div class="relative group min-w-0 hidden md:block">
                         <select id="personaSelect" onchange="handlePersonaChange()" class="appearance-none bg-emerald-500/10 dark:bg-emerald-950/40 border border-emerald-500/30 hover:border-emerald-500/60 text-emerald-700 dark:text-emerald-300 text-xs sm:text-sm font-semibold rounded-xl pl-3 pr-8 py-1.5 sm:py-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500/40 shadow-sm transition-all">
                             <option value="default">🤖 ผู้ช่วยทั่วไป</option>
@@ -547,7 +503,7 @@
                 </div>
 
                 <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
-                    <!-- เครื่องเล่นเพลงบนจอคอมพิวเตอร์ (Desktop Inline Pill) -->
+                    <!-- เครื่องเล่นเพลงบนจอคอมพิวเตอร์ -->
                     <div class="hidden lg:flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-slate-950 dark:bg-darkCard border border-emerald-500/40 text-white shadow-md shadow-emerald-500/10">
                         <button type="button" onclick="toggleBgMusic()" title="เล่น / หยุดเพลง" class="w-7 h-7 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 flex items-center justify-center shrink-0 transition-all active:scale-90 shadow-sm">
                             <i data-music-icon data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>
@@ -558,9 +514,9 @@
                             <span class="eq-bar"></span>
                             <span class="eq-bar"></span>
                         </div>
-                        <div class="min-w-0 max-w-[140px]">
+                        <div class="min-w-0 max-w-[160px]">
                             <p class="text-[11px] font-bold text-emerald-400 truncate leading-tight">ให้คุณเป็นดวงจันทร์ 🌙</p>
-                            <p data-music-status class="text-[9px] text-slate-400 truncate leading-tight">กำลังเปิดอัตโนมัติ...</p>
+                            <p data-music-status class="text-[9px] text-amber-300 truncate leading-tight">กดปุ่ม ▶ เพื่อเปิดเสียงเพลง</p>
                         </div>
                         <div class="flex items-center gap-1.5 pl-2 border-l border-slate-800">
                             <i data-lucide="volume-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
@@ -590,7 +546,7 @@
                 </div>
             </div>
 
-            <!-- แถวล่างเฉพาะมือถือ/แท็บเล็ต: แถบเครื่องเล่นเพลงแยกสัดส่วนชัดเจน ไม่ทับปุ่มอื่นแน่นอน -->
+            <!-- แถวเครื่องเล่นเพลงบนมือถือ -->
             <div class="lg:hidden px-3 py-2 bg-slate-950/95 dark:bg-darkCard/95 border-t border-emerald-500/25 flex items-center justify-between gap-2.5 text-white">
                 <div class="flex items-center gap-2 min-w-0">
                     <button type="button" onclick="toggleBgMusic()" title="เล่น / หยุดเพลง" class="w-8 h-8 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 flex items-center justify-center shrink-0 transition-all active:scale-90 shadow-md shadow-emerald-500/20">
@@ -604,7 +560,7 @@
                     </div>
                     <div class="min-w-0">
                         <p class="text-xs font-bold text-emerald-400 truncate leading-tight">ให้คุณเป็นดวงจันทร์ 🌙</p>
-                        <p data-music-status class="text-[10px] text-slate-400 truncate leading-tight">กำลังเปิดอัตโนมัติ...</p>
+                        <p data-music-status class="text-[10px] text-amber-300 truncate leading-tight">กดปุ่ม ▶ เพื่อเปิดเสียงเพลง</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-2 shrink-0">
@@ -623,15 +579,12 @@
                 
                 <!-- Welcome Screen -->
                 <div id="welcomeScreen" class="py-4 sm:py-10 text-center space-y-5 sm:space-y-6">
-                    <!-- โลโก้ปก SundayAI ไซเบอร์กรีน-เมทัลลิกตามรูปปก -->
                     <div class="relative w-32 h-36 sm:w-40 sm:h-44 mx-auto animate-gentle-float">
                         <div class="absolute inset-0 rounded-3xl bg-emerald-500/35 blur-2xl animate-pulse"></div>
                         <div class="relative w-full h-full rounded-3xl bg-gradient-to-b from-[#061409] via-[#091c0e] to-[#040b06] border-2 border-emerald-400/60 shadow-2xl shadow-emerald-500/30 flex flex-col items-center justify-center p-3 overflow-hidden">
-                            <!-- ลายวงจรพื้นหลัง -->
                             <svg class="absolute inset-0 w-full h-full opacity-30 pointer-events-none" viewBox="0 0 200 220">
                                 <path d="M0 30 H40 L60 50 H140 L160 30 H200 M0 190 H50 L70 170 H130 L150 190 H200 M20 0 V60 L40 80 V140 L20 160 V220 M180 0 V60 L160 80 V140 L180 160 V220" fill="none" stroke="#22c55e" stroke-width="2"/>
                             </svg>
-                            <!-- โลโก้ S วงแหวน + Sunday Ai + ชิป AI -->
                             <svg viewBox="0 0 220 210" class="w-full h-full relative z-10 drop-shadow-[0_0_12px_rgba(34,197,94,0.7)]">
                                 <defs>
                                     <linearGradient id="heroMetal" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -732,7 +685,7 @@
             </div>
         </div>
 
-        <!-- Floating Scroll-to-Bottom Button (เด้งขึ้นเมื่อเลื่อนอ่านข้อความเก่าบนมือถือ) -->
+        <!-- Floating Scroll-to-Bottom Button -->
         <button type="button" id="scrollBottomBtn" onclick="scrollToBottom(true)" class="hidden fixed bottom-28 right-4 sm:right-8 z-20 p-2.5 rounded-full bg-indigo-600/90 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-500/30 backdrop-blur-md border border-white/20 animate-bounce transition-all active:scale-90">
             <i data-lucide="arrow-down" class="w-4 h-4"></i>
         </button>
@@ -754,19 +707,15 @@
                     <div id="emojiGrid" class="grid grid-cols-8 gap-1 max-h-44 overflow-y-auto pr-1"></div>
                 </div>
 
-                <!-- Hidden File Input for Images -->
+                <!-- Hidden File Inputs -->
                 <input type="file" id="imageFileInput" accept="image/*" class="hidden" onchange="handleImageFileSelect(event)">
-                <!-- Hidden File Input for Code & Text Documents -->
-                <input type="file" id="docFileInput" accept=".txt,.md,.html,.htm,.css,.js,.jsx,.ts,.tsx,.py,.json,.csv,.xml,.sql,.php,.java,.cpp,.c,.cs,.go,.rs,.yaml,.yml,.env,.log" class="hidden" onchange="handleDocFileSelect(event)">
+                <input type="file" id="docFileInput" accept=".txt,.md,.html,.htm,.css,.js,.jsx,.ts,.tsx,.py,.json,.csv,.xml,.sql,.php,.java,.cpp,.c,.cs,.go,.rs,.yaml,.yml,.env,.log,.lua" class="hidden" onchange="handleDocFileSelect(event)">
 
                 <div id="inputDropZone" ondragover="handleInputDragOver(event)" ondragleave="handleInputDragLeave(event)" ondrop="handleInputDrop(event)" class="animated-input-border relative group rounded-2xl p-[1.5px] bg-gradient-to-r from-slate-200 via-slate-200 to-slate-200 dark:from-darkBorder dark:via-darkBorder dark:to-darkBorder focus-within:from-indigo-500 focus-within:via-purple-500 focus-within:to-pink-500 shadow-xl shadow-black/10 dark:shadow-black/40 transition-all duration-300">
                     <div class="relative bg-white/95 dark:bg-darkCard/95 backdrop-blur-xl rounded-[14.5px]">
                         
-                        <!-- ========================================================= -->
-                        <!-- 2. IMAGE & CODE FILE ATTACHMENT PREVIEW BAR               -->
-                        <!-- ========================================================= -->
+                        <!-- ATTACHMENT PREVIEW BAR -->
                         <div id="attachmentPreviewBar" class="hidden px-3.5 pt-3 pb-1 flex flex-wrap gap-2.5 animate-msg">
-                            <!-- พรีวิวรูปภาพ -->
                             <div id="imagePreviewContainer" class="hidden relative inline-flex items-center gap-3 p-2 rounded-xl bg-slate-100/90 dark:bg-darkBg/90 border border-slate-200 dark:border-darkBorder">
                                 <img id="imagePreviewThumb" src="" alt="Attached Preview" class="w-12 h-12 sm:w-14 sm:h-14 rounded-lg object-cover border border-white/10 shadow-sm">
                                 <div class="pr-6 max-w-[150px] sm:max-w-[190px]">
@@ -778,7 +727,6 @@
                                 </button>
                             </div>
 
-                            <!-- พรีวิวไฟล์โค้ด / เอกสาร -->
                             <div id="docPreviewContainer" class="hidden relative inline-flex items-center gap-3 p-2 rounded-xl bg-indigo-500/10 dark:bg-indigo-950/40 border border-indigo-500/30">
                                 <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center shrink-0 shadow-sm">
                                     <i data-lucide="file-code-2" class="w-5 h-5"></i>
@@ -793,44 +741,31 @@
                             </div>
                         </div>
 
-                        <!-- Responsive Layout: บนมือถือปุ่มเครื่องมืออยู่แถวล่างกดง่ายไม่เบียดช่องพิมพ์ -->
                         <textarea id="messageInput" rows="1" placeholder="พิมพ์ข้อความ วางรูป หรือแนบไฟล์โค้ดให้ AI แก้..." class="w-full bg-transparent px-3.5 sm:px-4 pt-3 pb-1.5 sm:py-3.5 sm:pr-52 text-[15px] sm:text-base resize-none focus:outline-none max-h-32 sm:max-h-36 overflow-y-auto placeholder:text-slate-400" oninput="autoResize(this)" onkeydown="handleKeyDown(event)" onpaste="handlePasteImage(event)"></textarea>
                         
                         <div class="flex items-center justify-between sm:justify-end px-2.5 pb-2 sm:p-0 sm:absolute sm:right-2 sm:bottom-2 gap-1">
                             <div class="flex items-center gap-0.5 sm:gap-1">
-                                <!-- ปุ่มคลังคำสั่งสำเร็จรูป (Prompt Library) -->
                                 <button type="button" onclick="openPromptLibrary()" title="คลังคำสั่งสำเร็จรูป" class="p-2 sm:p-2.5 rounded-xl text-slate-400 hover:text-purple-400 hover:bg-slate-100 dark:hover:bg-darkBorder/70 transition-all active:scale-90">
                                     <i data-lucide="wand-2" class="w-4 h-4 sm:w-4 sm:h-4 pointer-events-none"></i>
                                 </button>
-
-                                <!-- ปุ่มพิมพ์ด้วยเสียง (Voice Input) -->
-                                <button type="button" id="voiceInputBtn" onclick="toggleVoiceInput()" title="พิมพ์ด้วยเสียง (พูดภาษาไทย/อังกฤษ)" class="p-2 sm:p-2.5 rounded-xl text-slate-400 hover:text-sky-400 hover:bg-slate-100 dark:hover:bg-darkBorder/70 transition-all active:scale-90">
+                                <button type="button" id="voiceInputBtn" onclick="toggleVoiceInput()" title="พิมพ์ด้วยเสียง" class="p-2 sm:p-2.5 rounded-xl text-slate-400 hover:text-sky-400 hover:bg-slate-100 dark:hover:bg-darkBorder/70 transition-all active:scale-90">
                                     <i data-lucide="mic" class="w-4 h-4 sm:w-4 sm:h-4 pointer-events-none"></i>
                                 </button>
-
-                                <!-- ปุ่มอัปโหลดไฟล์โค้ด / เอกสารให้ AI แก้ -->
                                 <button type="button" id="attachDocBtn" onclick="triggerDocUpload()" title="แนบไฟล์โค้ด / เอกสารให้ AI แก้ไข" class="p-2 sm:p-2.5 rounded-xl text-slate-400 hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-darkBorder/70 transition-all active:scale-90">
                                     <i data-lucide="file-code-2" class="w-4 h-4 sm:w-4 sm:h-4 pointer-events-none"></i>
                                 </button>
-
-                                <!-- ปุ่มอัปโหลดรูปภาพ -->
                                 <button type="button" id="attachImageBtn" onclick="triggerImageUpload()" title="ส่งรูปภาพให้ AI ดู" class="p-2 sm:p-2.5 rounded-xl text-slate-400 hover:text-emerald-400 hover:bg-slate-100 dark:hover:bg-darkBorder/70 transition-all active:scale-90">
                                     <i data-lucide="image-plus" class="w-4 h-4 sm:w-4 sm:h-4 pointer-events-none"></i>
                                 </button>
-
-                                <!-- ปุ่มอีโมจิ -->
                                 <button type="button" id="emojiPickerBtn" onclick="toggleEmojiPicker()" title="แทรกอีโมจิ" class="p-2 sm:p-2.5 rounded-xl text-slate-400 hover:text-amber-400 hover:bg-slate-100 dark:hover:bg-darkBorder/70 transition-all active:scale-90">
                                     <i data-lucide="smile" class="w-4 h-4 sm:w-4 sm:h-4 pointer-events-none"></i>
                                 </button>
                             </div>
 
                             <div class="flex items-center">
-                                <!-- ปุ่มส่งข้อความ -->
                                 <button type="button" id="sendButton" onclick="sendMessage(event)" title="ส่งข้อความ" class="shimmer-btn p-2.5 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 hover:brightness-110 text-white shadow-md shadow-indigo-500/30 disabled:opacity-40 disabled:cursor-not-allowed transition-all active:scale-90 cursor-pointer">
                                     <i data-lucide="arrow-up" class="w-4 h-4 pointer-events-none"></i>
                                 </button>
-
-                                <!-- 3. STOP GENERATING BUTTON -->
                                 <button type="button" id="stopButton" onclick="stopGeneration()" title="หยุดการสร้างข้อความ" class="hidden p-2.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white shadow-md shadow-rose-500/30 transition-all active:scale-90 cursor-pointer animate-pulse">
                                     <i data-lucide="square" class="w-4 h-4 fill-current pointer-events-none"></i>
                                 </button>
@@ -922,13 +857,13 @@
         let isRecordingVoice = false;
         let speechRecognition = null;
 
-        // ตัวแปรควบคุมเครื่องเล่นเพลง "ให้คุณเป็นดวงจันทร์" (Web Audio Piano Lo-Fi Melody ที่ได้ยินเสียงชัดเจน 100%)
-        let audioCtx = null;
-        let masterGain = null;
-        let beatInterval = null;
-        let beatStep = 0;
-        let isMusicPlaying = true;
+        // ตัวแปรควบคุมเครื่องเล่นเพลง YouTube ต้นฉบับ ("ให้คุณเป็นดวงจันทร์" - eWf91SOdDl0)
+        const YT_MUSIC_VIDEO_ID = 'eWf91SOdDl0';
+        let ytPlayer = null;
+        let ytPlayerReady = false;
+        let isMusicPlaying = false;
         let musicUserPaused = false;
+        let audioUnlocked = false;
         let currentMusicVolume = 85;
 
         let chats = (() => {
@@ -975,7 +910,6 @@
         const messagesContainer = document.getElementById('messagesContainer');
 
         function init() {
-            // ตั้งค่าธีมเริ่มต้นเป็นโหมดสว่าง (สีขาว) หรือตามที่ผู้ใช้เคยเลือกไว้
             const savedTheme = safeStorage.get('sundayai_theme', true);
             const html = document.documentElement;
             const themeIcon = document.getElementById('themeIcon');
@@ -990,7 +924,6 @@
                 if (themeText) themeText.textContent = 'โหมดสว่าง (ธีมหลัก)';
             }
 
-            // ตรวจสอบว่าเคยผ่านหน้า Discord แล้วหรือไม่ ถ้าเคยแล้วให้ซ่อนอัตโนมัติ
             const discordPassed = safeStorage.get('sundayai_discord_passed', true);
             const discordModal = document.getElementById('discordGateModal');
             if (discordPassed === 'true' && discordModal) {
@@ -1006,140 +939,116 @@
             initCardTiltAnimations();
             initMobileSwipeGestures();
             initAudioUnlockOnFirstTap();
-            // สั่งเล่นเพลงอัตโนมัติทันทีที่เข้าเว็บ
-            startBgMusic();
+            loadYouTubeMusicAPI();
         }
 
-        // ปลดล็อกระบบเสียงทันทีที่ผู้ใช้แตะหน้าจอบนมือถือ/คอมพิวเตอร์
+        // โหลด YouTube IFrame Player API สำหรับเล่นเพลงต้นฉบับ
+        function loadYouTubeMusicAPI() {
+            if (window.YT && window.YT.Player) {
+                onYouTubeIframeAPIReady();
+                return;
+            }
+            const tag = document.createElement('script');
+            tag.src = 'https://www.youtube.com/iframe_api';
+            const firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        }
+
+        window.onYouTubeIframeAPIReady = function() {
+            ytPlayer = new window.YT.Player('ytMusicPlayer', {
+                height: '135',
+                width: '240',
+                videoId: YT_MUSIC_VIDEO_ID,
+                playerVars: {
+                    autoplay: 1,
+                    mute: 1, // เริ่มแบบ mute ก่อนเพื่อให้เบราว์เซอร์ยอมโหลดและเล่นทันที
+                    controls: 0,
+                    disablekb: 1,
+                    fs: 0,
+                    loop: 1,
+                    playlist: YT_MUSIC_VIDEO_ID,
+                    playsinline: 1,
+                    rel: 0,
+                    origin: window.location.origin
+                },
+                events: {
+                    onReady: function(event) {
+                        ytPlayerReady = true;
+                        event.target.setVolume(currentMusicVolume);
+                        if (!musicUserPaused) {
+                            event.target.playVideo();
+                            if (audioUnlocked) {
+                                event.target.unMute();
+                                event.target.setVolume(currentMusicVolume);
+                            }
+                        }
+                    },
+                    onStateChange: function(event) {
+                        if (event.data === window.YT.PlayerState.PLAYING) {
+                            const isMuted = ytPlayer && typeof ytPlayer.isMuted === 'function' ? ytPlayer.isMuted() : !audioUnlocked;
+                            if (!isMuted && audioUnlocked) {
+                                updateMusicPlayerUI(true, 'กำลังเล่น: ให้คุณเป็นดวงจันทร์ 🌙');
+                            } else {
+                                updateMusicPlayerUI(false, 'แตะหน้าจอหรือกด ▶ เพื่อเปิดเสียง 🔊');
+                            }
+                        } else if (event.data === window.YT.PlayerState.PAUSED) {
+                            updateMusicPlayerUI(false, musicUserPaused ? 'หยุดชั่วคราว' : 'กดปุ่ม ▶ เพื่อเปิดเสียงเพลง');
+                        } else if (event.data === window.YT.PlayerState.ENDED) {
+                            event.target.playVideo();
+                        }
+                    },
+                    onError: function(event) {
+                        const code = event?.data;
+                        if (code === 101 || code === 150) {
+                            updateMusicPlayerUI(false, 'เจ้าของเพลงบล็อกการเล่นนอก YouTube');
+                        } else {
+                            updateMusicPlayerUI(false, 'กดไอคอนขวาเพื่อฟังบน YouTube');
+                        }
+                    }
+                }
+            });
+        };
+
+        // ปลดล็อกเสียง YouTube ทันทีที่ผู้ใช้แตะปุ่มหรือหน้าจอครั้งแรก
         function initAudioUnlockOnFirstTap() {
             const unlock = () => {
-                if (!musicUserPaused) {
-                    ensureAudioContext();
-                    if (!beatInterval) {
-                        startBgMusic();
-                    }
-                    updateMusicPlayerUI(true, 'กำลังเล่น: ให้คุณเป็นดวงจันทร์ 🌙');
+                audioUnlocked = true;
+                if (!musicUserPaused && ytPlayerReady && ytPlayer) {
+                    try {
+                        ytPlayer.unMute();
+                        ytPlayer.setVolume(currentMusicVolume);
+                        ytPlayer.playVideo();
+                        updateMusicPlayerUI(true, 'กำลังเล่น: ให้คุณเป็นดวงจันทร์ 🌙');
+                    } catch (e) {}
                 }
-                if (audioCtx && audioCtx.state === 'running') {
-                    document.removeEventListener('touchstart', unlock);
-                    document.removeEventListener('click', unlock);
-                    document.removeEventListener('keydown', unlock);
-                }
+                document.removeEventListener('touchstart', unlock);
+                document.removeEventListener('click', unlock);
+                document.removeEventListener('keydown', unlock);
             };
             document.addEventListener('touchstart', unlock, { passive: true });
             document.addEventListener('click', unlock, { passive: true });
             document.addEventListener('keydown', unlock, { passive: true });
         }
 
-        // =========================================================
-        // WEB AUDIO PIANO MELODY PLAYER ("ให้คุณเป็นดวงจันทร์")
-        // =========================================================
-        function ensureAudioContext() {
-            if (!audioCtx) {
-                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-                audioCtx = new AudioContextClass();
-                masterGain = audioCtx.createGain();
-                masterGain.gain.setValueAtTime(Math.max(0.001, currentMusicVolume / 100), audioCtx.currentTime);
-                masterGain.connect(audioCtx.destination);
-            }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume().catch(() => {});
-            }
-        }
-
-        function playMoonlightNote(freq, duration, volume = 0.35, type = 'triangle') {
-            if (!audioCtx || !masterGain) return;
-            const now = audioCtx.currentTime;
-            const osc = audioCtx.createOscillator();
-            const subOsc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-
-            osc.type = type;
-            osc.frequency.setValueAtTime(freq, now);
-
-            subOsc.type = 'sine';
-            subOsc.frequency.setValueAtTime(freq * 2, now);
-
-            const subGain = audioCtx.createGain();
-            subGain.gain.setValueAtTime(0.08, now);
-
-            gain.gain.setValueAtTime(0.001, now);
-            gain.gain.linearRampToValueAtTime(volume, now + 0.03);
-            gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
-
-            osc.connect(gain);
-            subOsc.connect(subGain);
-            subGain.connect(gain);
-            gain.connect(masterGain);
-
-            osc.start(now);
-            subOsc.start(now);
-            osc.stop(now + duration + 0.02);
-            subOsc.stop(now + duration + 0.02);
-        }
-
-        function playBeatStep(step) {
-            if (!audioCtx || !masterGain) return;
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume().catch(() => {});
-            }
-
-            // คอร์ดเบสนุ่มๆ สไตล์เพลง "ให้คุณเป็นดวงจันทร์" (Fmaj7 -> Em7 -> Dm7 -> Cmaj7)
-            const bassNotes = {
-                0: 174.61,  // F3
-                8: 164.81,  // E3
-                16: 146.83, // D3
-                24: 130.81  // C3
-            };
-            if (bassNotes[step]) {
-                playMoonlightNote(bassNotes[step], 1.8, 0.42, 'sine');
-            }
-
-            // ทำนองเปียโนอบอุ่นชวนฝัน
-            const melodyNotes = {
-                0: 523.25,  // C5
-                2: 659.25,  // E5
-                4: 783.99,  // G5
-                6: 659.25,  // E5
-                8: 493.88,  // B4
-                10: 587.33, // D5
-                12: 783.99, // G5
-                14: 587.33, // D5
-                16: 440.00, // A4
-                18: 523.25, // C5
-                20: 659.25, // E5
-                22: 523.25, // C5
-                24: 392.00, // G4
-                26: 493.88, // B4
-                28: 587.33, // D5
-                30: 523.25  // C5
-            };
-            if (melodyNotes[step]) {
-                playMoonlightNote(melodyNotes[step], 0.75, 0.36, 'triangle');
-            }
-        }
-
         function startBgMusic() {
-            ensureAudioContext();
-            if (beatInterval) clearInterval(beatInterval);
-            playBeatStep(beatStep);
-            beatStep = (beatStep + 1) % 32;
-            beatInterval = setInterval(() => {
-                playBeatStep(beatStep);
-                beatStep = (beatStep + 1) % 32;
-            }, 260);
-
-            if (audioCtx && audioCtx.state === 'running') {
-                updateMusicPlayerUI(true, 'กำลังเล่น: ให้คุณเป็นดวงจันทร์ 🌙');
+            audioUnlocked = true;
+            if (ytPlayerReady && ytPlayer) {
+                try {
+                    ytPlayer.unMute();
+                    ytPlayer.setVolume(currentMusicVolume);
+                    ytPlayer.playVideo();
+                    updateMusicPlayerUI(true, 'กำลังเล่น: ให้คุณเป็นดวงจันทร์ 🌙');
+                } catch (e) {}
             } else {
-                updateMusicPlayerUI(true, 'แตะหน้าจอ 1 ครั้งเพื่อเปิดเสียง 🔊');
+                updateMusicPlayerUI(true, 'กำลังโหลดเพลงต้นฉบับ...');
             }
         }
 
         function stopBgMusic() {
-            if (beatInterval) {
-                clearInterval(beatInterval);
-                beatInterval = null;
+            if (ytPlayerReady && ytPlayer) {
+                try {
+                    ytPlayer.pauseVideo();
+                } catch (e) {}
             }
             updateMusicPlayerUI(false, 'หยุดชั่วคราว');
         }
@@ -1155,12 +1064,19 @@
             });
             document.querySelectorAll('[data-music-status]').forEach(status => {
                 status.textContent = customStatus || (playing ? 'กำลังเล่น: ให้คุณเป็นดวงจันทร์ 🌙' : 'หยุดชั่วคราว');
+                if (playing) {
+                    status.classList.remove('text-amber-300');
+                    status.classList.add('text-slate-400');
+                } else {
+                    status.classList.remove('text-slate-400');
+                    status.classList.add('text-amber-300');
+                }
             });
             safeIcons();
         }
 
         function toggleBgMusic() {
-            if (isMusicPlaying && beatInterval) {
+            if (isMusicPlaying) {
                 musicUserPaused = true;
                 stopBgMusic();
                 showToast('หยุดเสียงเพลงชั่วคราว 🔇');
@@ -1174,11 +1090,18 @@
         function changeMusicVolume(val) {
             const numericVol = Math.max(0, Math.min(100, Number(val)));
             currentMusicVolume = numericVol;
+            audioUnlocked = true;
             document.querySelectorAll('.music-vol-slider').forEach(slider => {
                 slider.value = numericVol;
             });
-            if (masterGain && audioCtx) {
-                masterGain.gain.setValueAtTime(Math.max(0.001, numericVol / 100), audioCtx.currentTime);
+            if (ytPlayerReady && ytPlayer) {
+                try {
+                    ytPlayer.unMute();
+                    ytPlayer.setVolume(numericVol);
+                    if (!musicUserPaused && !isMusicPlaying) {
+                        ytPlayer.playVideo();
+                    }
+                } catch (e) {}
             }
         }
 
@@ -1212,16 +1135,12 @@
                 const diffX = touchEndX - touchStartX;
                 const diffY = Math.abs(touchEndY - touchStartY);
 
-                // ปัดแนวนอนชัดเจนและไม่ชนกับการเลื่อนแนวตั้ง
                 if (Math.abs(diffX) > 65 && diffY < 50) {
                     const sidebar = document.getElementById('sidebar');
                     const isClosed = sidebar.classList.contains('-translate-x-full');
-                    // ปัดขวาจากขอบซ้าย (< 55px) เพื่อเปิดเมนู
                     if (diffX > 0 && touchStartX < 55 && isClosed) {
                         toggleSidebar();
-                    }
-                    // ปัดซ้ายเมื่อเมนูเปิดอยู่เพื่อปิดเมนู
-                    else if (diffX < 0 && !isClosed) {
+                    } else if (diffX < 0 && !isClosed) {
                         toggleSidebar();
                     }
                 }
@@ -1255,7 +1174,6 @@
             }
         }
 
-        // ย่อขนาดและแปลงรูปภาพเป็น Base64 เพื่อส่งให้ AI วิเคราะห์ได้รวดเร็ว
         function processImageFile(file) {
             if (!file.type.startsWith('image/')) {
                 showToast('กรุณาเลือกไฟล์รูปภาพเท่านั้น');
@@ -1335,7 +1253,6 @@
         }
 
         function processDocFile(file) {
-            // จำกัดขนาดไฟล์ข้อความไม่เกิน 1.5MB เพื่อไม่ให้เกิน Token Limit
             if (file.size > 1.5 * 1024 * 1024) {
                 showToast('ไฟล์มีขนาดใหญ่เกินไป (รองรับสูงสุด 1.5 MB)');
                 return;
@@ -1375,7 +1292,6 @@
             updateAttachmentBarVisibility();
         }
 
-        // รองรับการลากไฟล์ (รูปภาพ หรือ ไฟล์โค้ด) มาวางในช่องพิมพ์
         function handleInputDragOver(e) {
             e.preventDefault();
             document.getElementById('inputDropZone').classList.add('ring-2', 'ring-indigo-500');
@@ -1406,9 +1322,6 @@
             }
         }
 
-        // =========================================================
-        // EMOJI & REACTIONS
-        // =========================================================
         function renderEmojiGrid() {
             const grid = document.getElementById('emojiGrid');
             if (!grid) return;
@@ -1505,9 +1418,6 @@
             }).join('');
         }
 
-        // =========================================================
-        // API KEY & UI HELPERS
-        // =========================================================
         function openApiKeyModal() {
             document.getElementById('apiKeyInput').value = userApiKey;
             document.getElementById('apiKeyModal').classList.remove('hidden');
@@ -1707,7 +1617,6 @@
 
         function formatContent(text) {
             let escaped = escapeHtml(text);
-            // รองรับทั้งรูปแบบ ```lang:filename.ext และ ```lang ปกติ
             escaped = escaped.replace(/```([a-zA-Z0-9_-]+)?(?::([^\n`]+))?\n([\s\S]*?)(```|$)/g, (match, lang, customFilename, code) => {
                 const language = (lang || 'txt').toLowerCase();
                 const extMap = {
@@ -1715,7 +1624,7 @@
                     typescript: 'ts', ts: 'ts', tsx: 'tsx', python: 'py', py: 'py',
                     css: 'css', json: 'json', sql: 'sql', php: 'php', csv: 'csv',
                     java: 'java', cpp: 'cpp', c: 'c', markdown: 'md', md: 'md',
-                    xml: 'xml', yaml: 'yaml', yml: 'yml', sh: 'sh', bash: 'sh'
+                    xml: 'xml', yaml: 'yaml', yml: 'yml', sh: 'sh', bash: 'sh', lua: 'lua'
                 };
                 const ext = extMap[language] || 'txt';
                 const cleanFilename = customFilename ? customFilename.trim() : `sundayai-file.${ext}`;
@@ -1727,7 +1636,6 @@
 
                 return `
                     <div class="my-3.5 rounded-2xl overflow-hidden border border-emerald-500/30 dark:border-emerald-500/30 bg-slate-950 text-slate-100 shadow-lg">
-                        <!-- การ์ดแสดงไฟล์ที่ AI สร้างให้ -->
                         <div class="flex flex-wrap items-center justify-between gap-2 px-3.5 py-3 bg-gradient-to-r from-slate-900 via-[#0a1f12] to-slate-900 border-b border-slate-800">
                             <div class="flex items-center gap-2.5 min-w-0">
                                 <div class="w-9 h-9 rounded-xl bg-emerald-500/20 border border-emerald-400/40 text-emerald-400 flex items-center justify-center shrink-0">
@@ -1908,9 +1816,6 @@
             if (indicator) indicator.remove();
         }
 
-        // =========================================================
-        // SEND MESSAGE (รองรับรูปภาพ + ไฟล์โค้ด + สตรีม + หยุดข้อความ)
-        // =========================================================
         async function sendMessage(event) {
             if (isTyping) return;
             if (event) triggerButtonRipple(document.getElementById('sendButton'), event);
@@ -1979,18 +1884,16 @@
             let wrapper = null;
 
             try {
-                // จัดรูปแบบประวัติการสนทนาให้ถูกต้องตามมาตรฐาน API (สลับ user/assistant เท่านั้น และไม่ซ้ำ role ติดกัน)
                 const rawValid = chat.messages.filter(m => {
                     const txt = String(m.content || '').trim();
                     return txt.length > 0 && !txt.startsWith('⚠️') && !txt.startsWith('⏹️');
                 }).slice(-8);
 
-                // ป้องกันกรณีมีข้อความ role เดียวกันติดกัน (ซึ่งทำให้ API แจ้งว่ารูปแบบประวัติข้อความไม่ถูกต้อง)
                 const normalizedHistory = [];
                 for (const m of rawValid) {
                     const normalizedRole = m.role === 'user' ? 'user' : 'assistant';
                     if (normalizedHistory.length === 0 && normalizedRole !== 'user') {
-                        continue; // ประวัติต้องเริ่มต้นด้วย user เสมอ
+                        continue;
                     }
                     const prev = normalizedHistory[normalizedHistory.length - 1];
                     if (prev && prev.role === normalizedRole) {
@@ -2113,9 +2016,6 @@
             }
         }
 
-        // =========================================================
-        // DISCORD GATE, PROMPT LIBRARY, VOICE & IMAGE UPLOAD
-        // =========================================================
         function openDiscordModal() {
             const modal = document.getElementById('discordGateModal');
             modal.classList.remove('hidden', 'opacity-0');
@@ -2123,7 +2023,7 @@
 
         function handleJoinDiscordClick() {
             safeStorage.set('sundayai_discord_passed', 'true', true);
-            if (!musicUserPaused && !isMusicPlaying) {
+            if (!musicUserPaused) {
                 startBgMusic();
             }
             const btnText = document.getElementById('enterAppBtnText');
@@ -2133,7 +2033,7 @@
 
         function enterSundayAI() {
             safeStorage.set('sundayai_discord_passed', 'true', true);
-            if (!musicUserPaused && !isMusicPlaying) {
+            if (!musicUserPaused) {
                 startBgMusic();
             }
             const modal = document.getElementById('discordGateModal');
@@ -2334,9 +2234,6 @@
             scrollToBottom();
         }
 
-        // =========================================================
-        // TEXT-TO-SPEECH, PERSONA & EXPORT CHAT HISTORY
-        // =========================================================
         function handlePersonaChange() {
             const select = document.getElementById('personaSelect');
             if (!select) return;
@@ -2355,7 +2252,6 @@
                 return;
             }
             const raw = btn.getAttribute('data-text') || '';
-            // ลบสัญลักษณ์โค้ดและ Markdown ออกเพื่อให้อ่านเป็นธรรมชาติ
             const cleanText = raw.replace(/```[\s\S]*?```/g, ' (มีส่วนประกอบของโค้ด) ').replace(/[*#`]/g, '').trim();
             if (!cleanText) return;
 
@@ -2436,7 +2332,7 @@
                 html: 'html', htm: 'html', javascript: 'js', js: 'js',
                 typescript: 'ts', ts: 'ts', python: 'py', py: 'py',
                 css: 'css', json: 'json', sql: 'sql', php: 'php',
-                java: 'java', cpp: 'cpp', c: 'c', markdown: 'md', md: 'md'
+                java: 'java', cpp: 'cpp', c: 'c', markdown: 'md', md: 'md', lua: 'lua'
             };
             const ext = extMap[lang.toLowerCase()] || 'txt';
             const filename = customFilename || `sundayai-file.${ext}`;
