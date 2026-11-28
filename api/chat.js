@@ -66,18 +66,16 @@ module.exports = async (req, res) => {
   const lastUserMsg = messages[messages.length - 1].content;
   const isCodeRequest = /(เขียนโค้ด|สร้างเว็บ|สร้างเกม|สร้างแอป|แก้โค้ด|เขียนโปรแกรม|ทำเว็บ|ทำแอป|ทำเกม|ทั้งหมด|ครบทุก|code|html|css|js|javascript|typescript|python|react|next|vue|php|sql|api|script|function|app|game|web)/i.test(lastUserMsg);
 
-  // ตั้งค่า thinkingBudget ให้พอดี ไม่ให้กินโควตาการพ่นโค้ด (Output Tokens) จนโค้ดถูกตัด
-  // หากเป็นโหมด fast และไม่ใช่คำสั่งโค้ด -> 0 (ตอบทันที)
-  // หากเป็นคำสั่งโค้ดในโหมด fast/smart -> 512 (คิดวางโครงสร้างสั้นๆ แล้วเอาโควตาไปพ่นโค้ดเต็มที่)
-  // หากเป็นโหมด beast -> 2048 (คิดโครงสร้างซับซ้อนและยังเหลือโควตาพ่นโค้ดได้อีกมหาศาล)
-  const budget = beast ? 2048 : (smart || isCodeRequest) ? 512 : 0;
+  // ปิด thinkingBudget ในโหมด fast/smart (ตั้งเป็น 0) เพื่อป้องกัน Vercel Timeout (10 วิ) และให้เริ่มพ่นโค้ดทันที!
+  // เปิดคิดล่วงหน้าเฉพาะโหมด beast แค่ 512 tokens เพื่อให้ตอบเร็วและไม่ค้าง
+  const budget = beast ? 512 : 0;
 
   const build = (thinkingBudget, extraDirective) => {
     const config = {
-      // ใช้ temperature ต่ำ (0.3 - 0.4) เพื่อให้โมเดลทำตามคำสั่งอย่างเคร่งครัด ไม่หลุดสเปก และไม่ย่อโค้ด
-      temperature: beast ? 0.4 : 0.3,
-      // เปิดเพดาน Output สูงสุด (65536 tokens) เพื่อให้เขียนไฟล์ขนาดใหญ่ได้จบครบทุกบรรทัดในรอบเดียว
-      maxOutputTokens: 65536,
+      // ใช้ temperature ต่ำ (0.25 - 0.35) เพื่อให้โมเดลเขียนโค้ดตรงตามสั่งเป๊ะๆ ไม่ข้าม ไม่ย่อ
+      temperature: beast ? 0.35 : 0.25,
+      // ใช้ค่ามาตรฐานที่เสถียรกับทุกโมเดล (8192 สำหรับ Flash/Lite และ 16384 สำหรับ Beast) ป้องกัน Error 400
+      maxOutputTokens: beast ? 16384 : 8192,
     };
 
     if (thinkingBudget > 0) {
@@ -114,12 +112,12 @@ module.exports = async (req, res) => {
     for (let i = 0; i < queue.length; i++) {
       const model = queue[i];
       const payload = JSON.parse(JSON.stringify(basePayload));
-      let retriedSameModel = false;
+      let retryCount = 0;
 
-      while (true) {
+      while (retryCount < 3) {
         const controller = new AbortController();
-        // ตั้ง Timeout 45 วินาที เพื่อรองรับการประมวลผลโค้ดขนาดใหญ่
-        const timeoutId = setTimeout(() => controller.abort(), 45000);
+        // ตั้ง Timeout การเชื่อมต่อแรกเริ่มไว้ที่ 15 วินาที หากช้าให้สลับโมเดลทันที
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
         try {
           r = await fetch(urlFor(model), {
             method: 'POST',
@@ -136,29 +134,31 @@ module.exports = async (req, res) => {
 
         if (r.ok) return r;
 
-        if (r.status === 400 && !retriedSameModel) {
+        if (r.status === 400) {
           const j = await r.clone().json().catch(() => ({}));
           const errMsg = (j.error && j.error.message) || '';
           if (/api key/i.test(errMsg)) return r;
 
-          // กรณีโมเดลสำรองบางตัวไม่รองรับ maxOutputTokens 65536 หรือ thinkingConfig ให้ปรับลดแล้วลองใหม่ทันที
-          if (/maxOutputTokens|max_output_tokens/i.test(errMsg)) {
-            payload.generationConfig.maxOutputTokens = 16384;
-            retriedSameModel = true;
-            continue;
-          }
+          // หากเกิด 400 ให้ค่อยๆ ถอด config เสริมออกทีละตัวเพื่อลองกับโมเดลเดิม
           if (payload.generationConfig && payload.generationConfig.thinkingConfig) {
             delete payload.generationConfig.thinkingConfig;
-            retriedSameModel = true;
+            retryCount++;
+            continue;
+          }
+          if (payload.generationConfig && payload.generationConfig.maxOutputTokens > 8192) {
+            payload.generationConfig.maxOutputTokens = 8192;
+            retryCount++;
+            continue;
+          }
+          if (payload.safetySettings) {
+            delete payload.safetySettings;
+            retryCount++;
             continue;
           }
         }
 
-        if (r.status === 404 || r.status === 503 || r.status === 429 || r.status === 400) {
-          break;
-        }
-
-        return r;
+        // หากไม่พบโมเดล (404), เซิร์ฟเวอร์แน่น (503), ติดลิมิต (429) หรือ 400 ที่แก้ไม่ได้ ให้ไปโมเดลถัดไปทันที
+        break;
       }
     }
     return r;
