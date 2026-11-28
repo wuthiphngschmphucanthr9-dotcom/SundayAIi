@@ -1,10 +1,10 @@
 // Vercel Serverless Function (Gemini Real-time Streaming)
 const SYSTEM = "คุณคือวิศวกรซอฟต์แวร์อาวุโสและผู้ช่วยอัจฉริยะ SundayAI ตอบคำถามให้ตรงประเด็น ครบถ้วน และทำงานได้จริง ปฏิบัติตามกฎเหล่านี้ทุกครั้ง: 1) อ่านคำสั่งให้ครบทุกข้อ แล้วทำทุกข้อที่ขอ ห้ามข้าม ห้ามเปลี่ยนโจทย์ 2) ใช้ภาษา เฟรมเวิร์ก ชื่อ และสไตล์ที่ผู้ใช้ระบุตรงตัว 3) ถ้าคำสั่งกำกวม ให้ตีความอย่างสมเหตุสมผลแล้วลงมือทำเลย 4) โค้ดต้องสมบูรณ์ รันได้จริง ห้ามย่อ ห้ามใช้ ... 5) โค้ดทุกชิ้นต้องอยู่ใน code fence ที่ระบุภาษา 6) ตอบเป็นภาษาเดียวกับผู้ใช้ (ส่วนใหญ่ภาษาไทย) 7) ใส่อีโมจิที่เหมาะสมและทันสมัยประกอบหัวข้อหรือข้อความสำคัญอย่างพอดี (ไม่รกจนเกินไป) เพื่อให้อ่านง่าย น่าสนใจ และเป็นกันเอง (ห้ามใส่อีโมจิในบล็อกโค้ดเด็ดขาด)";
 
-// แก้ไขชื่อโมเดลให้ตรงกับที่ Google Gemini API รองรับจริงในปัจจุบัน
-const FAST = process.env.GEMINI_FAST_MODEL || 'gemini-2.5-flash-lite';
-const SMART = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
-const FALLBACK_MODELS = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.0-flash', 'gemini-2.0-flash-lite'];
+// แก้ไขชื่อโมเดลให้ตรงกับที่ Google Gemini API รองรับจริงในปัจจุบัน (อัปเดตตามคำแนะนำของ Google API)
+const FAST = process.env.GEMINI_FAST_MODEL || 'gemini-3.5-flash-lite';
+const SMART = process.env.GEMINI_MODEL || 'gemini-3.5-flash';
+const FALLBACK_MODELS = ['gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-2.5-flash', 'gemini-2.5-flash-lite'];
 
 const SAFETY = ['HARASSMENT', 'HATE_SPEECH', 'SEXUALLY_EXPLICIT', 'DANGEROUS_CONTENT'].map(c => ({
   category: 'HARM_CATEGORY_' + c,
@@ -77,11 +77,6 @@ module.exports = async (req, res) => {
       const model = queue[i];
       // คัดลอก payload ใหม่ทุกครั้งที่เปลี่ยนโมเดล เพื่อไม่ให้ค่าที่ถูกลบกระทบโมเดลถัดไป
       const payload = JSON.parse(JSON.stringify(basePayload));
-
-      // โมเดลตระกูล 2.0 ไม่รองรับ thinkingConfig ให้ลบออกก่อนส่งทันทีเพื่อลดการเกิด 400
-      if (model.includes('gemini-2.0') && payload.generationConfig) {
-        delete payload.generationConfig.thinkingConfig;
-      }
 
       let retriedSameModel = false;
 
